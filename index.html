@@ -6,7 +6,6 @@
     <title>Medical Claim Application - Genetek</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         :root {
@@ -149,10 +148,12 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            /* CSS for smaller font in table */
+            font-size: 0.9em; /* Reduce font size for the entire table */
         }
 
         th, td {
-            padding: 12px;
+            padding: 8px; /* Reduce padding to make rows and columns tighter */
             text-align: left;
             border-bottom: 1px solid #eee;
         }
@@ -162,9 +163,14 @@
             color: var(--white);
             cursor: pointer;
             transition: background 0.3s;
+            text-align: center; /* Center alignment for table headers */
         }
 
-        th:hover { background: var(--accent-color); }
+        th i.fas.fa-sort,
+        th i.fas.fa-sort-up,
+        th i.fas.fa-sort-down {
+            margin-left: 5px; /* Small space between text and sort icon */
+        }
 
         tr:hover {
             background: var(--secondary-color);
@@ -258,17 +264,24 @@
             overflow: auto; /* Enable scroll if needed */
             background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
             animation: fadeIn 0.3s;
+            /* To position modal in the center of the screen */
+            display: flex; /* Use flexbox */
+            align-items: center; /* Vertically center */
+            justify-content: center; /* Horizontally center */
         }
 
         .modal-content {
             background-color: var(--white);
-            margin: 10% auto; /* 10% from the top and centered */
+            /* margin: 10% auto; /* Removed because using flexbox */
             padding: 30px;
             border-radius: 15px;
             box-shadow: var(--shadow);
             width: 80%; /* Could be more or less, depending on screen size */
             max-width: 600px;
             position: relative;
+            /* Ensure modal-content does not take full height when flexbox is used */
+            max-height: 90vh; /* Limit modal height to prevent it from being too large */
+            overflow-y: auto; /* Add scroll if content is too long */
         }
 
         .close-button {
@@ -289,17 +302,17 @@
         }
 
         /* Status Styling */
-        .status-Pending { background-color: #ffeb3b; color: #333; padding: 4px 8px; border-radius: 5px; font-weight: bold; } /* Yellow */
-        .status-Approved { background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; } /* Green */
-        .status-Rejected { background-color: #f44336; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; } /* Red */
+        .status-pending { background-color: #ffeb3b; color: #333; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; } /* Yellow */
+        .status-approved { background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; } /* Green */
+        .status-rejected { background-color: #f44336; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; } /* Red */
 
         /* Action Buttons in table */
         .action-buttons button {
             background: none;
             border: none;
-            padding: 5px;
+            padding: 3px; /* Smaller padding for action buttons */
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 0.9em; /* Smaller font size for action button icons */
             color: var(--accent-color);
             transition: color 0.2s;
         }
@@ -318,7 +331,12 @@
             #claimForm { grid-template-columns: 1fr; }
             #claimForm .full-width { grid-column: auto; }
             .nominal-group { grid-template-columns: 1fr; } /* Stack nominal inputs on small screens */
-            table { font-size: 12px; }
+            table { 
+                font-size: 0.8em; /* Even smaller on mobile screens */
+            }
+            th, td {
+                padding: 6px; /* Smaller padding on mobile screens */
+            }
             .logout-btn {
                 position: static;
                 float: right;
@@ -334,7 +352,15 @@
             }
             .modal-content {
                 width: 95%;
-                margin: 5% auto;
+                /* margin: 5% auto; Removed because using flexbox */
+            }
+            .status-pending, .status-approved, .status-rejected {
+                font-size: 0.7em;
+                padding: 2px 4px;
+            }
+            .action-buttons button {
+                font-size: 0.8em;
+                padding: 2px;
             }
         }
     </style>
@@ -347,7 +373,7 @@
             <input type="email" id="email" placeholder="Enter your email" required>
 
             <label for="password"><i class="fas fa-lock icon"></i>Password:</label>
-            <input type="password" id="password" placeholder="Enter your password" required>
+            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
 
             <button type="submit" id="loginBtn">
                 <span id="loginSpinner" class="loading hidden"></span>
@@ -369,7 +395,8 @@
         <div id="claimFormPage" class="page-content">
             <h2>Medical Claim Submission Form</h2>
             <form id="claimForm">
-                <!-- No Urut will be generated on submission -->
+                <label for="noUrutForm"><i class="fas fa-hashtag icon"></i>Claim Number:</label>
+                <input type="text" id="noUrutForm" disabled value="1"> <!-- Auto-filled Claim Number -->
 
                 <label for="tanggalUpload"><i class="fas fa-upload icon"></i>TALENTA Upload Date:</label>
                 <input type="date" id="tanggalUpload" required>
@@ -427,12 +454,13 @@
             <table id="claimsTable">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Submission Date <i class="fas fa-sort"></i></th>
-                        <th onclick="sortTable(1)">Employee Name <i class="fas fa-sort"></i></th>
-                        <th onclick="sortTable(2)">Department <i class="fas fa-sort"></i></th>
-                        <th onclick="sortTable(3)">Claimed Amount <i class="fas fa-sort"></i></th>
-                        <th onclick="sortTable(4)">Approved Amount <i class="fas fa-sort"></i></th>
-                        <th onclick="sortTable(5)">Status <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(0)">Claim No. <i class="fas fa-sort"></i></th> <!-- Kolom No. Urut -->
+                        <th onclick="sortTable(1)">Submission Date <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(2)">Employee Name <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(3)">Department <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(4)">Claimed Amount <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(5)">Approved Amount <i class="fas fa-sort"></i></th>
+                        <th onclick="sortTable(6)">Status <i class="fas fa-sort"></i></th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -448,8 +476,8 @@
             <h2>Edit Claim</h2>
             <form id="editClaimForm">
                 <input type="hidden" id="editClaimId">
-                <label for="editNoUrut">No. Urut:</label>
-                <input type="text" id="editNoUrut" disabled> <!-- No. Urut should not be editable -->
+                <label for="editNoUrut">Claim No.:</label>
+                <input type="text" id="editNoUrut" disabled> <!-- Claim No. should not be editable -->
 
                 <label for="editTanggalUpload">TALENTA Upload Date:</label>
                 <input type="date" id="editTanggalUpload" required>
@@ -542,7 +570,11 @@
         {
           "rules": {
             ".read": "auth != null",
-            ".write": "auth != null"
+            ".write": "auth != null",
+            "claims": {
+              ".read": "auth != null",
+              ".write": "auth != null"
+            }
           }
         }
         */
@@ -612,6 +644,8 @@
             document.getElementById('showClaimsListBtn').classList.remove('active');
             if (pageId === 'claimFormPage') {
                 document.getElementById('showClaimFormBtn').classList.add('active');
+                // When showing claim form, ensure the claim number is updated
+                updateNextClaimNumber();
             } else if (pageId === 'claimsListPage') {
                 document.getElementById('showClaimsListBtn').classList.add('active');
                 loadClaims(); // Load claims every time the claim list page is displayed
@@ -644,30 +678,293 @@
             return formattedString.replace(/[^0-9]/g, ''); // Remove all non-digit characters
         }
 
-        // Event for Nominal Formatting on new inputs (now includes 'Rp ' inside input)
-        ['nominalDiajukanBaru', 'nominalDisetujuiBaru', 'editNominalDiajukan', 'editNominalDisetujui'].forEach(id => {
-            const input = document.getElementById(id);
-            if (input) { // Check if element exists (for edit modal inputs)
-                input.addEventListener('input', (e) => {
-                    let value = e.target.value;
-                    let cleanValue = cleanRupiahFormat(value);
-                    
-                    // Format the pure number to rupiah format for display in the input
-                    // Add 'Rp ' prefix directly to the input value
-                    e.target.value = formatRupiah(cleanValue);
-                });
+        // --- Auto-generate Claim Number ---
+        async function updateNextClaimNumber() {
+            try {
+                const snapshot = await database.ref('claims').once('value');
+                const claims = snapshot.val() || {};
+                const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
+                document.getElementById('noUrutForm').value = maxNo + 1;
+            } catch (error) {
+                console.error("Error getting next claim number:", error);
+                document.getElementById('noUrutForm').value = 'Error';
+            }
+        }
 
-                // Initialize display on load (if there's a default value)
-                // This ensures that if a value is pre-filled (e.g., from Firebase), it's formatted.
-                // For new form, default value is 'Rp 0' already.
-                if (input.value && input.value !== 'Rp 0') { // Only format if it's not the default 'Rp 0'
-                    const initialCleanValue = cleanRupiahFormat(input.value);
-                    input.value = formatRupiah(initialCleanValue);
+        // --- Load Claims and Sorting Section (Moved to global scope) ---
+        let currentSortColumn = -1;
+        let currentSortDirection = 'asc';
+        let claimsData = [];
+
+        async function loadClaims() {
+            const claimsBody = document.getElementById('claimsBody');
+            claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>'; // Updated colspan
+
+            try {
+                const snapshot = await database.ref('claims').orderByChild('noUrut').once('value'); // Order by noUrut
+                const claims = snapshot.val() || {};
+                claimsData = [];
+                Object.keys(claims).forEach(key => {
+                    claimsData.push({ id: key, ...claims[key] });
+                });
+                // Sort by No. Urut descending by default for new claims to appear on top
+                claimsData.sort((a, b) => b.noUrut - a.noUrut);
+                renderClaimsTable(claimsData);
+            } catch (error) {
+                console.error("Error loading claims:", error);
+                claimsBody.innerHTML = '<tr><td colspan="8" class="error" style="text-align:center;">Failed to load claim data.</td></tr>'; // Updated colspan
+            }
+        }
+
+        function renderClaimsTable(data) {
+            const claimsBody = document.getElementById('claimsBody');
+            claimsBody.innerHTML = '';
+
+            if (data.length === 0) {
+                claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No claim data available.</td></tr>'; // Updated colspan
+                return;
+            }
+
+            data.forEach(claim => {
+                const row = claimsBody.insertRow();
+                // Displayed columns: Claim No., Submission Date, Employee Name, Department, Claimed Amount, Approved Amount, Status, Actions
+                row.insertCell(0).textContent = claim.noUrut; // Claim No.
+                row.insertCell(1).textContent = claim.tanggalPengajuan;
+                row.insertCell(2).textContent = claim.namaKaryawan;
+                row.insertCell(3).textContent = claim.departemen;
+                row.insertCell(4).textContent = formatRupiah(claim.nominalDiajukan);
+                row.insertCell(5).textContent = formatRupiah(claim.nominalDisetujui);
+                
+                const statusCell = row.insertCell(6); // Updated index
+                const statusDropdown = document.createElement('select');
+                statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                statusDropdown.innerHTML = `
+                    <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
+                    <option value="Rejected" ${claim.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                `;
+                statusDropdown.addEventListener('change', async (e) => {
+                    const newStatus = e.target.value;
+                    try {
+                        await database.ref('claims/' + claim.id).update({ status: newStatus });
+                        e.target.className = ''; // Clear existing classes
+                        e.target.classList.add(`status-${newStatus.toLowerCase()}`);
+                        showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
+                    } catch (error) {
+                        console.error("Update Status Error:", error);
+                        showMessage('submitError', 'Failed to update status: ' + error.message);
+                    }
+                });
+                statusCell.appendChild(statusDropdown);
+
+                const actionsCell = row.insertCell(7); // Updated index
+                actionsCell.classList.add('action-buttons');
+
+                const detailButton = document.createElement('button');
+                detailButton.innerHTML = '<i class="fas fa-info-circle"></i>';
+                detailButton.title = 'View Details';
+                detailButton.onclick = () => openDetailModal(claim);
+                actionsCell.appendChild(detailButton);
+
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                editButton.title = 'Edit Claim';
+                editButton.onclick = () => openEditModal(claim.id, claim);
+                actionsCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteButton.title = 'Delete Claim';
+                deleteButton.classList.add('delete-btn');
+                deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
+                actionsCell.appendChild(deleteButton);
+            });
+        }
+
+        window.sortTable = function(columnIndex) {
+            const headers = document.querySelectorAll('#claimsTable th');
+            headers.forEach((header, index) => {
+                const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
+                if (icon) {
+                    icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                    icon.classList.add('fa-sort');
                 }
+            });
+
+            if (currentSortColumn === columnIndex) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = columnIndex;
+                currentSortDirection = 'asc';
+            }
+
+            const icon = headers[columnIndex].querySelector('.fa-sort');
+            if (icon) {
+                icon.classList.remove('fa-sort');
+                icon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+            }
+
+            claimsData.sort((a, b) => {
+                let valA, valB;
+
+                // Map column index to actual data key for sorting
+                // Updated dataKeys to include 'noUrut' at index 0
+                const dataKeys = ['noUrut', 'tanggalPengajuan', 'namaKaryawan', 'departemen', 'nominalDiajukan', 'nominalDisetujui', 'status'];
+                const key = dataKeys[columnIndex];
+
+                valA = a[key];
+                valB = b[key];
+
+                // Type-specific comparison
+                if (key === 'noUrut' || key.includes('nominal')) {
+                    valA = parseInt(valA);
+                    valB = parseInt(valB);
+                } else if (key.includes('tanggal')) {
+                    valA = new Date(valA);
+                    valB = new Date(valB);
+                } else {
+                    valA = String(valA || '').toLowerCase();
+                    valB = String(valB || '').toLowerCase();
+                }
+
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderClaimsTable(claimsData);
+        };
+
+        // --- Edit Modal Logic (Moved to global scope) ---
+        const editClaimModal = document.getElementById('editClaimModal');
+        const detailClaimModal = document.getElementById('detailClaimModal');
+        const closeButtons = document.querySelectorAll('.close-button');
+        const editClaimForm = document.getElementById('editClaimForm');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const editSpinner = document.getElementById('editSpinner');
+        const editError = document.getElementById('editError');
+        const editSuccess = document.getElementById('editSuccess');
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                editClaimModal.style.display = 'none';
+                detailClaimModal.style.display = 'none';
+                editError.classList.add('hidden');
+                editSuccess.classList.add('hidden');
+            });
+        });
+
+        window.addEventListener('click', (event) => {
+            // Only close if the click is directly on the modal background
+            if (event.target === editClaimModal) {
+                editClaimModal.style.display = 'none';
+                editError.classList.add('hidden');
+                editSuccess.classList.add('hidden');
+            }
+            if (event.target === detailClaimModal) {
+                detailClaimModal.style.display = 'none';
             }
         });
 
-        // --- Login/Logout Section ---
+        window.openEditModal = (claimId, claimData) => {
+            document.getElementById('editClaimId').value = claimId;
+            document.getElementById('editNoUrut').value = claimData.noUrut;
+            document.getElementById('editTanggalUpload').value = claimData.tanggalUpload;
+            document.getElementById('editTanggalPengajuan').value = claimData.tanggalPengajuan;
+            document.getElementById('editNamaKaryawan').value = claimData.namaKaryawan;
+            document.getElementById('editHubungan').value = claimData.hubungan;
+            document.getElementById('editDepartemen').value = claimData.departemen;
+            document.getElementById('editJenisKlaim').value = claimData.jenisKlaim;
+            // Format nominal values for display in edit modal
+            document.getElementById('editNominalDiajukan').value = formatRupiah(claimData.nominalDiajukan);
+            document.getElementById('editNominalDisetujui').value = formatRupiah(claimData.nominalDisetujui);
+            document.getElementById('editTanggalPenerimaan').value = claimData.tanggalPenerimaan;
+            document.getElementById('editCatatan').value = claimData.catatan;
+            document.getElementById('editStatus').value = claimData.status || 'Pending'; // Set default if status is missing
+
+            editClaimModal.style.display = 'flex'; // Use flex to center
+        };
+
+        window.openDetailModal = (claimData) => {
+            const detailsContent = document.getElementById('claimDetailsContent');
+            detailsContent.innerHTML = `
+                <p><strong>Claim No.:</strong> ${claimData.noUrut}</p>
+                <p><strong>TALENTA Upload Date:</strong> ${claimData.tanggalUpload}</p>
+                <p><strong>Submission Date:</strong> ${claimData.tanggalPengajuan}</p>
+                <p><strong>Employee Name:</strong> ${claimData.namaKaryawan}</p>
+                <p><strong>Relationship As:</strong> ${claimData.hubungan}</p>
+                <p><strong>Department:</strong> ${claimData.departemen}</p>
+                <p><strong>Claim Type:</strong> ${claimData.jenisKlaim}</p>
+                <p><strong>Claimed Amount:</strong> ${formatRupiah(claimData.nominalDiajukan)}</p>
+                <p><strong>Approved Amount:</strong> ${formatRupiah(claimData.nominalDisetujui)}</p>
+                <p><strong>Receipt Date:</strong> ${claimData.tanggalPenerimaan || '-'}</p>
+                <p><strong>Notes:</strong> ${claimData.catatan || '-'}</p>
+                <p><strong>Status:</strong> <span class="status-${(claimData.status || 'Pending').toLowerCase()}">${claimData.status || 'Pending'}</span></p>
+            `;
+            detailClaimModal.style.display = 'flex'; // Use flex to center
+        };
+
+        editClaimForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            saveEditBtn.disabled = true;
+            editSpinner.classList.remove('hidden');
+            editError.classList.add('hidden');
+            editSuccess.classList.add('hidden');
+
+            const claimId = document.getElementById('editClaimId').value;
+            
+            // Clean nominal values before saving
+            const editedNominalDiajukan = parseInt(cleanRupiahFormat(document.getElementById('editNominalDiajukan').value)) || 0;
+            const editedNominalDisetujui = parseInt(cleanRupiahFormat(document.getElementById('editNominalDisetujui').value)) || 0;
+
+            const updatedClaimData = {
+                noUrut: parseInt(document.getElementById('editNoUrut').value), // Keep original NoUrut
+                tanggalUpload: document.getElementById('editTanggalUpload').value,
+                tanggalPengajuan: document.getElementById('editTanggalPengajuan').value,
+                namaKaryawan: document.getElementById('editNamaKaryawan').value,
+                hubungan: document.getElementById('editHubungan').value,
+                departemen: document.getElementById('editDepartemen').value,
+                jenisKlaim: document.getElementById('editJenisKlaim').value,
+                nominalDiajukan: editedNominalDiajukan,
+                nominalDisetujui: editedNominalDisetujui,
+                tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
+                catatan: document.getElementById('editCatatan').value,
+                status: document.getElementById('editStatus').value,
+                // Do not update timestamp here unless explicitly desired
+            };
+
+            try {
+                await database.ref('claims/' + claimId).update(updatedClaimData);
+                showMessage('editSuccess', 'Claim updated successfully!', false);
+                loadClaims(); // Reload claims to show updated data
+                setTimeout(() => {
+                    editClaimModal.style.display = 'none';
+                    editError.classList.add('hidden');
+                    editSuccess.classList.add('hidden');
+                }, 1500); // Close modal after 1.5 seconds
+            } catch (error) {
+                console.error("Update Claim Error:", error);
+                showMessage('editError', 'Failed to update claim: ' + error.message);
+            } finally {
+                saveEditBtn.disabled = false;
+                editSpinner.classList.add('hidden');
+            }
+        });
+
+        window.deleteClaim = async (claimId, noUrut) => {
+            if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
+                try {
+                    await database.ref('claims/' + claimId).remove();
+                    showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
+                    loadClaims(); // Reload claims after deletion
+                } catch (error) {
+                    console.error("Delete Claim Error:", error);
+                    showMessage('submitError', 'Failed to delete claim: ' + error.message);
+                }
+            }
+        };
+
+        // --- Login/Logout Section and DOMContentLoaded Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
             // Set initial values for new claim form nominal inputs
             document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
@@ -739,10 +1036,7 @@
 
                 try {
                     // Get the current highest sequence number
-                    const snapshot = await database.ref('claims').once('value');
-                    const claims = snapshot.val() || {};
-                    const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
-                    const newNoUrut = maxNo + 1;
+                    const currentNoUrut = parseInt(document.getElementById('noUrutForm').value);
 
                     // Get nominal values from new inputs, ensure they are numbers
                     // Use cleanRupiahFormat to get the pure numeric value
@@ -750,7 +1044,7 @@
                     const nominalDisetujuiValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value)) || 0;
 
                     const claimData = {
-                        noUrut: newNoUrut, // Automatic sequence number
+                        noUrut: currentNoUrut, // Use the auto-generated number
                         tanggalUpload: document.getElementById('tanggalUpload').value,
                         tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
                         namaKaryawan: document.getElementById('namaKaryawan').value,
@@ -771,6 +1065,7 @@
                     // Reset formatted inputs to 'Rp 0'
                     document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
                     document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
+                    updateNextClaimNumber(); // Update claim number for the next submission
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Failed to submit claim: ' + error.message);
@@ -780,279 +1075,35 @@
                 }
             });
 
-            // --- Load Claims and Sorting Section ---
-            let currentSortColumn = -1;
-            let currentSortDirection = 'asc';
-            let claimsData = [];
-
-            async function loadClaims() {
-                const claimsBody = document.getElementById('claimsBody');
-                claimsBody.innerHTML = '<tr><td colspan="7" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>'; // Adjusted colspan
-
-                try {
-                    const snapshot = await database.ref('claims').orderByChild('timestamp').once('value');
-                    const claims = snapshot.val() || {};
-                    claimsData = [];
-                    Object.keys(claims).forEach(key => {
-                        claimsData.push({ id: key, ...claims[key] });
+            // Event for Nominal Formatting on new inputs (now includes 'Rp ' inside input)
+            ['nominalDiajukanBaru', 'nominalDisetujuiBaru', 'editNominalDiajukan', 'editNominalDisetujui'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) { // Check if element exists (for edit modal inputs)
+                    input.addEventListener('input', (e) => {
+                        let value = e.target.value;
+                        let cleanValue = cleanRupiahFormat(value);
+                        
+                        // Format the pure number to rupiah format for display in the input
+                        // Add 'Rp ' prefix directly to the input value
+                        e.target.value = formatRupiah(cleanValue);
                     });
-                    // Sort by Submission Date descending by default for new claims to appear on top
-                    claimsData.sort((a, b) => new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan));
-                    renderClaimsTable(claimsData);
-                } catch (error) {
-                    console.error("Error loading claims:", error);
-                    claimsBody.innerHTML = '<tr><td colspan="7" class="error" style="text-align:center;">Failed to load claim data.</td></tr>'; // Adjusted colspan
-                }
-            }
 
-            function renderClaimsTable(data) {
-                const claimsBody = document.getElementById('claimsBody');
-                claimsBody.innerHTML = '';
-
-                if (data.length === 0) {
-                    claimsBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No claim data available.</td></tr>'; // Adjusted colspan
-                    return;
-                }
-
-                data.forEach(claim => {
-                    const row = claimsBody.insertRow();
-                    // Displayed columns: Submission Date, Employee Name, Department, Claimed Amount, Approved Amount, Status, Actions
-                    row.insertCell(0).textContent = claim.tanggalPengajuan;
-                    row.insertCell(1).textContent = claim.namaKaryawan;
-                    row.insertCell(2).textContent = claim.departemen;
-                    row.insertCell(3).textContent = formatRupiah(claim.nominalDiajukan);
-                    row.insertCell(4).textContent = formatRupiah(claim.nominalDisetujui);
-                    
-                    const statusCell = row.insertCell(5);
-                    const statusDropdown = document.createElement('select');
-                    statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
-                    statusDropdown.innerHTML = `
-                        <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
-                        <option value="Rejected" ${claim.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                    `;
-                    statusDropdown.addEventListener('change', async (e) => {
-                        const newStatus = e.target.value;
-                        try {
-                            await database.ref('claims/' + claim.id).update({ status: newStatus });
-                            e.target.className = ''; // Clear existing classes
-                            e.target.classList.add(`status-${newStatus.toLowerCase()}`);
-                            showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
-                        } catch (error) {
-                            console.error("Update Status Error:", error);
-                            showMessage('submitError', 'Failed to update status: ' + error.message);
-                        }
-                    });
-                    statusCell.appendChild(statusDropdown);
-
-                    const actionsCell = row.insertCell(6);
-                    actionsCell.classList.add('action-buttons');
-
-                    const detailButton = document.createElement('button');
-                    detailButton.innerHTML = '<i class="fas fa-info-circle"></i>';
-                    detailButton.title = 'View Details';
-                    detailButton.onclick = () => openDetailModal(claim);
-                    actionsCell.appendChild(detailButton);
-
-                    const editButton = document.createElement('button');
-                    editButton.innerHTML = '<i class="fas fa-edit"></i>';
-                    editButton.title = 'Edit Claim';
-                    editButton.onclick = () => openEditModal(claim.id, claim);
-                    actionsCell.appendChild(editButton);
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                    deleteButton.title = 'Delete Claim';
-                    deleteButton.classList.add('delete-btn');
-                    deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
-                    actionsCell.appendChild(deleteButton);
-                });
-            }
-
-            window.sortTable = function(columnIndex) {
-                const headers = document.querySelectorAll('#claimsTable th');
-                headers.forEach((header, index) => {
-                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
-                    if (icon) {
-                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                        icon.classList.add('fa-sort');
+                    // Initialize display on load (if there's a default value)
+                    // This ensures that if a value is pre-filled (e.g., from Firebase), it's formatted.
+                    // For new form, default value is 'Rp 0' already.
+                    if (input.value && input.value !== 'Rp 0') { // Only format if it's not the default 'Rp 0'
+                        const initialCleanValue = cleanRupiahFormat(input.value);
+                        input.value = formatRupiah(initialCleanValue);
                     }
-                });
-
-                if (currentSortColumn === columnIndex) {
-                    currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-                } else {
-                    currentSortColumn = columnIndex;
-                    currentSortDirection = 'asc';
                 }
-
-                const icon = headers[columnIndex].querySelector('.fa-sort');
-                if (icon) {
-                    icon.classList.remove('fa-sort');
-                    icon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
-                }
-
-                claimsData.sort((a, b) => {
-                    let valA, valB;
-
-                    // Map column index to actual data key for sorting
-                    const dataKeys = ['tanggalPengajuan', 'namaKaryawan', 'departemen', 'nominalDiajukan', 'nominalDisetujui', 'status'];
-                    const key = dataKeys[columnIndex];
-
-                    valA = a[key];
-                    valB = b[key];
-
-                    // Type-specific comparison
-                    if (key.includes('tanggal')) {
-                        valA = new Date(valA);
-                        valB = new Date(valB);
-                    } else if (key.includes('nominal')) {
-                        valA = parseInt(valA);
-                        valB = parseInt(valB);
-                    } else {
-                        valA = String(valA || '').toLowerCase();
-                        valB = String(valB || '').toLowerCase();
-                    }
-
-                    if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-                    if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-                    return 0;
-                });
-
-                renderClaimsTable(claimsData);
-            };
+            });
 
             // --- Page Navigation ---
             document.getElementById('showClaimFormBtn').addEventListener('click', () => showPage('claimFormPage'));
             document.getElementById('showClaimsListBtn').addEventListener('click', () => showPage('claimsListPage'));
 
-            // --- Edit Modal Logic ---
-            const editClaimModal = document.getElementById('editClaimModal');
-            const detailClaimModal = document.getElementById('detailClaimModal'); // Get detail modal
-            const closeButtons = document.querySelectorAll('.close-button'); // Get all close buttons
-            const editClaimForm = document.getElementById('editClaimForm');
-            const saveEditBtn = document.getElementById('saveEditBtn');
-            const editSpinner = document.getElementById('editSpinner');
-            const editError = document.getElementById('editError');
-            const editSuccess = document.getElementById('editSuccess');
-
-            closeButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    editClaimModal.style.display = 'none';
-                    detailClaimModal.style.display = 'none'; // Close detail modal too
-                    editError.classList.add('hidden');
-                    editSuccess.classList.add('hidden');
-                });
-            });
-
-            window.addEventListener('click', (event) => {
-                if (event.target == editClaimModal) {
-                    editClaimModal.style.display = 'none';
-                    editError.classList.add('hidden');
-                    editSuccess.classList.add('hidden');
-                }
-                if (event.target == detailClaimModal) { // Close detail modal on outside click
-                    detailClaimModal.style.display = 'none';
-                }
-            });
-
-            window.openEditModal = (claimId, claimData) => {
-                document.getElementById('editClaimId').value = claimId;
-                document.getElementById('editNoUrut').value = claimData.noUrut;
-                document.getElementById('editTanggalUpload').value = claimData.tanggalUpload;
-                document.getElementById('editTanggalPengajuan').value = claimData.tanggalPengajuan;
-                document.getElementById('editNamaKaryawan').value = claimData.namaKaryawan;
-                document.getElementById('editHubungan').value = claimData.hubungan;
-                document.getElementById('editDepartemen').value = claimData.departemen;
-                document.getElementById('editJenisKlaim').value = claimData.jenisKlaim;
-                // Format nominal values for display in edit modal
-                document.getElementById('editNominalDiajukan').value = formatRupiah(claimData.nominalDiajukan);
-                document.getElementById('editNominalDisetujui').value = formatRupiah(claimData.nominalDisetujui);
-                document.getElementById('editTanggalPenerimaan').value = claimData.tanggalPenerimaan;
-                document.getElementById('editCatatan').value = claimData.catatan;
-                document.getElementById('editStatus').value = claimData.status || 'Pending'; // Set default if status is missing
-
-                editClaimModal.style.display = 'block';
-            };
-
-            window.openDetailModal = (claimData) => {
-                const detailsContent = document.getElementById('claimDetailsContent');
-                detailsContent.innerHTML = `
-                    <p><strong>No. Urut:</strong> ${claimData.noUrut}</p>
-                    <p><strong>TALENTA Upload Date:</strong> ${claimData.tanggalUpload}</p>
-                    <p><strong>Submission Date:</strong> ${claimData.tanggalPengajuan}</p>
-                    <p><strong>Employee Name:</strong> ${claimData.namaKaryawan}</p>
-                    <p><strong>Relationship As:</strong> ${claimData.hubungan}</p>
-                    <p><strong>Department:</strong> ${claimData.departemen}</p>
-                    <p><strong>Claim Type:</strong> ${claimData.jenisKlaim}</p>
-                    <p><strong>Claimed Amount:</strong> ${formatRupiah(claimData.nominalDiajukan)}</p>
-                    <p><strong>Approved Amount:</strong> ${formatRupiah(claimData.nominalDisetujui)}</p>
-                    <p><strong>Receipt Date:</strong> ${claimData.tanggalPenerimaan || '-'}</p>
-                    <p><strong>Notes:</strong> ${claimData.catatan || '-'}</p>
-                    <p><strong>Status:</strong> <span class="status-${(claimData.status || 'Pending').toLowerCase()}">${claimData.status || 'Pending'}</span></p>
-                `;
-                detailClaimModal.style.display = 'block';
-            };
-
-            editClaimForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                saveEditBtn.disabled = true;
-                editSpinner.classList.remove('hidden');
-                editError.classList.add('hidden');
-                editSuccess.classList.add('hidden');
-
-                const claimId = document.getElementById('editClaimId').value;
-                
-                // Clean nominal values before saving
-                const editedNominalDiajukan = parseInt(cleanRupiahFormat(document.getElementById('editNominalDiajukan').value)) || 0;
-                const editedNominalDisetujui = parseInt(cleanRupiahFormat(document.getElementById('editNominalDisetujui').value)) || 0;
-
-                const updatedClaimData = {
-                    noUrut: parseInt(document.getElementById('editNoUrut').value), // Keep original NoUrut
-                    tanggalUpload: document.getElementById('editTanggalUpload').value,
-                    tanggalPengajuan: document.getElementById('editTanggalPengajuan').value,
-                    namaKaryawan: document.getElementById('editNamaKaryawan').value,
-                    hubungan: document.getElementById('editHubungan').value,
-                    departemen: document.getElementById('editDepartemen').value,
-                    jenisKlaim: document.getElementById('editJenisKlaim').value,
-                    nominalDiajukan: editedNominalDiajukan,
-                    nominalDisetujui: editedNominalDisetujui,
-                    tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
-                    catatan: document.getElementById('editCatatan').value,
-                    status: document.getElementById('editStatus').value,
-                    // Do not update timestamp here unless explicitly desired
-                };
-
-                try {
-                    await database.ref('claims/' + claimId).update(updatedClaimData);
-                    showMessage('editSuccess', 'Claim updated successfully!', false);
-                    loadClaims(); // Reload claims to show updated data
-                    setTimeout(() => {
-                        editClaimModal.style.display = 'none';
-                        editError.classList.add('hidden');
-                        editSuccess.classList.add('hidden');
-                    }, 1500); // Close modal after 1.5 seconds
-                } catch (error) {
-                    console.error("Update Claim Error:", error);
-                    showMessage('editError', 'Failed to update claim: ' + error.message);
-                } finally {
-                    saveEditBtn.disabled = false;
-                    editSpinner.classList.add('hidden');
-                }
-            });
-
-            window.deleteClaim = async (claimId, noUrut) => {
-                if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
-                    try {
-                        await database.ref('claims/' + claimId).remove();
-                        showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
-                        loadClaims(); // Reload claims after deletion
-                    } catch (error) {
-                        console.error("Delete Claim Error:", error);
-                        showMessage('submitError', 'Failed to delete claim: ' + error.message);
-                    }
-                }
-            };
+            // Initial update of claim number when the page loads
+            updateNextClaimNumber();
         });
     </script>
 </body>
