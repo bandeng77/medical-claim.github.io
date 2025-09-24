@@ -442,13 +442,22 @@
         }
 
         // Format Nominal untuk tampilan (Rp X.XXX.XXX)
+        // Fungsi ini akan memformat angka menjadi string dengan pemisah ribuan dan awalan 'Rp '
         function formatRupiah(amount) {
-            if (isNaN(amount) || amount === null || amount === undefined) return 'Rp 0';
-            const numberString = String(amount).replace(/\D/g, ''); // Hapus non-digit
+            if (amount === null || amount === undefined || amount === '') return 'Rp 0';
+            // Hapus semua karakter non-digit kecuali koma/titik jika ingin mendukung desimal
+            // Untuk kasus ini, kita hanya ingin angka bulat, jadi hapus semua non-digit
+            const numberString = String(amount).replace(/\D/g, ''); 
             if (numberString === '') return 'Rp 0';
             const number = parseInt(numberString);
-            if (number === 0) return 'Rp 0';
+            if (isNaN(number) || number === 0) return 'Rp 0';
             return `Rp ${number.toLocaleString('id-ID')}`;
+        }
+
+        // Fungsi untuk membersihkan format rupiah dari string (mengembalikan hanya angka)
+        function cleanRupiahFormat(formattedString) {
+            if (!formattedString) return '';
+            return formattedString.replace(/\D/g, ''); // Hapus semua karakter non-digit
         }
 
         // Event untuk Format Nominal pada input baru
@@ -458,20 +467,23 @@
 
             input.addEventListener('input', (e) => {
                 let value = e.target.value;
-                // Hapus semua karakter non-digit kecuali koma/titik jika ingin mendukung desimal
-                // Untuk kasus ini, kita hanya ingin angka bulat, jadi hapus semua non-digit
-                value = value.replace(/\D/g, '');
+                // Hapus format rupiah yang mungkin sudah ada untuk mendapatkan angka murni
+                let cleanValue = cleanRupiahFormat(value);
+                
+                // Format angka murni ke format rupiah untuk ditampilkan di input
+                const formattedInput = formatRupiah(cleanValue).replace('Rp ', ''); // Hapus 'Rp ' untuk input
+                e.target.value = formattedInput;
 
-                // Update input value dengan format angka saja (tanpa titik ribuan)
-                e.target.value = value;
-
-                // Tampilkan format rupiah di elemen <p> di bawahnya
-                displayP.textContent = formatRupiah(value);
+                // Tampilkan format rupiah lengkap di elemen <p> di bawahnya
+                displayP.textContent = formatRupiah(cleanValue);
             });
 
             // Inisialisasi tampilan saat dimuat (jika ada nilai default)
+            // Pastikan nilai default juga diformat
             if (input.value) {
-                displayP.textContent = formatRupiah(input.value);
+                const initialCleanValue = cleanRupiahFormat(input.value);
+                input.value = formatRupiah(initialCleanValue).replace('Rp ', '');
+                displayP.textContent = formatRupiah(initialCleanValue);
             }
         });
 
@@ -549,8 +561,9 @@
                     const newNoUrut = maxNo + 1;
 
                     // Ambil nilai nominal dari input baru, pastikan hanya angka
-                    const nominalDiajukanValue = parseInt(document.getElementById('nominalDiajukanBaru').value.replace(/\D/g, '')) || 0;
-                    const nominalDisetujuiValue = parseInt(document.getElementById('nominalDisetujuiBaru').value.replace(/\D/g, '')) || 0;
+                    // Gunakan cleanRupiahFormat untuk mendapatkan nilai numerik murni
+                    const nominalDiajukanValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDiajukanBaru').value)) || 0;
+                    const nominalDisetujuiValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value)) || 0;
 
                     const claimData = {
                         noUrut: newNoUrut, // Nomor urut otomatis
@@ -560,8 +573,8 @@
                         hubungan: document.getElementById('hubungan').value,
                         departemen: document.getElementById('departemen').value,
                         jenisKlaim: document.getElementById('jenisKlaim').value,
-                        nominalDiajukan: nominalDiajukanValue, // Menggunakan nilai dari input baru
-                        nominalDisetujui: nominalDisetujuiValue, // Menggunakan nilai dari input baru
+                        nominalDiajukan: nominalDiajukanValue, // Menggunakan nilai numerik murni
+                        nominalDisetujui: nominalDisetujuiValue, // Menggunakan nilai numerik murni
                         tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
                         catatan: document.getElementById('catatan').value,
                         timestamp: firebase.database.ServerValue.TIMESTAMP
