@@ -61,25 +61,25 @@
         }
 
         #claimForm {
-            grid-template-columns: 1fr 1fr; /* Tetap 2 kolom untuk form secara keseluruhan */
+            grid-template-columns: 1fr 1fr; /* Remains 2 columns for the entire form */
             gap: 20px;
         }
 
         #claimForm .full-width {
-            grid-column: 1 / -1; /* Ini untuk elemen yang memang ingin mengambil seluruh lebar */
+            grid-column: 1 / -1; /* For elements that should take full width */
         }
 
-        /* Gaya untuk mengelompokkan nominal agar sejajar horizontal */
+        /* Style to group nominal inputs horizontally */
         .nominal-group {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Dua kolom untuk nominal */
-            gap: 20px; /* Jarak antar kolom nominal */
-            grid-column: 1 / -1; /* Agar nominal-group mengambil seluruh lebar form */
+            grid-template-columns: 1fr 1fr; /* Two columns for nominal inputs */
+            gap: 20px; /* Gap between nominal columns */
+            grid-column: 1 / -1; /* Make nominal-group take full form width */
         }
 
-        /* Pastikan label dan input di dalam nominal-group tidak mengambil full-width */
+        /* Ensure labels and inputs within nominal-group do not take full-width */
         .nominal-group > div {
-            grid-column: auto; /* Biarkan mereka mengisi kolom secara otomatis */
+            grid-column: auto; /* Let them fill columns automatically */
         }
 
         label {
@@ -254,34 +254,32 @@
 
         /* Modal Styling */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 100; /* Sit on top */
+            /* Default to hidden */
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
             animation: fadeIn 0.3s;
             /* To position modal in the center of the screen */
-            display: flex; /* Use flexbox */
             align-items: center; /* Vertically center */
             justify-content: center; /* Horizontally center */
         }
 
         .modal-content {
             background-color: var(--white);
-            /* margin: 10% auto; /* Removed because using flexbox */
             padding: 30px;
             border-radius: 15px;
             box-shadow: var(--shadow);
-            width: 80%; /* Could be more or less, depending on screen size */
+            width: 80%; 
             max-width: 600px;
             position: relative;
-            /* Ensure modal-content does not take full height when flexbox is used */
-            max-height: 90vh; /* Limit modal height to prevent it from being too large */
-            overflow-y: auto; /* Add scroll if content is too long */
+            max-height: 90vh; 
+            overflow-y: auto; 
         }
 
         .close-button {
@@ -352,7 +350,6 @@
             }
             .modal-content {
                 width: 95%;
-                /* margin: 5% auto; Removed because using flexbox */
             }
             .status-pending, .status-approved, .status-rejected {
                 font-size: 0.7em;
@@ -454,7 +451,7 @@
             <table id="claimsTable">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Claim No. <i class="fas fa-sort"></i></th> <!-- Kolom No. Urut -->
+                        <th onclick="sortTable(0)">Claim No. <i class="fas fa-sort"></i></th>
                         <th onclick="sortTable(1)">Submission Date <i class="fas fa-sort"></i></th>
                         <th onclick="sortTable(2)">Employee Name <i class="fas fa-sort"></i></th>
                         <th onclick="sortTable(3)">Department <i class="fas fa-sort"></i></th>
