@@ -212,8 +212,8 @@
             border-radius: 8px;
             font-weight: bold;
             transition: background 0.3s, color 0.3s;
-            flex-grow: 1; /* Agar tombol mengisi ruang */
-            max-width: 250px; /* Batasi lebar tombol */
+            flex-grow: 1;
+            max-width: 250px;
         }
 
         .tab-navigation button.active {
@@ -284,8 +284,7 @@
         <div id="claimFormPage" class="page-content">
             <h2>Form Pengajuan Klaim Medis</h2>
             <form id="claimForm">
-                <label for="noUrut"><i class="fas fa-list-ol icon"></i>No Urut (Otomatis):</label>
-                <input type="text" id="noUrut" readonly>
+                <!-- No Urut dihilangkan dari form, akan di-generate saat submit -->
 
                 <label for="tanggalUpload"><i class="fas fa-upload icon"></i>Tanggal Upload TALENTA:</label>
                 <input type="date" id="tanggalUpload" required>
@@ -311,13 +310,15 @@
                 <label for="jenisKlaim"><i class="fas fa-medkit icon"></i>Jenis Klaim:</label>
                 <input type="text" id="jenisKlaim" placeholder="Misalnya: Rawat Jalan/Obat" required>
 
-                <label for="nominalDiajukan"><i class="fas fa-money-bill-wave icon"></i>Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
-                <input type="number" id="nominalDiajukan" min="0" step="1" required>
-                <span id="formattedDiajukan" class="formatted"></span>
+                <!-- Nominal Diajukan Baru -->
+                <label for="nominalDiajukanBaru"><i class="fas fa-money-bill-wave icon"></i>Nominal Diajukan:</label>
+                <input type="text" id="nominalDiajukanBaru" placeholder="Masukkan nominal diajukan" required>
+                <p id="formattedDiajukanBaru" class="formatted">Rp 0</p>
 
-                <label for="nominalDisetujui"><i class="fas fa-check-circle icon"></i>Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
-                <input type="number" id="nominalDisetujui" min="0" step="1" required>
-                <span id="formattedDisetujui" class="formatted"></span>
+                <!-- Nominal Disetujui Baru -->
+                <label for="nominalDisetujuiBaru"><i class="fas fa-check-circle icon"></i>Nominal Disetujui:</label>
+                <input type="text" id="nominalDisetujuiBaru" placeholder="Masukkan nominal disetujui" required>
+                <p id="formattedDisetujuiBaru" class="formatted">Rp 0</p>
 
                 <label for="tanggalPenerimaan" class="full-width"><i class="fas fa-calendar-check icon"></i>Tanggal Penerimaan:</label>
                 <input type="date" id="tanggalPenerimaan" class="full-width">
@@ -405,7 +406,6 @@
         function showMainPage() {
             fadeOut(document.getElementById('loginPage'), () => {
                 fadeIn(document.getElementById('mainPage'));
-                generateNoUrut();
                 showPage('claimFormPage'); // Tampilkan form klaim secara default
             });
         }
@@ -441,42 +441,39 @@
             setTimeout(() => el.classList.add('hidden'), 5000);
         }
 
-        // Format Nominal
-        function formatNominal(value) {
-            if (!value || isNaN(value)) return '';
-            // Pastikan nilai adalah integer sebelum format
-            const numValue = parseInt(value);
-            if (numValue <= 0) return ''; // Jangan tampilkan jika 0 atau negatif
-            return `Rp ${numValue.toLocaleString('id-ID')}.000`;
+        // Format Nominal untuk tampilan (Rp X.XXX.XXX)
+        function formatRupiah(amount) {
+            if (isNaN(amount) || amount === null || amount === undefined) return 'Rp 0';
+            const numberString = String(amount).replace(/\D/g, ''); // Hapus non-digit
+            if (numberString === '') return 'Rp 0';
+            const number = parseInt(numberString);
+            if (number === 0) return 'Rp 0';
+            return `Rp ${number.toLocaleString('id-ID')}`;
         }
 
-        // Event untuk Format Nominal
-        ['nominalDiajukan', 'nominalDisetujui'].forEach(id => {
+        // Event untuk Format Nominal pada input baru
+        ['nominalDiajukanBaru', 'nominalDisetujuiBaru'].forEach(id => {
             const input = document.getElementById(id);
-            const span = document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`);
-            input.addEventListener('input', (e) => {
-                // Hapus karakter non-digit untuk memastikan hanya angka yang diproses
-                const cleanValue = e.target.value.replace(/\D/g, '');
-                e.target.value = cleanValue; // Update input value to clean version
-                if (cleanValue && !isNaN(cleanValue) && parseInt(cleanValue) > 0) {
-                    span.textContent = formatNominal(cleanValue);
-                } else {
-                    span.textContent = '';
-                }
-            });
-        });
+            const displayP = document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`);
 
-        // Auto-generate No Urut
-        async function generateNoUrut() {
-            try {
-                const snapshot = await database.ref('claims').once('value');
-                const claims = snapshot.val() || {};
-                const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
-                document.getElementById('noUrut').value = maxNo + 1;
-            } catch (err) {
-                console.error('Error generate no urut:', err);
+            input.addEventListener('input', (e) => {
+                let value = e.target.value;
+                // Hapus semua karakter non-digit kecuali koma/titik jika ingin mendukung desimal
+                // Untuk kasus ini, kita hanya ingin angka bulat, jadi hapus semua non-digit
+                value = value.replace(/\D/g, '');
+
+                // Update input value dengan format angka saja (tanpa titik ribuan)
+                e.target.value = value;
+
+                // Tampilkan format rupiah di elemen <p> di bawahnya
+                displayP.textContent = formatRupiah(value);
+            });
+
+            // Inisialisasi tampilan saat dimuat (jika ada nilai default)
+            if (input.value) {
+                displayP.textContent = formatRupiah(input.value);
             }
-        }
+        });
 
         // --- Bagian Login/Logout ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -544,28 +541,38 @@
                 submitError.classList.add('hidden');
                 submitSuccess.classList.add('hidden');
 
-                const claimData = {
-                    noUrut: parseInt(document.getElementById('noUrut').value),
-                    tanggalUpload: document.getElementById('tanggalUpload').value,
-                    tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
-                    namaKaryawan: document.getElementById('namaKaryawan').value,
-                    hubungan: document.getElementById('hubungan').value,
-                    departemen: document.getElementById('departemen').value,
-                    jenisKlaim: document.getElementById('jenisKlaim').value,
-                    nominalDiajukan: parseInt(document.getElementById('nominalDiajukan').value),
-                    nominalDisetujui: parseInt(document.getElementById('nominalDisetujui').value),
-                    tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
-                    catatan: document.getElementById('catatan').value,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-
                 try {
+                    // Dapatkan nomor urut tertinggi saat ini
+                    const snapshot = await database.ref('claims').once('value');
+                    const claims = snapshot.val() || {};
+                    const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
+                    const newNoUrut = maxNo + 1;
+
+                    // Ambil nilai nominal dari input baru, pastikan hanya angka
+                    const nominalDiajukanValue = parseInt(document.getElementById('nominalDiajukanBaru').value.replace(/\D/g, '')) || 0;
+                    const nominalDisetujuiValue = parseInt(document.getElementById('nominalDisetujuiBaru').value.replace(/\D/g, '')) || 0;
+
+                    const claimData = {
+                        noUrut: newNoUrut, // Nomor urut otomatis
+                        tanggalUpload: document.getElementById('tanggalUpload').value,
+                        tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
+                        namaKaryawan: document.getElementById('namaKaryawan').value,
+                        hubungan: document.getElementById('hubungan').value,
+                        departemen: document.getElementById('departemen').value,
+                        jenisKlaim: document.getElementById('jenisKlaim').value,
+                        nominalDiajukan: nominalDiajukanValue, // Menggunakan nilai dari input baru
+                        nominalDisetujui: nominalDisetujuiValue, // Menggunakan nilai dari input baru
+                        tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
+                        catatan: document.getElementById('catatan').value,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+
                     await database.ref('claims').push(claimData);
                     showMessage('submitSuccess', 'Klaim berhasil diajukan!', false);
                     document.getElementById('claimForm').reset();
-                    document.getElementById('formattedDiajukan').textContent = '';
-                    document.getElementById('formattedDisetujui').textContent = '';
-                    generateNoUrut();
+                    document.getElementById('formattedDiajukanBaru').textContent = 'Rp 0';
+                    document.getElementById('formattedDisetujuiBaru').textContent = 'Rp 0';
+                    // Tidak perlu generateNoUrut() lagi karena sudah dilakukan di awal submit
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Gagal mengajukan klaim: ' + error.message);
@@ -586,13 +593,11 @@
 
                 try {
                     const snapshot = await database.ref('claims').orderByChild('timestamp').once('value');
-                    const claims = snapshot.val();
+                    const claims = snapshot.val() || {};
                     claimsData = [];
-                    if (claims) {
-                        Object.keys(claims).forEach(key => {
-                            claimsData.push({ id: key, ...claims[key] });
-                        });
-                    }
+                    Object.keys(claims).forEach(key => {
+                        claimsData.push({ id: key, ...claims[key] });
+                    });
                     // Sort by No Urut descending by default for new claims to appear on top
                     claimsData.sort((a, b) => b.noUrut - a.noUrut);
                     renderClaimsTable(claimsData);
@@ -619,8 +624,8 @@
                     row.insertCell(3).textContent = claim.namaKaryawan;
                     row.insertCell(4).textContent = claim.departemen;
                     row.insertCell(5).textContent = claim.jenisKlaim;
-                    row.insertCell(6).textContent = formatNominal(claim.nominalDiajukan);
-                    row.insertCell(7).textContent = formatNominal(claim.nominalDisetujui);
+                    row.insertCell(6).textContent = formatRupiah(claim.nominalDiajukan); // Menggunakan formatRupiah
+                    row.insertCell(7).textContent = formatRupiah(claim.nominalDisetujui); // Menggunakan formatRupiah
                     row.insertCell(8).textContent = claim.tanggalPenerimaan || '-';
                     row.insertCell(9).textContent = claim.catatan || '-';
                 });
