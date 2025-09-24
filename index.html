@@ -3,59 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Klaim Medis</title>
+    <title>Aplikasi Klaim Medis - Genetek</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        form { display: grid; gap: 10px; }
-        label { font-weight: bold; }
-        input, select, textarea { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box; }
-        button { padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f8f9fa; }
+        :root {
+            --primary-color: #00A896;
+            --secondary-color: #A8E6CF;
+            --accent-color: #045D5D;
+            --text-color: #333;
+            --bg-color: #F8FFF9;
+            --white: #FFFFFF;
+            --shadow: 0 4px 15px rgba(0, 168, 150, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 i { margin-right: 10px; }
+
+        form {
+            display: grid;
+            gap: 15px;
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--secondary-color);
+        }
+
+        label {
+            font-weight: bold;
+            color: var(--accent-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(0, 168, 150, 0.3);
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 168, 150, 0.3);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .logout-btn {
+            float: right;
+            background: #ff6b6b;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover { background: #ff5252; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--primary-color);
+            color: var(--white);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        th:hover { background: var(--accent-color); }
+
+        tr:hover {
+            background: var(--secondary-color);
+            transition: background 0.3s;
+        }
+
         .hidden { display: none; }
-        .error { color: red; }
-        .success { color: green; }
+
+        .error { color: #ff6b6b; background: #ffebee; padding: 10px; border-radius: 5px; margin: 10px 0; }
+
+        .success { 
+            color: var(--primary-color); 
+            background: #e8f5e8; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin: 10px 0;
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .formatted { font-weight: bold; color: var(--primary-color); margin-top: 5px; display: block; }
+
+        .icon { color: var(--primary-color); margin-right: 8px; }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            form { grid-template-columns: 1fr; }
+            table { font-size: 12px; }
+        }
     </style>
 </head>
 <body>
     <div id="loginPage" class="container">
-        <h2>Login Aplikasi Klaim Medis</h2>
+        <h1><i class="fas fa-stethoscope icon"></i>Aplikasi Klaim Medis Genetek</h1>
         <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            <label for="password">Password (Demo):</label>
-            <input type="password" id="password" required>
-            <button type="submit">Login</button>
+            <label for="email"><i class="fas fa-envelope icon"></i>Email:</label>
+            <input type="email" id="email" placeholder="Masukkan email Anda" required>
+
+            <label for="password"><i class="fas fa-lock icon"></i>Password:</label>
+            <input type="password" id="password" placeholder="Masukkan password" required>
+
+            <button type="submit" id="loginBtn">
+                <span id="loginSpinner" class="loading hidden"></span>
+                Login
+            </button>
             <p id="loginError" class="error hidden"></p>
         </form>
     </div>
 
     <div id="mainPage" class="container hidden">
-        <h2>Form Pengajuan Klaim Medis</h2>
-        <button id="logoutBtn">Logout</button>
+        <h1><i class="fas fa-stethoscope icon"></i>Form Pengajuan Klaim Medis</h1>
+        <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        
         <form id="claimForm">
-            <label for="noUrut">No Urut (Otomatis):</label>
+            <label for="noUrut"><i class="fas fa-list-ol icon"></i>No Urut (Otomatis):</label>
             <input type="text" id="noUrut" readonly>
 
-            <label for="tanggalUpload">Tanggal Upload TALENTA:</label>
+            <label for="tanggalUpload"><i class="fas fa-upload icon"></i>Tanggal Upload TALENTA:</label>
             <input type="date" id="tanggalUpload" required>
 
-            <label for="tanggalPengajuan">Tanggal Pengajuan:</label>
+            <label for="tanggalPengajuan"><i class="fas fa-calendar-alt icon"></i>Tanggal Pengajuan:</label>
             <input type="date" id="tanggalPengajuan" required>
 
-            <label for="namaKaryawan">Nama Karyawan:</label>
-            <input type="text" id="namaKaryawan" required>
+            <label for="namaKaryawan"><i class="fas fa-user icon"></i>Nama Karyawan:</label>
+            <input type="text" id="namaKaryawan" placeholder="Masukkan nama karyawan" required>
 
-            <label for="hubungan">Hubungan Sebagai:</label>
-            <input type="text" id="hubungan" required>
+            <label for="hubungan"><i class="fas fa-users icon"></i>Hubungan Sebagai:</label>
+            <input type="text" id="hubungan" placeholder="Misalnya: Istri/Suami/Anak" required>
 
-            <label for="departemen">Departemen:</label>
+            <label for="departemen"><i class="fas fa-building icon"></i>Departemen:</label>
             <select id="departemen" required>
                 <option value="">Pilih Departemen</option>
                 <option value="HR">HR</option>
@@ -64,33 +238,36 @@
                 <option value="Marketing">Marketing</option>
             </select>
 
-            <label for="jenisKlaim">Jenis Klaim:</label>
-            <input type="text" id="jenisKlaim" required>
+            <label for="jenisKlaim"><i class="fas fa-medkit icon"></i>Jenis Klaim:</label>
+            <input type="text" id="jenisKlaim" placeholder="Misalnya: Rawat Jalan/Obat" required>
 
-            <label for="nominalDiajukan">Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+            <label for="nominalDiajukan"><i class="fas fa-money-bill-wave icon"></i>Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
             <input type="number" id="nominalDiajukan" min="0" step="1" required>
-            <span id="formattedDiajukan"></span>
+            <span id="formattedDiajukan" class="formatted"></span>
 
-            <label for="nominalDisetujui">Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+            <label for="nominalDisetujui"><i class="fas fa-check-circle icon"></i>Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
             <input type="number" id="nominalDisetujui" min="0" step="1" required>
-            <span id="formattedDisetujui"></span>
+            <span id="formattedDisetujui" class="formatted"></span>
 
-            <label for="tanggalPenerimaan">Tanggal Penerimaan:</label>
+            <label for="tanggalPenerimaan"><i class="fas fa-calendar-check icon"></i>Tanggal Penerimaan:</label>
             <input type="date" id="tanggalPenerimaan">
 
-            <label for="catatan">Catatan:</label>
-            <textarea id="catatan" rows="4"></textarea>
+            <label for="catatan"><i class="fas fa-notes-medical icon"></i>Catatan:</label>
+            <textarea id="catatan" rows="4" placeholder="Catatan tambahan..."></textarea>
 
-            <button type="submit">Submit Klaim</button>
+            <button type="submit" id="submitBtn">
+                <span id="submitSpinner" class="loading hidden"></span>
+                Submit Klaim
+            </button>
             <p id="submitError" class="error hidden"></p>
             <p id="submitSuccess" class="success hidden"></p>
         </form>
 
-        <h3>Daftar Klaim</h3>
+        <h3><i class="fas fa-list icon"></i>Daftar Klaim</h3>
         <table id="claimsTable">
             <thead>
                 <tr>
-                    <th>No Urut</th>
+                    <th onclick="sortTable(0)">No Urut <i class="fas fa-sort"></i></th>
                     <th>Tanggal Upload</th>
                     <th>Tanggal Pengajuan</th>
                     <th>Nama Karyawan</th>
@@ -123,149 +300,79 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // UID Demo
-        const DEMO_UID = "Q4BVDT9hr1QQUWd2D2CKyRrITbc2";
-        const DEMO_EMAIL = "anisah@genetek.co.id";
+        // Fungsi animasi fade
+        function fadeIn(element) {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.classList.remove('hidden');
+            setTimeout(() => {
+                element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }, 10);
+        }
 
-        // Form Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value; // Demo: Abaikan password
+        function fadeOut(element, callback) {
+            element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                element.classList.add('hidden');
+                if (callback) callback();
+            }, 500);
+        }
 
-            if (email === DEMO_EMAIL) {
-                // Simulasi auth: Set pengguna saat ini dengan UID
-                const user = { uid: DEMO_UID, email: email };
-                auth.signInAnonymously().then(() => {
-                    // Override dengan pengguna kustom untuk demo
-                    localStorage.setItem('user', JSON.stringify(user));
-                    showMainPage();
-                }).catch(err => {
-                    showError('loginError', 'Login gagal: ' + err.message);
-                });
-            } else {
-                showError('loginError', 'Email tidak valid untuk demo.');
-            }
-        });
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut();
-            localStorage.removeItem('user');
-            showLoginPage();
-        });
-
-        // Tampilkan/Sembunyikan Halaman
+        // Tampilkan/Sembunyikan Halaman dengan Animasi
         function showLoginPage() {
-            document.getElementById('loginPage').classList.remove('hidden');
-            document.getElementById('mainPage').classList.add('hidden');
+            fadeOut(document.getElementById('mainPage'), () => {
+                fadeIn(document.getElementById('loginPage'));
+            });
         }
 
         function showMainPage() {
-            document.getElementById('loginPage').classList.add('hidden');
-            document.getElementById('mainPage').classList.remove('hidden');
-            loadClaims();
-            generateNoUrut();
+            fadeOut(document.getElementById('loginPage'), () => {
+                fadeIn(document.getElementById('mainPage'));
+                loadClaims();
+                generateNoUrut();
+            });
         }
 
-        function showError(id, msg) {
+        // Tampilkan Error/Success
+        function showMessage(id, msg, isError = true) {
             const el = document.getElementById(id);
             el.textContent = msg;
-            el.classList.remove('hidden');
+            el.classList.remove('hidden', 'success', 'error');
+            el.classList.add(isError ? 'error' : 'success');
             setTimeout(() => el.classList.add('hidden'), 5000);
         }
 
-        // Format Nominal (Rp X.000)
+        // Format Nominal
         function formatNominal(value) {
-            if (!value) return '';
+            if (!value || isNaN(value)) return '';
             return `Rp ${parseInt(value).toLocaleString('id-ID')}.000`;
         }
 
+        // Event untuk Format Nominal
         ['nominalDiajukan', 'nominalDisetujui'].forEach(id => {
-            document.getElementById(id).addEventListener('input', (e) => {
-                const formatted = formatNominal(e.target.value);
-                document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`).textContent = formatted;
+            const input = document.getElementById(id);
+            const span = document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`);
+            input.addEventListener('input', (e) => {
+                if (e.target.value && !isNaN(e.target.value) && e.target.value > 0) {
+                    span.textContent = formatNominal(e.target.value);
+                } else {
+                    span.textContent = '';
+                }
             });
         });
 
         // Auto-generate No Urut
         async function generateNoUrut() {
-            const snapshot = await database.ref('claims').once('value');
-            const claims = snapshot.val() || {};
-            const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
-            document.getElementById('noUrut').value = maxNo + 1;
-        }
-
-        // Submit Form
-        document.getElementById('claimForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const user = JSON.parse(localStorage.getItem('user'));
-            if (!user) return showError('submitError', 'Pengguna tidak terautentikasi.');
-
-            const claim = {
-                noUrut: parseInt(document.getElementById('noUrut').value),
-                tanggalUpload: document.getElementById('tanggalUpload').value,
-                tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
-                namaKaryawan: document.getElementById('namaKaryawan').value,
-                hubungan: document.getElementById('hubungan').value,
-                departemen: document.getElementById('departemen').value,
-                jenisKlaim: document.getElementById('jenisKlaim').value,
-                nominalDiajukan: parseInt(document.getElementById('nominalDiajukan').value) * 1000, // Konversi ke jumlah aktual
-                nominalDisetujui: parseInt(document.getElementById('nominalDisetujui').value) * 1000,
-                tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
-                catatan: document.getElementById('catatan').value,
-                uid: user.uid,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-
             try {
-                await database.ref('claims').push(claim);
-                document.getElementById('submitSuccess').textContent = 'Klaim berhasil disimpan!';
-                document.getElementById('submitSuccess').classList.remove('hidden');
-                document.getElementById('claimForm').reset();
-                generateNoUrut();
-                loadClaims();
-                setTimeout(() => document.getElementById('submitSuccess').classList.add('hidden'), 3000);
+                const snapshot = await database.ref('claims').once('value');
+                const claims = snapshot.val() || {};
+                const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
+                document.getElementById('noUrut').value = maxNo + 1;
             } catch (err) {
-                showError('submitError', 'Gagal menyimpan: ' + err.message);
+                console.error('Error generate no urut:', err);
             }
-        });
-
-        // Muat dan Tampilkan Klaim
-        async function loadClaims() {
-            const snapshot = await database.ref('claims').orderByChild('timestamp').once('value');
-            const claims = snapshot.val() || {};
-            const tbody = document.getElementById('claimsBody');
-            tbody.innerHTML = '';
-            Object.values(claims).forEach(claim => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = claim.noUrut;
-                row.insertCell(1).textContent = claim.tanggalUpload;
-                row.insertCell(2).textContent = claim.tanggalPengajuan;
-                row.insertCell(3).textContent = claim.namaKaryawan;
-                row.insertCell(4).textContent = claim.departemen;
-                row.insertCell(5).textContent = claim.jenisKlaim;
-                row.insertCell(6).textContent = `Rp ${ (claim.nominalDiajukan / 1000).toLocaleString('id-ID') }.000`;
-                row.insertCell(7).textContent = `Rp ${ (claim.nominalDisetujui / 1000).toLocaleString('id-ID') }.000`;
-                row.insertCell(8).textContent = claim.tanggalPenerimaan || '-';
-                row.insertCell(9).textContent = claim.catatan || '-';
-            });
         }
-
-        // Periksa jika sudah login
-        const savedUser  = localStorage.getItem('user');
-        if (savedUser ) {
-            showMainPage();
-        } else {
-            showLoginPage();
-        }
-
-        // Dengarkan perubahan auth
-        auth.onAuthStateChanged(user => {
-            if (!user && !localStorage.getItem('user')) {
-                showLoginPage();
-            }
-        });
-    </script>
-</body>
-</html>
