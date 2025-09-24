@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Klaim Medis</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        form { display: grid; gap: 10px; }
+        label { font-weight: bold; }
+        input, select, textarea { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        button { padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f8f9fa; }
+        .hidden { display: none; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="container">
+        <h2>Login Aplikasi Klaim Medis</h2>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="password">Password (Demo):</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
+            <p id="loginError" class="error hidden"></p>
+        </form>
+    </div>
+
+    <div id="mainPage" class="container hidden">
+        <h2>Form Pengajuan Klaim Medis</h2>
+        <button id="logoutBtn">Logout</button>
+        <form id="claimForm">
+            <label for="noUrut">No Urut (Otomatis):</label>
+            <input type="text" id="noUrut" readonly>
+
+            <label for="tanggalUpload">Tanggal Upload TALENTA:</label>
+            <input type="date" id="tanggalUpload" required>
+
+            <label for="tanggalPengajuan">Tanggal Pengajuan:</label>
+            <input type="date" id="tanggalPengajuan" required>
+
+            <label for="namaKaryawan">Nama Karyawan:</label>
+            <input type="text" id="namaKaryawan" required>
+
+            <label for="hubungan">Hubungan Sebagai:</label>
+            <input type="text" id="hubungan" required>
+
+            <label for="departemen">Departemen:</label>
+            <select id="departemen" required>
+                <option value="">Pilih Departemen</option>
+                <option value="HR">HR</option>
+                <option value="IT">IT</option>
+                <option value="Finance">Finance</option>
+                <option value="Marketing">Marketing</option>
+            </select>
+
+            <label for="jenisKlaim">Jenis Klaim:</label>
+            <input type="text" id="jenisKlaim" required>
+
+            <label for="nominalDiajukan">Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+            <input type="number" id="nominalDiajukan" min="0" step="1" required>
+            <span id="formattedDiajukan"></span>
+
+            <label for="nominalDisetujui">Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+            <input type="number" id="nominalDisetujui" min="0" step="1" required>
+            <span id="formattedDisetujui"></span>
+
+            <label for="tanggalPenerimaan">Tanggal Penerimaan:</label>
+            <input type="date" id="tanggalPenerimaan">
+
+            <label for="catatan">Catatan:</label>
+            <textarea id="catatan" rows="4"></textarea>
+
+            <button type="submit">Submit Klaim</button>
+            <p id="submitError" class="error hidden"></p>
+            <p id="submitSuccess" class="success hidden"></p>
+        </form>
+
+        <h3>Daftar Klaim</h3>
+        <table id="claimsTable">
+            <thead>
+                <tr>
+                    <th>No Urut</th>
+                    <th>Tanggal Upload</th>
+                    <th>Tanggal Pengajuan</th>
+                    <th>Nama Karyawan</th>
+                    <th>Departemen</th>
+                    <th>Jenis Klaim</th>
+                    <th>Nominal Diajukan</th>
+                    <th>Nominal Disetujui</th>
+                    <th>Tanggal Penerimaan</th>
+                    <th>Catatan</th>
+                </tr>
+            </thead>
+            <tbody id="claimsBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgXWrv-yNSGV1cCzMghgNksY1XNHAfl38",
+            authDomain: "badmintonefk.firebaseapp.com",
+            databaseURL: "https://badmintonefk-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "badmintonefk",
+            storageBucket: "badmintonefk.firebasestorage.app",
+            messagingSenderId: "987525154148",
+            appId: "1:987525154148:web:f0668e7e0a00041a6a2671"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // UID Demo
+        const DEMO_UID = "Q4BVDT9hr1QQUWd2D2CKyRrITbc2";
+        const DEMO_EMAIL = "anisah@genetek.co.id";
+
+        // Form Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value; // Demo: Abaikan password
+
+            if (email === DEMO_EMAIL) {
+                // Simulasi auth: Set pengguna saat ini dengan UID
+                const user = { uid: DEMO_UID, email: email };
+                auth.signInAnonymously().then(() => {
+                    // Override dengan pengguna kustom untuk demo
+                    localStorage.setItem('user', JSON.stringify(user));
+                    showMainPage();
+                }).catch(err => {
+                    showError('loginError', 'Login gagal: ' + err.message);
+                });
+            } else {
+                showError('loginError', 'Email tidak valid untuk demo.');
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut();
+            localStorage.removeItem('user');
+            showLoginPage();
+        });
+
+        // Tampilkan/Sembunyikan Halaman
+        function showLoginPage() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('mainPage').classList.add('hidden');
+        }
+
+        function showMainPage() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainPage').classList.remove('hidden');
+            loadClaims();
+            generateNoUrut();
+        }
+
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+
+        // Format Nominal (Rp X.000)
+        function formatNominal(value) {
+            if (!value) return '';
+            return `Rp ${parseInt(value).toLocaleString('id-ID')}.000`;
+        }
+
+        ['nominalDiajukan', 'nominalDisetujui'].forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                const formatted = formatNominal(e.target.value);
+                document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`).textContent = formatted;
+            });
+        });
+
+        // Auto-generate No Urut
+        async function generateNoUrut() {
+            const snapshot = await database.ref('claims').once('value');
+            const claims = snapshot.val() || {};
+            const maxNo = Object.values(claims).reduce((max, claim) => Math.max(max, claim.noUrut || 0), 0);
+            document.getElementById('noUrut').value = maxNo + 1;
+        }
+
+        // Submit Form
+        document.getElementById('claimForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) return showError('submitError', 'Pengguna tidak terautentikasi.');
+
+            const claim = {
+                noUrut: parseInt(document.getElementById('noUrut').value),
+                tanggalUpload: document.getElementById('tanggalUpload').value,
+                tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
+                namaKaryawan: document.getElementById('namaKaryawan').value,
+                hubungan: document.getElementById('hubungan').value,
+                departemen: document.getElementById('departemen').value,
+                jenisKlaim: document.getElementById('jenisKlaim').value,
+                nominalDiajukan: parseInt(document.getElementById('nominalDiajukan').value) * 1000, // Konversi ke jumlah aktual
+                nominalDisetujui: parseInt(document.getElementById('nominalDisetujui').value) * 1000,
+                tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
+                catatan: document.getElementById('catatan').value,
+                uid: user.uid,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            try {
+                await database.ref('claims').push(claim);
+                document.getElementById('submitSuccess').textContent = 'Klaim berhasil disimpan!';
+                document.getElementById('submitSuccess').classList.remove('hidden');
+                document.getElementById('claimForm').reset();
+                generateNoUrut();
+                loadClaims();
+                setTimeout(() => document.getElementById('submitSuccess').classList.add('hidden'), 3000);
+            } catch (err) {
+                showError('submitError', 'Gagal menyimpan: ' + err.message);
+            }
+        });
+
+        // Muat dan Tampilkan Klaim
+        async function loadClaims() {
+            const snapshot = await database.ref('claims').orderByChild('timestamp').once('value');
+            const claims = snapshot.val() || {};
+            const tbody = document.getElementById('claimsBody');
+            tbody.innerHTML = '';
+            Object.values(claims).forEach(claim => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = claim.noUrut;
+                row.insertCell(1).textContent = claim.tanggalUpload;
+                row.insertCell(2).textContent = claim.tanggalPengajuan;
+                row.insertCell(3).textContent = claim.namaKaryawan;
+                row.insertCell(4).textContent = claim.departemen;
+                row.insertCell(5).textContent = claim.jenisKlaim;
+                row.insertCell(6).textContent = `Rp ${ (claim.nominalDiajukan / 1000).toLocaleString('id-ID') }.000`;
+                row.insertCell(7).textContent = `Rp ${ (claim.nominalDisetujui / 1000).toLocaleString('id-ID') }.000`;
+                row.insertCell(8).textContent = claim.tanggalPenerimaan || '-';
+                row.insertCell(9).textContent = claim.catatan || '-';
+            });
+        }
+
+        // Periksa jika sudah login
+        const savedUser  = localStorage.getItem('user');
+        if (savedUser ) {
+            showMainPage();
+        } else {
+            showLoginPage();
+        }
+
+        // Dengarkan perubahan auth
+        auth.onAuthStateChanged(user => {
+            if (!user && !localStorage.getItem('user')) {
+                showLoginPage();
+            }
+        });
+    </script>
+</body>
+</html>
