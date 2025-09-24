@@ -36,7 +36,7 @@
             border-radius: 15px;
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
-            position: relative; /* Untuk positioning logout button */
+            position: relative;
         }
 
         @keyframes fadeIn {
@@ -61,14 +61,13 @@
             border: 1px solid var(--secondary-color);
         }
 
-        /* Styling untuk form 2 kolom */
         #claimForm {
-            grid-template-columns: 1fr 1fr; /* Dua kolom */
-            gap: 20px; /* Jarak antar kolom dan baris */
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         #claimForm .full-width {
-            grid-column: 1 / -1; /* Membuat elemen ini membentang di seluruh lebar grid */
+            grid-column: 1 / -1;
         }
 
         label {
@@ -118,13 +117,13 @@
         }
 
         .logout-btn {
-            position: absolute; /* Posisi absolut */
-            top: 20px; /* Jarak dari atas */
-            right: 20px; /* Jarak dari kanan */
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: #ff6b6b;
-            padding: 8px 15px; /* Ukuran lebih kecil */
-            font-size: 14px; /* Font lebih kecil */
-            z-index: 10; /* Pastikan di atas elemen lain */
+            padding: 8px 15px;
+            font-size: 14px;
+            z-index: 10;
         }
 
         .logout-btn:hover { background: #ff5252; }
@@ -198,26 +197,59 @@
 
         .icon { color: var(--primary-color); margin-right: 8px; }
 
-        /* Styling untuk bagian daftar klaim yang bisa di-toggle */
-        #claimsSection {
-            margin-top: 30px;
+        /* Styling untuk navigasi tab */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .tab-navigation button {
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
+            flex-grow: 1; /* Agar tombol mengisi ruang */
+            max-width: 250px; /* Batasi lebar tombol */
+        }
+
+        .tab-navigation button.active {
+            background: var(--primary-color);
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-navigation button:hover:not(.active) {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Konten halaman */
+        .page-content {
             padding-top: 20px;
             border-top: 1px solid var(--secondary-color);
         }
 
-        #claimsSection h3 {
-            margin-top: 0;
-        }
-
         @media (max-width: 768px) {
             .container { padding: 15px; }
-            #claimForm { grid-template-columns: 1fr; } /* Kembali ke 1 kolom di mobile */
+            #claimForm { grid-template-columns: 1fr; }
             #claimForm .full-width { grid-column: auto; }
             table { font-size: 12px; }
             .logout-btn {
-                position: static; /* Kembali ke posisi normal di mobile */
+                position: static;
                 float: right;
                 margin-bottom: 15px;
+            }
+            .tab-navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tab-navigation button {
+                width: 100%;
+                max-width: none;
             }
         }
     </style>
@@ -241,84 +273,86 @@
     </div>
 
     <div id="mainPage" class="container hidden">
-        <h1><i class="fas fa-stethoscope icon"></i>Form Pengajuan Klaim Medis</h1>
         <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <h1><i class="fas fa-stethoscope icon"></i>Aplikasi Klaim Medis Genetek</h1>
         
-        <form id="claimForm">
-            <label for="noUrut"><i class="fas fa-list-ol icon"></i>No Urut (Otomatis):</label>
-            <input type="text" id="noUrut" readonly>
+        <div class="tab-navigation">
+            <button id="showClaimFormBtn" class="active"><i class="fas fa-file-medical icon"></i> Form Pengajuan Klaim</button>
+            <button id="showClaimsListBtn"><i class="fas fa-list-alt icon"></i> Daftar Klaim</button>
+        </div>
 
-            <label for="tanggalUpload"><i class="fas fa-upload icon"></i>Tanggal Upload TALENTA:</label>
-            <input type="date" id="tanggalUpload" required>
+        <div id="claimFormPage" class="page-content">
+            <h2>Form Pengajuan Klaim Medis</h2>
+            <form id="claimForm">
+                <label for="noUrut"><i class="fas fa-list-ol icon"></i>No Urut (Otomatis):</label>
+                <input type="text" id="noUrut" readonly>
 
-            <label for="tanggalPengajuan"><i class="fas fa-calendar-alt icon"></i>Tanggal Pengajuan:</label>
-            <input type="date" id="tanggalPengajuan" required>
+                <label for="tanggalUpload"><i class="fas fa-upload icon"></i>Tanggal Upload TALENTA:</label>
+                <input type="date" id="tanggalUpload" required>
 
-            <label for="namaKaryawan"><i class="fas fa-user icon"></i>Nama Karyawan:</label>
-            <input type="text" id="namaKaryawan" placeholder="Masukkan nama karyawan" required>
+                <label for="tanggalPengajuan"><i class="fas fa-calendar-alt icon"></i>Tanggal Pengajuan:</label>
+                <input type="date" id="tanggalPengajuan" required>
 
-            <label for="hubungan"><i class="fas fa-users icon"></i>Hubungan Sebagai:</label>
-            <input type="text" id="hubungan" placeholder="Misalnya: Istri/Suami/Anak" required>
+                <label for="namaKaryawan"><i class="fas fa-user icon"></i>Nama Karyawan:</label>
+                <input type="text" id="namaKaryawan" placeholder="Masukkan nama karyawan" required>
 
-            <label for="departemen"><i class="fas fa-building icon"></i>Departemen:</label>
-            <select id="departemen" required>
-                <option value="">Pilih Departemen</option>
-                <option value="HR">HR</option>
-                <option value="IT">IT</option>
-                <option value="Finance">Finance</option>
-                <option value="Marketing">Marketing</option>
-            </select>
+                <label for="hubungan"><i class="fas fa-users icon"></i>Hubungan Sebagai:</label>
+                <input type="text" id="hubungan" placeholder="Misalnya: Istri/Suami/Anak" required>
 
-            <label for="jenisKlaim"><i class="fas fa-medkit icon"></i>Jenis Klaim:</label>
-            <input type="text" id="jenisKlaim" placeholder="Misalnya: Rawat Jalan/Obat" required>
+                <label for="departemen"><i class="fas fa-building icon"></i>Departemen:</label>
+                <select id="departemen" required>
+                    <option value="">Pilih Departemen</option>
+                    <option value="HR">HR</option>
+                    <option value="IT">IT</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
 
-            <label for="nominalDiajukan"><i class="fas fa-money-bill-wave icon"></i>Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
-            <input type="number" id="nominalDiajukan" min="0" step="1" required>
-            <span id="formattedDiajukan" class="formatted"></span>
+                <label for="jenisKlaim"><i class="fas fa-medkit icon"></i>Jenis Klaim:</label>
+                <input type="text" id="jenisKlaim" placeholder="Misalnya: Rawat Jalan/Obat" required>
 
-            <label for="nominalDisetujui"><i class="fas fa-check-circle icon"></i>Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
-            <input type="number" id="nominalDisetujui" min="0" step="1" required>
-            <span id="formattedDisetujui" class="formatted"></span>
+                <label for="nominalDiajukan"><i class="fas fa-money-bill-wave icon"></i>Nominal Diajukan (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+                <input type="number" id="nominalDiajukan" min="0" step="1" required>
+                <span id="formattedDiajukan" class="formatted"></span>
 
-            <label for="tanggalPenerimaan" class="full-width"><i class="fas fa-calendar-check icon"></i>Tanggal Penerimaan:</label>
-            <input type="date" id="tanggalPenerimaan" class="full-width">
+                <label for="nominalDisetujui"><i class="fas fa-check-circle icon"></i>Nominal Disetujui (dalam ribuan, e.g., 80 untuk Rp 80.000):</label>
+                <input type="number" id="nominalDisetujui" min="0" step="1" required>
+                <span id="formattedDisetujui" class="formatted"></span>
 
-            <label for="catatan" class="full-width"><i class="fas fa-notes-medical icon"></i>Catatan:</label>
-            <textarea id="catatan" rows="4" placeholder="Catatan tambahan..." class="full-width"></textarea>
+                <label for="tanggalPenerimaan" class="full-width"><i class="fas fa-calendar-check icon"></i>Tanggal Penerimaan:</label>
+                <input type="date" id="tanggalPenerimaan" class="full-width">
 
-            <button type="submit" id="submitBtn" class="full-width">
-                <span id="submitSpinner" class="loading hidden"></span>
-                Submit Klaim
-            </button>
-            <p id="submitError" class="error hidden full-width"></p>
-            <p id="submitSuccess" class="success hidden full-width"></p>
-        </form>
+                <label for="catatan" class="full-width"><i class="fas fa-notes-medical icon"></i>Catatan:</label>
+                <textarea id="catatan" rows="4" placeholder="Catatan tambahan..." class="full-width"></textarea>
 
-        <div id="claimsSection">
-            <button id="toggleClaimsBtn" class="full-width" style="margin-bottom: 20px;">
-                <i class="fas fa-list icon"></i> Lihat Daftar Klaim
-            </button>
+                <button type="submit" id="submitBtn" class="full-width">
+                    <span id="submitSpinner" class="loading hidden"></span>
+                    Submit Klaim
+                </button>
+                <p id="submitError" class="error hidden full-width"></p>
+                <p id="submitSuccess" class="success hidden full-width"></p>
+            </form>
+        </div>
 
-            <div id="claimsListContainer" class="hidden">
-                <h3><i class="fas fa-list icon"></i>Daftar Klaim</h3>
-                <table id="claimsTable">
-                    <thead>
-                        <tr>
-                            <th onclick="sortTable(0)">No Urut <i class="fas fa-sort"></i></th>
-                            <th>Tanggal Upload</th>
-                            <th>Tanggal Pengajuan</th>
-                            <th>Nama Karyawan</th>
-                            <th>Departemen</th>
-                            <th>Jenis Klaim</th>
-                            <th>Nominal Diajukan</th>
-                            <th>Nominal Disetujui</th>
-                            <th>Tanggal Penerimaan</th>
-                            <th>Catatan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="claimsBody"></tbody>
-                </table>
-            </div>
+        <div id="claimsListPage" class="page-content hidden">
+            <h2><i class="fas fa-list icon"></i>Daftar Klaim</h2>
+            <table id="claimsTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">No Urut <i class="fas fa-sort"></i></th>
+                        <th>Tanggal Upload</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Nama Karyawan</th>
+                        <th>Departemen</th>
+                        <th>Jenis Klaim</th>
+                        <th>Nominal Diajukan</th>
+                        <th>Nominal Disetujui</th>
+                        <th>Tanggal Penerimaan</th>
+                        <th>Catatan</th>
+                    </tr>
+                </thead>
+                <tbody id="claimsBody"></tbody>
+            </table>
         </div>
     </div>
 
@@ -371,9 +405,31 @@
         function showMainPage() {
             fadeOut(document.getElementById('loginPage'), () => {
                 fadeIn(document.getElementById('mainPage'));
-                // loadClaims(); // Tidak langsung load, menunggu tombol diklik
                 generateNoUrut();
+                showPage('claimFormPage'); // Tampilkan form klaim secara default
             });
+        }
+
+        // Fungsi untuk menampilkan halaman tertentu
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    fadeIn(page);
+                } else {
+                    fadeOut(page);
+                }
+            });
+
+            // Update active class for navigation buttons
+            document.getElementById('showClaimFormBtn').classList.remove('active');
+            document.getElementById('showClaimsListBtn').classList.remove('active');
+            if (pageId === 'claimFormPage') {
+                document.getElementById('showClaimFormBtn').classList.add('active');
+            } else if (pageId === 'claimsListPage') {
+                document.getElementById('showClaimsListBtn').classList.add('active');
+                loadClaims(); // Muat klaim setiap kali halaman daftar klaim ditampilkan
+            }
         }
 
         // Tampilkan Error/Success
@@ -388,7 +444,10 @@
         // Format Nominal
         function formatNominal(value) {
             if (!value || isNaN(value)) return '';
-            return `Rp ${parseInt(value).toLocaleString('id-ID')}.000`;
+            // Pastikan nilai adalah integer sebelum format
+            const numValue = parseInt(value);
+            if (numValue <= 0) return ''; // Jangan tampilkan jika 0 atau negatif
+            return `Rp ${numValue.toLocaleString('id-ID')}.000`;
         }
 
         // Event untuk Format Nominal
@@ -396,8 +455,11 @@
             const input = document.getElementById(id);
             const span = document.getElementById(`formatted${id.charAt(0).toUpperCase() + id.slice(1)}`);
             input.addEventListener('input', (e) => {
-                if (e.target.value && !isNaN(e.target.value) && e.target.value > 0) {
-                    span.textContent = formatNominal(e.target.value);
+                // Hapus karakter non-digit untuk memastikan hanya angka yang diproses
+                const cleanValue = e.target.value.replace(/\D/g, '');
+                e.target.value = cleanValue; // Update input value to clean version
+                if (cleanValue && !isNaN(cleanValue) && parseInt(cleanValue) > 0) {
+                    span.textContent = formatNominal(cleanValue);
                 } else {
                     span.textContent = '';
                 }
@@ -494,20 +556,16 @@
                     nominalDisetujui: parseInt(document.getElementById('nominalDisetujui').value),
                     tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
                     catatan: document.getElementById('catatan').value,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP // Untuk sorting berdasarkan waktu
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
                 };
 
                 try {
                     await database.ref('claims').push(claimData);
                     showMessage('submitSuccess', 'Klaim berhasil diajukan!', false);
-                    document.getElementById('claimForm').reset(); // Reset form
+                    document.getElementById('claimForm').reset();
                     document.getElementById('formattedDiajukan').textContent = '';
                     document.getElementById('formattedDisetujui').textContent = '';
-                    generateNoUrut(); // Generate nomor urut baru
-                    // Jika daftar klaim sedang terlihat, muat ulang
-                    if (!document.getElementById('claimsListContainer').classList.contains('hidden')) {
-                        loadClaims();
-                    }
+                    generateNoUrut();
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Gagal mengajukan klaim: ' + error.message);
@@ -520,7 +578,7 @@
             // --- Bagian Load Claims dan Sorting ---
             let currentSortColumn = -1;
             let currentSortDirection = 'asc';
-            let claimsData = []; // Untuk menyimpan data klaim yang dimuat
+            let claimsData = [];
 
             async function loadClaims() {
                 const claimsBody = document.getElementById('claimsBody');
@@ -535,6 +593,8 @@
                             claimsData.push({ id: key, ...claims[key] });
                         });
                     }
+                    // Sort by No Urut descending by default for new claims to appear on top
+                    claimsData.sort((a, b) => b.noUrut - a.noUrut);
                     renderClaimsTable(claimsData);
                 } catch (error) {
                     console.error("Error loading claims:", error);
@@ -544,7 +604,7 @@
 
             function renderClaimsTable(data) {
                 const claimsBody = document.getElementById('claimsBody');
-                claimsBody.innerHTML = ''; // Bersihkan tabel
+                claimsBody.innerHTML = '';
 
                 if (data.length === 0) {
                     claimsBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Belum ada data klaim.</td></tr>';
@@ -592,33 +652,23 @@
                 claimsData.sort((a, b) => {
                     let valA, valB;
 
-                    // Adjust index for object keys if 'id' is the first key
-                    const keys = Object.keys(a);
-                    let actualKeyIndex = columnIndex;
-                    if (keys[0] === 'id') { // If 'id' is present, shift index
-                        actualKeyIndex = columnIndex + 1;
-                    }
+                    // Map column index to actual data key
+                    const dataKeys = ['noUrut', 'tanggalUpload', 'tanggalPengajuan', 'namaKaryawan', 'departemen', 'jenisKlaim', 'nominalDiajukan', 'nominalDisetujui', 'tanggalPenerimaan', 'catatan'];
+                    const key = dataKeys[columnIndex];
 
-                    switch (columnIndex) {
-                        case 0: // No Urut
-                            valA = a.noUrut;
-                            valB = b.noUrut;
-                            break;
-                        case 1: // Tanggal Upload
-                        case 2: // Tanggal Pengajuan
-                        case 8: // Tanggal Penerimaan
-                            valA = new Date(a[keys[actualKeyIndex]]);
-                            valB = new Date(b[keys[actualKeyIndex]]);
-                            break;
-                        case 6: // Nominal Diajukan
-                        case 7: // Nominal Disetujui
-                            valA = a[keys[actualKeyIndex]];
-                            valB = b[keys[actualKeyIndex]];
-                            break;
-                        default: // String columns
-                            valA = a[keys[actualKeyIndex]] ? a[keys[actualKeyIndex]].toLowerCase() : '';
-                            valB = b[keys[actualKeyIndex]] ? b[keys[actualKeyIndex]].toLowerCase() : '';
-                            break;
+                    valA = a[key];
+                    valB = b[key];
+
+                    // Type-specific comparison
+                    if (key.includes('tanggal')) {
+                        valA = new Date(valA);
+                        valB = new Date(valB);
+                    } else if (key.includes('nominal') || key === 'noUrut') {
+                        valA = parseInt(valA);
+                        valB = parseInt(valB);
+                    } else {
+                        valA = String(valA || '').toLowerCase();
+                        valB = String(valB || '').toLowerCase();
                     }
 
                     if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
@@ -629,22 +679,9 @@
                 renderClaimsTable(claimsData);
             };
 
-            // --- Toggle Daftar Klaim ---
-            const toggleClaimsBtn = document.getElementById('toggleClaimsBtn');
-            const claimsListContainer = document.getElementById('claimsListContainer');
-
-            toggleClaimsBtn.addEventListener('click', () => {
-                if (claimsListContainer.classList.contains('hidden')) {
-                    // Tampilkan daftar klaim
-                    fadeIn(claimsListContainer);
-                    loadClaims(); // Muat data saat ditampilkan
-                    toggleClaimsBtn.innerHTML = '<i class="fas fa-eye-slash icon"></i> Sembunyikan Daftar Klaim';
-                } else {
-                    // Sembunyikan daftar klaim
-                    fadeOut(claimsListContainer);
-                    toggleClaimsBtn.innerHTML = '<i class="fas fa-list icon"></i> Lihat Daftar Klaim';
-                }
-            });
+            // --- Navigasi Halaman ---
+            document.getElementById('showClaimFormBtn').addEventListener('click', () => showPage('claimFormPage'));
+            document.getElementById('showClaimsListBtn').addEventListener('click', () => showPage('claimsListPage'));
         });
     </script>
 </body>
