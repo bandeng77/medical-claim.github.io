@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
+        /* ... (CSS Anda yang sudah ada) ... */
         :root {
             --primary-color: #00A896;
             --secondary-color: #A8E6CF;
@@ -18,21 +19,15 @@
             --bg-color: #F8FFF9;
             --white: #FFFFFF;
             --shadow: 0 4px 15px rgba(0, 168, 150, 0.2);
-            --soft-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* New soft shadow for login */
-            --gradient-start: #A8E6CF; /* Lighter green */
-            --gradient-end: #DCEEEB; /* Even lighter, almost white-green */
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0; /* Remove padding from body */
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%); /* Softer gradient */
+            padding: 20px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%);
             color: var(--text-color);
             min-height: 100vh;
-            display: flex; /* Use flexbox for centering */
-            justify-content: center; /* Horizontally center */
-            align-items: center; /* Vertically center */
         }
 
         .container {
@@ -44,15 +39,6 @@
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
-        }
-
-        /* Specific styling for login container */
-        #loginPage.container {
-            max-width: 450px; /* Smaller width for login form */
-            padding: 40px; /* More padding */
-            border-radius: 20px; /* More rounded corners */
-            box-shadow: var(--soft-shadow); /* Softer shadow */
-            background: linear-gradient(145deg, #ffffff, #f0f8f7); /* Subtle gradient for login card */
         }
 
         @keyframes fadeIn {
@@ -67,15 +53,6 @@
         }
 
         h1 i { margin-right: 10px; }
-
-        /* Specific styling for login form */
-        #loginForm {
-            display: grid;
-            gap: 20px; /* Increased gap */
-            background: none; /* No background for login form itself */
-            padding: 0; /* No padding for login form itself */
-            border: none; /* No border for login form itself */
-        }
 
         form {
             display: grid;
@@ -115,19 +92,6 @@
             margin-bottom: 5px;
         }
 
-        /* Specific styling for login inputs */
-        #loginForm input {
-            padding: 14px; /* More padding */
-            border: 1px solid #e0e0e0; /* Lighter border */
-            border-radius: 10px; /* More rounded */
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
-        }
-
-        #loginForm input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.2), inset 0 1px 3px rgba(0,0,0,0.05); /* Focus ring */
-        }
-
         input, select, textarea {
             padding: 12px;
             border: 2px solid #ddd;
@@ -165,23 +129,6 @@
             background: #ccc;
             cursor: not-allowed;
             transform: none;
-        }
-
-        /* Specific styling for login buttons */
-        #loginBtn, #guestLoginBtn {
-            padding: 14px 25px; /* Larger padding */
-            border-radius: 10px; /* More rounded */
-            font-size: 17px; /* Larger font */
-            margin-top: 10px; /* Space between buttons */
-        }
-
-        #guestLoginBtn {
-            background: linear-gradient(135deg, #6c757d, #495057) !important; /* Darker grey gradient */
-            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
-        }
-
-        #guestLoginBtn:hover {
-            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
         }
 
         .logout-btn {
@@ -235,14 +182,7 @@
 
         .hidden { display: none; }
 
-        .error { 
-            color: #ff6b6b; 
-            background: #ffebee; 
-            padding: 10px; 
-            border-radius: 5px; 
-            margin: 10px 0; 
-            text-align: center; /* Center error message */
-        }
+        .error { color: #ff6b6b; background: #ffebee; padding: 10px; border-radius: 5px; margin: 10px 0; }
 
         .success { 
             color: var(--primary-color); 
@@ -251,7 +191,6 @@
             border-radius: 5px; 
             margin: 10px 0;
             animation: pulse 0.5s;
-            text-align: center; /* Center success message */
         }
 
         @keyframes pulse {
@@ -423,16 +362,6 @@
                 font-size: 0.8em;
                 padding: 2px;
             }
-
-            /* Adjust login page for smaller screens */
-            #loginPage.container {
-                max-width: 90%;
-                padding: 30px 20px;
-            }
-            #loginBtn, #guestLoginBtn {
-                padding: 12px 20px;
-                font-size: 16px;
-            }
         }
     </style>
 </head>
@@ -447,9 +376,10 @@
             <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
 
             <button type="submit" id="loginBtn">
+                <span id="loginSpinner" class="loading hidden"></span>
                 Login
             </button>
-            <button type="button" id="guestLoginBtn" class="full-width">
+            <button type="button" id="guestLoginBtn" class="full-width" style="background: #6c757d; margin-top: 10px;">
                 <i class="fas fa-user-secret"></i> Login as Guest
             </button>
             <p id="loginError" class="error hidden"></p>
@@ -518,6 +448,7 @@
                 <textarea id="catatan" rows="4" placeholder="Additional notes..." class="full-width"></textarea>
 
                 <button type="submit" id="submitBtn" class="full-width">
+                    <span id="submitSpinner" class="loading hidden"></span>
                     Submit Claim
                 </button>
                 <p id="submitError" class="error hidden full-width"></p>
@@ -779,7 +710,31 @@
                 Object.keys(claims).forEach(key => {
                     claimsData.push({ id: key, ...claims[key] });
                 });
-                claimsData.sort((a, b) => b.noUrut - a.noUrut); // Sort by Claim No. descending by default
+                
+                // --- MODIFIKASI DI SINI ---
+                // Urutkan berdasarkan Claim No. secara ascending (dari terkecil ke terbesar)
+                claimsData.sort((a, b) => a.noUrut - b.noUrut); 
+                
+                // Reset sort state for table headers
+                currentSortColumn = 0; // Set default sort column to Claim No.
+                currentSortDirection = 'asc'; // Set default sort direction to ascending
+                
+                // Update sort icons to reflect default sorting
+                const headers = document.querySelectorAll('#claimsTable th');
+                headers.forEach((header, index) => {
+                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
+                    if (icon) {
+                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                        icon.classList.add('fa-sort');
+                    }
+                });
+                const defaultSortIcon = headers[0].querySelector('.fa-sort'); // Claim No. header
+                if (defaultSortIcon) {
+                    defaultSortIcon.classList.remove('fa-sort');
+                    defaultSortIcon.classList.add('fa-sort-up');
+                }
+                // --- AKHIR MODIFIKASI ---
+
                 renderClaimsTable(claimsData);
             } catch (error) {
                 console.error("Error loading claims:", error);
@@ -1080,11 +1035,12 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const loginBtn = document.getElementById('loginBtn');
-                // const loginSpinner = document.getElementById('loginSpinner'); // Removed spinner
+                const loginSpinner = document.getElementById('loginSpinner');
+                const loginError = document.getElementById('loginError');
 
                 loginBtn.disabled = true;
-                // loginSpinner.classList.remove('hidden'); // Removed spinner
-                document.getElementById('loginError').classList.add('hidden');
+                loginSpinner.classList.remove('hidden');
+                loginError.classList.add('hidden');
 
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
@@ -1100,7 +1056,7 @@
                     showMessage('loginError', errorMessage);
                 } finally {
                     loginBtn.disabled = false;
-                    // loginSpinner.classList.add('hidden'); // Removed spinner
+                    loginSpinner.classList.add('hidden');
                 }
             });
 
@@ -1130,12 +1086,14 @@
                 if (currentUserRole === 'guest') return; // Prevent guest from submitting claims
 
                 const submitBtn = document.getElementById('submitBtn');
-                // const submitSpinner = document.getElementById('submitSpinner'); // Removed spinner
-                document.getElementById('submitError').classList.add('hidden');
-                document.getElementById('submitSuccess').classList.add('hidden');
+                const submitSpinner = document.getElementById('submitSpinner');
+                const submitError = document.getElementById('submitError');
+                const submitSuccess = document.getElementById('submitSuccess');
 
                 submitBtn.disabled = true;
-                // submitSpinner.classList.remove('hidden'); // Removed spinner
+                submitSpinner.classList.remove('hidden');
+                submitError.classList.add('hidden');
+                submitSuccess.classList.add('hidden');
 
                 try {
                     const currentNoUrut = parseInt(document.getElementById('noUrutForm').value);
@@ -1170,7 +1128,7 @@
                     showMessage('submitError', 'Failed to submit claim: ' + error.message);
                 } finally {
                     submitBtn.disabled = false;
-                    // submitSpinner.classList.add('hidden'); // Removed spinner
+                    submitSpinner.classList.add('hidden');
                 }
             });
 
