@@ -23,128 +23,22 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0; /* Remove padding from body, container will handle it */
+            padding: 20px;
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%);
             color: var(--text-color);
             min-height: 100vh;
-            display: flex; /* Use flexbox for centering */
-            justify-content: center; /* Horizontally center */
-            align-items: center; /* Vertically center */
-            overflow: hidden; /* Hide overflow for background animations */
-            position: relative; /* For pseudo-element background */
-        }
-
-        /* Animated background effect */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            z-index: -1; /* Send behind content */
-            opacity: 0.7; /* Make it subtle */
-        }
-
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .container {
             max-width: 900px;
-            margin: 0 auto; /* Keep for general containers, but body flexbox handles centering for login */
+            margin: 0 auto;
             background: var(--white);
             padding: 30px;
             border-radius: 15px;
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
-            z-index: 1; /* Ensure container is above animated background */
         }
-
-        /* Specific styling for login page container */
-        #loginPage {
-            max-width: 450px; /* Make login form a bit narrower */
-            padding: 40px; /* More padding for a substantial feel */
-            text-align: center;
-            background: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
-            backdrop-filter: blur(5px); /* Frosted glass effect */
-            border: 1px solid rgba(0, 168, 150, 0.1); /* Subtle border */
-        }
-
-        #loginPage h1 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            color: var(--accent-color); /* Darker primary color for heading */
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-
-        #loginPage form {
-            background: none; /* Remove background from form itself */
-            border: none; /* Remove border from form itself */
-            padding: 0; /* Remove padding from form itself */
-            gap: 20px; /* Increase gap between elements */
-        }
-
-        #loginPage label {
-            text-align: left;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-        }
-
-        #loginPage input {
-            padding: 15px; /* Larger input fields */
-            border: 1px solid var(--secondary-color);
-            border-radius: 10px;
-            font-size: 16px;
-            background-color: var(--bg-color); /* Light background for inputs */
-        }
-
-        #loginPage input:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 8px rgba(4, 93, 93, 0.4);
-        }
-
-        #loginPage button {
-            width: 100%; /* Full width buttons */
-            padding: 15px;
-            font-size: 1.1em;
-            margin-top: 15px; /* Space above buttons */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 168, 150, 0.2);
-        }
-
-        #loginPage button:hover {
-            transform: translateY(-3px); /* More pronounced hover effect */
-            box-shadow: 0 6px 15px rgba(0, 168, 150, 0.4);
-        }
-
-        #loginPage .error {
-            margin-top: 20px;
-            font-size: 0.95em;
-        }
-
-        /* Responsive adjustments for login page */
-        @media (max-width: 768px) {
-            #loginPage {
-                max-width: 90%;
-                padding: 30px 20px;
-            }
-            #loginPage h1 {
-                font-size: 2em;
-            }
-            #loginPage input, #loginPage button {
-                padding: 12px;
-                font-size: 1em;
-            }
-        }
-
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -432,12 +326,6 @@
             color: #d32f2f;
         }
 
-        /* Hide Actions column for guest view */
-        #claimsTable.guest-view th:last-child,
-        #claimsTable.guest-view td:last-child {
-            display: none;
-        }
-
         @media (max-width: 768px) {
             .container { padding: 15px; }
             #claimForm { grid-template-columns: 1fr; }
@@ -474,6 +362,115 @@
                 padding: 2px;
             }
         }
+
+        /* --- Login Page Specific Styles --- */
+        #loginPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Make login page take full viewport height */
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%); /* Keep existing body gradient for main page */
+            padding: 0; /* Remove padding from container for login page */
+            box-shadow: none; /* Remove shadow from container for login page */
+            border-radius: 0; /* Remove border-radius from container for login page */
+            animation: none; /* Remove fadeIn animation from container for login page */
+        }
+
+        #loginPage .container { /* Target the container specifically for login page */
+            max-width: 400px; /* Smaller width for login form */
+            padding: 40px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.5s ease-in;
+            position: relative;
+        }
+
+        #loginPage h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        #loginForm {
+            background: none; /* Remove background from form itself */
+            border: none; /* Remove border from form itself */
+            padding: 0; /* Remove padding from form itself */
+            gap: 20px; /* Increase gap between elements */
+        }
+
+        #loginForm label {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        #loginForm input[type="email"],
+        #loginForm input[type="password"] {
+            padding: 14px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #loginForm input[type="email"]:focus,
+        #loginForm input[type="password"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 168, 150, 0.4);
+            transform: translateY(-2px);
+        }
+
+        #loginBtn, #guestLoginBtn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            margin-top: 15px; /* Space between buttons */
+        }
+
+        #guestLoginBtn {
+            background: #6c757d; /* Grey color for guest button */
+        }
+
+        #guestLoginBtn:hover {
+            background: #5a6268;
+            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+        }
+
+        /* Shake animation for error */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Responsive adjustments for login page */
+        @media (max-width: 768px) {
+            #loginPage .container {
+                max-width: 90%;
+                padding: 25px;
+            }
+            #loginPage h1 {
+                font-size: 2em;
+            }
+            #loginForm input {
+                padding: 12px;
+                font-size: 15px;
+            }
+            #loginBtn, #guestLoginBtn {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -490,16 +487,16 @@
                 <span id="loginSpinner" class="loading hidden"></span>
                 Login
             </button>
-            <p id="loginError" class="error hidden"></p>
-            <button type="button" id="guestLoginBtn" style="background: var(--accent-color); margin-top: 10px;">
-                <i class="fas fa-user-secret icon"></i> Login as Guest
+            <button type="button" id="guestLoginBtn" class="full-width" style="background: #6c757d; margin-top: 10px;">
+                <i class="fas fa-user-secret"></i> Login as Guest
             </button>
+            <p id="loginError" class="error hidden"></p>
         </form>
     </div>
 
     <div id="mainPage" class="container hidden">
         <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        <h1><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
+        <h1 id="mainPageTitle"><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
         
         <div class="tab-navigation">
             <button id="showClaimFormBtn" class="active"><i class="fas fa-file-medical icon"></i> Claim Submission Form</button>
@@ -579,7 +576,7 @@
                         <th onclick="sortTable(4)">Claimed Amount <i class="fas fa-sort"></i></th>
                         <th onclick="sortTable(5)">Approved Amount <i class="fas fa-sort"></i></th>
                         <th onclick="sortTable(6)">Status <i class="fas fa-sort"></i></th>
-                        <th>Actions</th>
+                        <th id="actionsHeader">Actions</th> <!-- Added ID for easy hiding -->
                     </tr>
                 </thead>
                 <tbody id="claimsBody"></tbody>
@@ -677,43 +674,11 @@
         const app = firebase.initializeApp(firebaseConfig);
 
         // Get Auth and Database instances using the compat API
-        // This is the fix for "firebase.auth is not a function"
         const auth = app.auth();
         const database = app.database();
 
-        let currentUserRole = 'admin'; // Default role is admin
-
-        // --- Firebase Database Rules Check ---
-        // The "PERMISSION_DENIED" error indicates that your Firebase Realtime Database rules
-        // are not configured to allow write access for authenticated users.
-        // You need to set your database rules to allow write access.
-        // Go to your Firebase project console -> Realtime Database -> Rules tab.
-        // Change the rules to something like this (for testing, be careful in production):
-        /*
-        {
-          "rules": {
-            ".read": "auth != null",
-            ".write": "auth != null",
-            "claims": {
-              ".read": "auth != null",
-              ".write": "auth != null"
-            }
-          }
-        }
-        */
-        // Or, if you want to allow unauthenticated writes (NOT RECOMMENDED FOR PRODUCTION):
-        /*
-        {
-          "rules": {
-            ".read": true,
-            ".write": true
-          }
-        }
-        */
-        // For a real application, you'd implement more granular security rules.
-        // For now, ensure ".write": "auth != null" if users are logging in.
-        // If you're testing without login, use ".write": true temporarily.
-
+        // Global variable to track user role (e.g., 'admin', 'guest', 'unauthenticated')
+        let currentUserRole = 'unauthenticated'; 
 
         // Fade animation functions
         function fadeIn(element) {
@@ -744,35 +709,35 @@
             });
         }
 
-        function showMainPage() {
+        function showMainPage(role) {
+            currentUserRole = role; // Set the current user role
             fadeOut(document.getElementById('loginPage'), () => {
                 fadeIn(document.getElementById('mainPage'));
-                
-                // Hide/show elements based on user role
-                const claimFormPage = document.getElementById('claimFormPage');
-                const showClaimFormBtn = document.getElementById('showClaimFormBtn');
-                const submitBtn = document.getElementById('submitBtn');
-                const claimsTable = document.getElementById('claimsTable'); // Get the table itself
-
-                if (currentUserRole === 'guest') {
-                    claimFormPage.classList.add('hidden');
-                    showClaimFormBtn.classList.add('hidden');
-                    if (submitBtn) submitBtn.classList.add('hidden'); // Hide submit button if it exists
-                    
-                    // Hide action buttons in the table for guests
-                    claimsTable.classList.add('guest-view'); // Add a class to hide action buttons via CSS
-                    
-                    showPage('claimsListPage'); // Guests only see the claim list
-                } else {
-                    claimFormPage.classList.remove('hidden');
-                    showClaimFormBtn.classList.remove('hidden');
-                    if (submitBtn) submitBtn.classList.remove('hidden');
-                    
-                    claimsTable.classList.remove('guest-view'); // Remove class for admin
-                    
-                    showPage('claimFormPage'); // Admins see the claim form by default
-                }
+                updateUIForRole(role); // Update UI based on role
+                showPage('claimsListPage'); // Default to claims list for all users, especially guest
             });
+        }
+
+        // Function to update UI elements based on user role
+        function updateUIForRole(role) {
+            const claimFormPage = document.getElementById('claimFormPage');
+            const showClaimFormBtn = document.getElementById('showClaimFormBtn');
+            const actionsHeader = document.getElementById('actionsHeader');
+            const mainPageTitle = document.getElementById('mainPageTitle');
+
+            if (role === 'guest') {
+                claimFormPage.classList.add('hidden'); // Hide the form page
+                showClaimFormBtn.classList.add('hidden'); // Hide the form tab button
+                if (actionsHeader) actionsHeader.classList.add('hidden'); // Hide Actions header
+                mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (Guest View)';
+            } else { // Admin/Authenticated user
+                claimFormPage.classList.remove('hidden'); // Show the form page
+                showClaimFormBtn.classList.remove('hidden'); // Show the form tab button
+                if (actionsHeader) actionsHeader.classList.remove('hidden'); // Show Actions header
+                mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim';
+            }
+            // Reload claims to ensure action buttons are rendered correctly
+            loadClaims(); 
         }
 
         // Function to display a specific page
@@ -789,10 +754,10 @@
             // Update active class for navigation buttons
             document.getElementById('showClaimFormBtn').classList.remove('active');
             document.getElementById('showClaimsListBtn').classList.remove('active');
+            
             if (pageId === 'claimFormPage') {
                 document.getElementById('showClaimFormBtn').classList.add('active');
-                // When showing claim form, ensure the claim number is updated
-                updateNextClaimNumber();
+                updateNextClaimNumber(); // Update claim number for the next submission
             } else if (pageId === 'claimsListPage') {
                 document.getElementById('showClaimsListBtn').classList.add('active');
                 loadClaims(); // Load claims every time the claim list page is displayed
@@ -809,21 +774,19 @@
         }
 
         // Format Nominal for display (Rp X.XXX.XXX)
-        // This function will format numbers into a string with thousands separators and 'Rp ' prefix
         function formatRupiah(amount) {
             if (amount === null || amount === undefined || amount === '') return 'Rp 0';
-            const numberString = String(amount).replace(/\D/g, ''); // Remove all non-digit characters
+            const numberString = String(amount).replace(/\D/g, ''); 
             if (numberString === '') return 'Rp 0';
             const number = parseInt(numberString);
             if (isNaN(number) || number === 0) return 'Rp 0';
-            // Changed to 'en-US' for English currency formatting, or remove for default locale
             return `Rp ${number.toLocaleString('en-US')}`; 
         }
 
         // Function to clean rupiah format from a string (returns only numbers)
         function cleanRupiahFormat(formattedString) {
             if (!formattedString) return '';
-            return formattedString.replace(/[^0-9]/g, ''); // Remove all non-digit characters
+            return formattedString.replace(/[^0-9]/g, ''); 
         }
 
         // --- Auto-generate Claim Number ---
@@ -839,48 +802,27 @@
             }
         }
 
-        // --- Load Claims and Sorting Section (Moved to global scope) ---
+        // --- Load Claims and Sorting Section ---
         let currentSortColumn = -1;
         let currentSortDirection = 'asc';
         let claimsData = [];
 
         async function loadClaims() {
             const claimsBody = document.getElementById('claimsBody');
-            claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>';
+            claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>'; 
 
             try {
-                const snapshot = await database.ref('claims').orderByChild('noUrut').once('value');
+                const snapshot = await database.ref('claims').orderByChild('noUrut').once('value'); 
                 const claims = snapshot.val() || {};
                 claimsData = [];
                 Object.keys(claims).forEach(key => {
                     claimsData.push({ id: key, ...claims[key] });
                 });
-
-                // Default sort by Claim No. (columnIndex 0) descending
-                currentSortColumn = 0;
-                currentSortDirection = 'desc';
-                claimsData.sort((a, b) => b.noUrut - a.noUrut); // Initial sort for default view
-
+                claimsData.sort((a, b) => b.noUrut - a.noUrut); // Sort by Claim No. descending by default
                 renderClaimsTable(claimsData);
-                
-                // Update sort icons for the default sort
-                const headers = document.querySelectorAll('#claimsTable th');
-                headers.forEach((header, index) => {
-                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
-                    if (icon) {
-                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                        icon.classList.add('fa-sort');
-                    }
-                });
-                const defaultSortIcon = headers[currentSortColumn].querySelector('.fa-sort');
-                if (defaultSortIcon) {
-                    defaultSortIcon.classList.remove('fa-sort');
-                    defaultSortIcon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
-                }
-
             } catch (error) {
                 console.error("Error loading claims:", error);
-                claimsBody.innerHTML = '<tr><td colspan="8" class="error" style="text-align:center;">Failed to load claim data.</td></tr>';
+                claimsBody.innerHTML = '<tr><td colspan="8" class="error" style="text-align:center;">Failed to load claim data.</td></tr>'; 
             }
         }
 
@@ -889,28 +831,28 @@
             claimsBody.innerHTML = '';
 
             if (data.length === 0) {
-                claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No claim data available.</td></tr>';
+                claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No claim data available.</td></tr>'; 
                 return;
             }
 
             data.forEach(claim => {
                 const row = claimsBody.insertRow();
-                row.insertCell(0).textContent = claim.noUrut;
+                row.insertCell(0).textContent = claim.noUrut; 
                 row.insertCell(1).textContent = claim.tanggalPengajuan;
                 row.insertCell(2).textContent = claim.namaKaryawan;
                 row.insertCell(3).textContent = claim.departemen;
                 row.insertCell(4).textContent = formatRupiah(claim.nominalDiajukan);
                 row.insertCell(5).textContent = formatRupiah(claim.nominalDisetujui);
                 
-                const statusCell = row.insertCell(6);
+                const statusCell = row.insertCell(6); 
                 if (currentUserRole === 'guest') {
-                    // For guests, just display the status as text
+                    // For guest, display status as plain text
                     const statusSpan = document.createElement('span');
                     statusSpan.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
                     statusSpan.textContent = claim.status || 'Pending';
                     statusCell.appendChild(statusSpan);
                 } else {
-                    // For admins, display the dropdown
+                    // For authenticated users, display status as a dropdown
                     const statusDropdown = document.createElement('select');
                     statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
                     statusDropdown.innerHTML = `
@@ -922,7 +864,7 @@
                         const newStatus = e.target.value;
                         try {
                             await database.ref('claims/' + claim.id).update({ status: newStatus });
-                            e.target.className = '';
+                            e.target.className = ''; 
                             e.target.classList.add(`status-${newStatus.toLowerCase()}`);
                             showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
                         } catch (error) {
@@ -933,7 +875,7 @@
                     statusCell.appendChild(statusDropdown);
                 }
 
-                const actionsCell = row.insertCell(7);
+                const actionsCell = row.insertCell(7); 
                 actionsCell.classList.add('action-buttons');
 
                 const detailButton = document.createElement('button');
@@ -942,8 +884,7 @@
                 detailButton.onclick = () => openDetailModal(claim);
                 actionsCell.appendChild(detailButton);
 
-                // Only show edit and delete buttons if not a guest
-                if (currentUserRole !== 'guest') {
+                if (currentUserRole !== 'guest') { // Only show edit/delete for authenticated users
                     const editButton = document.createElement('button');
                     editButton.innerHTML = '<i class="fas fa-edit"></i>';
                     editButton.title = 'Edit Claim';
@@ -956,8 +897,21 @@
                     deleteButton.classList.add('delete-btn');
                     deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
                     actionsCell.appendChild(deleteButton);
+                } else {
+                    // If guest, ensure the actions column is hidden
+                    actionsCell.classList.add('hidden');
                 }
             });
+
+            // Hide the 'Actions' header if the user is a guest
+            const actionsHeader = document.getElementById('actionsHeader');
+            if (actionsHeader) {
+                if (currentUserRole === 'guest') {
+                    actionsHeader.classList.add('hidden');
+                } else {
+                    actionsHeader.classList.remove('hidden');
+                }
+            }
         }
 
         window.sortTable = function(columnIndex) {
@@ -986,15 +940,12 @@
             claimsData.sort((a, b) => {
                 let valA, valB;
 
-                // Map column index to actual data key for sorting
-                // Updated dataKeys to include 'noUrut' at index 0
                 const dataKeys = ['noUrut', 'tanggalPengajuan', 'namaKaryawan', 'departemen', 'nominalDiajukan', 'nominalDisetujui', 'status'];
                 const key = dataKeys[columnIndex];
 
                 valA = a[key];
                 valB = b[key];
 
-                // Type-specific comparison
                 if (key === 'noUrut' || key.includes('nominal')) {
                     valA = parseInt(valA);
                     valB = parseInt(valB);
@@ -1014,7 +965,7 @@
             renderClaimsTable(claimsData);
         };
 
-        // --- Edit Modal Logic (Moved to global scope) ---
+        // --- Edit Modal Logic ---
         const editClaimModal = document.getElementById('editClaimModal');
         const detailClaimModal = document.getElementById('detailClaimModal');
         const closeButtons = document.querySelectorAll('.close-button');
@@ -1034,7 +985,6 @@
         });
 
         window.addEventListener('click', (event) => {
-            // Only close if the click is directly on the modal background
             if (event.target === editClaimModal) {
                 editClaimModal.style.display = 'none';
                 editError.classList.add('hidden');
@@ -1046,10 +996,8 @@
         });
 
         window.openEditModal = (claimId, claimData) => {
-            if (currentUserRole === 'guest') {
-                showMessage('submitError', 'Guests do not have permission to edit claims.');
-                return;
-            }
+            if (currentUserRole === 'guest') return; // Prevent guest from opening edit modal
+
             document.getElementById('editClaimId').value = claimId;
             document.getElementById('editNoUrut').value = claimData.noUrut;
             document.getElementById('editTanggalUpload').value = claimData.tanggalUpload;
@@ -1058,14 +1006,13 @@
             document.getElementById('editHubungan').value = claimData.hubungan;
             document.getElementById('editDepartemen').value = claimData.departemen;
             document.getElementById('editJenisKlaim').value = claimData.jenisKlaim;
-            // Format nominal values for display in edit modal
             document.getElementById('editNominalDiajukan').value = formatRupiah(claimData.nominalDiajukan);
             document.getElementById('editNominalDisetujui').value = formatRupiah(claimData.nominalDisetujui);
             document.getElementById('editTanggalPenerimaan').value = claimData.tanggalPenerimaan;
             document.getElementById('editCatatan').value = claimData.catatan;
-            document.getElementById('editStatus').value = claimData.status || 'Pending'; // Set default if status is missing
+            document.getElementById('editStatus').value = claimData.status || 'Pending'; 
 
-            editClaimModal.style.display = 'flex'; // Use flex to center
+            editClaimModal.style.display = 'flex'; 
         };
 
         window.openDetailModal = (claimData) => {
@@ -1084,11 +1031,13 @@
                 <p><strong>Notes:</strong> ${claimData.catatan || '-'}</p>
                 <p><strong>Status:</strong> <span class="status-${(claimData.status || 'Pending').toLowerCase()}">${claimData.status || 'Pending'}</span></p>
             `;
-            detailClaimModal.style.display = 'flex'; // Use flex to center
+            detailClaimModal.style.display = 'flex'; 
         };
 
         editClaimForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (currentUserRole === 'guest') return; // Prevent guest from submitting edit form
+
             saveEditBtn.disabled = true;
             editSpinner.classList.remove('hidden');
             editError.classList.add('hidden');
@@ -1096,35 +1045,33 @@
 
             const claimId = document.getElementById('editClaimId').value;
             
-            // Clean nominal values before saving
             const editedNominalDiajukan = parseInt(cleanRupiahFormat(document.getElementById('editNominalDiajukan').value)) || 0;
             const editedNominalDisetujui = parseInt(cleanRupiahFormat(document.getElementById('editNominalDisetujui').value)) || 0;
 
             const updatedClaimData = {
-                noUrut: parseInt(document.getElementById('editNoUrut').value), // Keep original NoUrut
+                noUrut: parseInt(document.getElementById('editNoUrut').value), 
                 tanggalUpload: document.getElementById('editTanggalUpload').value,
                 tanggalPengajuan: document.getElementById('editTanggalPengajuan').value,
                 namaKaryawan: document.getElementById('editNamaKaryawan').value,
                 hubungan: document.getElementById('editHubungan').value,
                 departemen: document.getElementById('editDepartemen').value,
                 jenisKlaim: document.getElementById('editJenisKlaim').value,
-                nominalDiajukan: editedNominalDiajukan,
-                nominalDisetujui: editedNominalDisetujui,
+                nominalDiajukan: editedNominalDiajukan, 
+                nominalDisetujui: editedNominalDisetujui, 
                 tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
                 catatan: document.getElementById('editCatatan').value,
                 status: document.getElementById('editStatus').value,
-                // Do not update timestamp here unless explicitly desired
             };
 
             try {
                 await database.ref('claims/' + claimId).update(updatedClaimData);
                 showMessage('editSuccess', 'Claim updated successfully!', false);
-                loadClaims(); // Reload claims to show updated data
+                loadClaims(); 
                 setTimeout(() => {
                     editClaimModal.style.display = 'none';
                     editError.classList.add('hidden');
                     editSuccess.classList.add('hidden');
-                }, 1500); // Close modal after 1.5 seconds
+                }, 1500); 
             } catch (error) {
                 console.error("Update Claim Error:", error);
                 showMessage('editError', 'Failed to update claim: ' + error.message);
@@ -1135,15 +1082,13 @@
         });
 
         window.deleteClaim = async (claimId, noUrut) => {
-            if (currentUserRole === 'guest') {
-                showMessage('submitError', 'Guests do not have permission to delete claims.');
-                return;
-            }
+            if (currentUserRole === 'guest') return; // Prevent guest from deleting claims
+
             if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
                 try {
                     await database.ref('claims/' + claimId).remove();
                     showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
-                    loadClaims(); // Reload claims after deletion
+                    loadClaims(); 
                 } catch (error) {
                     console.error("Delete Claim Error:", error);
                     showMessage('submitError', 'Failed to delete claim: ' + error.message);
@@ -1153,25 +1098,22 @@
 
         // --- Login/Logout Section and DOMContentLoaded Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Set initial values for new claim form nominal inputs
             document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
             document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
 
-            // Check authentication status when page loads
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    currentUserRole = 'admin'; // Authenticated user is admin
-                    showMainPage();
+                    showMainPage('admin'); // Assuming authenticated users are 'admin'
                 } else {
-                    // If no user is authenticated, and it's not a guest session, show login page
-                    // If it's a guest session, showMainPage() would have already been called
-                    if (currentUserRole !== 'guest') {
+                    // If no user is logged in, check if it's a guest session
+                    if (sessionStorage.getItem('isGuest') === 'true') {
+                        showMainPage('guest');
+                    } else {
                         showLoginPage();
                     }
                 }
             });
 
-            // Event Listener for Login Form
             document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
@@ -1179,14 +1121,16 @@
                 const loginBtn = document.getElementById('loginBtn');
                 const loginSpinner = document.getElementById('loginSpinner');
                 const loginError = document.getElementById('loginError');
+                const loginForm = document.getElementById('loginForm'); // Get the login form element
 
                 loginBtn.disabled = true;
                 loginSpinner.classList.remove('hidden');
                 loginError.classList.add('hidden');
+                loginForm.classList.remove('shake-animation'); // Remove shake class before new attempt
 
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
-                    // Login successful, onAuthStateChanged will handle showMainPage()
+                    sessionStorage.removeItem('isGuest'); // Clear guest status on successful login
                 } catch (error) {
                     console.error("Login Error:", error.code, error.message);
                     let errorMessage = "An error occurred during login.";
@@ -1196,34 +1140,38 @@
                         errorMessage = "Invalid email format.";
                     }
                     showMessage('loginError', errorMessage);
+                    loginForm.classList.add('shake-animation'); // Add shake class on error
                 } finally {
                     loginBtn.disabled = false;
                     loginSpinner.classList.add('hidden');
                 }
             });
 
-            // Event Listener for Logout Button
+            // Event Listener for Guest Login Button
+            document.getElementById('guestLoginBtn').addEventListener('click', () => {
+                sessionStorage.setItem('isGuest', 'true'); // Mark as guest session
+                showMainPage('guest');
+            });
+
             document.getElementById('logoutBtn').addEventListener('click', async () => {
                 try {
-                    await auth.signOut();
-                    currentUserRole = 'admin'; // Reset role on logout
-                    // Logout successful, onAuthStateChanged will handle showLoginPage()
+                    if (currentUserRole === 'guest') {
+                        sessionStorage.removeItem('isGuest'); // Clear guest status
+                        showLoginPage();
+                    } else {
+                        await auth.signOut();
+                    }
                 } catch (error) {
                     console.error("Logout Error:", error.message);
                     alert("Failed to logout: " + error.message);
                 }
             });
 
-            // Event Listener for Guest Login Button
-            document.getElementById('guestLoginBtn').addEventListener('click', () => {
-                currentUserRole = 'guest';
-                // For guest, we don't need Firebase Auth login, just show main page with guest permissions
-                showMainPage();
-            });
-
             // --- Claim Form Section ---
             document.getElementById('claimForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
+                if (currentUserRole === 'guest') return; // Prevent guest from submitting claims
+
                 const submitBtn = document.getElementById('submitBtn');
                 const submitSpinner = document.getElementById('submitSpinner');
                 const submitError = document.getElementById('submitError');
@@ -1235,37 +1183,33 @@
                 submitSuccess.classList.add('hidden');
 
                 try {
-                    // Get the current highest sequence number
                     const currentNoUrut = parseInt(document.getElementById('noUrutForm').value);
 
-                    // Get nominal values from new inputs, ensure they are numbers
-                    // Use cleanRupiahFormat to get the pure numeric value
                     const nominalDiajukanValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDiajukanBaru').value)) || 0;
                     const nominalDisetujuiValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value)) || 0;
 
                     const claimData = {
-                        noUrut: currentNoUrut, // Use the auto-generated number
+                        noUrut: currentNoUrut, 
                         tanggalUpload: document.getElementById('tanggalUpload').value,
                         tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
                         namaKaryawan: document.getElementById('namaKaryawan').value,
                         hubungan: document.getElementById('hubungan').value,
                         departemen: document.getElementById('departemen').value,
                         jenisKlaim: document.getElementById('jenisKlaim').value,
-                        nominalDiajukan: nominalDiajukanValue, // Using pure numeric value
-                        nominalDisetujui: nominalDisetujuiValue, // Using pure numeric value
+                        nominalDiajukan: nominalDiajukanValue, 
+                        nominalDisetujui: nominalDisetujuiValue, 
                         tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
                         catatan: document.getElementById('catatan').value,
-                        status: 'Pending', // Default status for new claims
+                        status: 'Pending', 
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     };
 
                     await database.ref('claims').push(claimData);
                     showMessage('submitSuccess', 'Claim submitted successfully!', false);
                     document.getElementById('claimForm').reset();
-                    // Reset formatted inputs to 'Rp 0'
                     document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
                     document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
-                    updateNextClaimNumber(); // Update claim number for the next submission
+                    updateNextClaimNumber(); 
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Failed to submit claim: ' + error.message);
@@ -1275,30 +1219,22 @@
                 }
             });
 
-            // Event for Nominal Formatting on new inputs (now includes 'Rp ' inside input)
             ['nominalDiajukanBaru', 'nominalDisetujuiBaru', 'editNominalDiajukan', 'editNominalDisetujui'].forEach(id => {
                 const input = document.getElementById(id);
-                if (input) { // Check if element exists (for edit modal inputs)
+                if (input) { 
                     input.addEventListener('input', (e) => {
                         let value = e.target.value;
                         let cleanValue = cleanRupiahFormat(value);
-                        
-                        // Format the pure number to rupiah format for display in the input
-                        // Add 'Rp ' prefix directly to the input value
                         e.target.value = formatRupiah(cleanValue);
                     });
 
-                    // Initialize display on load (if there's a default value)
-                    // This ensures that if a value is pre-filled (e.g., from Firebase), it's formatted.
-                    // For new form, default value is 'Rp 0' already.
-                    if (input.value && input.value !== 'Rp 0') { // Only format if it's not the default 'Rp 0'
+                    if (input.value && input.value !== 'Rp 0') { 
                         const initialCleanValue = cleanRupiahFormat(input.value);
                         input.value = formatRupiah(initialCleanValue);
                     }
                 }
             });
 
-            // --- Page Navigation ---
             document.getElementById('showClaimFormBtn').addEventListener('click', () => showPage('claimFormPage'));
             document.getElementById('showClaimsListBtn').addEventListener('click', () => showPage('claimsListPage'));
 
