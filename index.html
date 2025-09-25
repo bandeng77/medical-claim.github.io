@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
+        /* ... (CSS Anda yang sudah ada) ... */
         :root {
             --primary-color: #00A896;
             --secondary-color: #A8E6CF;
@@ -709,7 +710,31 @@
                 Object.keys(claims).forEach(key => {
                     claimsData.push({ id: key, ...claims[key] });
                 });
-                claimsData.sort((a, b) => b.noUrut - a.noUrut); // Sort by Claim No. descending by default
+                
+                // --- MODIFIKASI DI SINI ---
+                // Urutkan berdasarkan Claim No. secara ascending (dari terkecil ke terbesar)
+                claimsData.sort((a, b) => a.noUrut - b.noUrut); 
+                
+                // Reset sort state for table headers
+                currentSortColumn = 0; // Set default sort column to Claim No.
+                currentSortDirection = 'asc'; // Set default sort direction to ascending
+                
+                // Update sort icons to reflect default sorting
+                const headers = document.querySelectorAll('#claimsTable th');
+                headers.forEach((header, index) => {
+                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
+                    if (icon) {
+                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                        icon.classList.add('fa-sort');
+                    }
+                });
+                const defaultSortIcon = headers[0].querySelector('.fa-sort'); // Claim No. header
+                if (defaultSortIcon) {
+                    defaultSortIcon.classList.remove('fa-sort');
+                    defaultSortIcon.classList.add('fa-sort-up');
+                }
+                // --- AKHIR MODIFIKASI ---
+
                 renderClaimsTable(claimsData);
             } catch (error) {
                 console.error("Error loading claims:", error);
