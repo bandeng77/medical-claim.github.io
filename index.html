@@ -716,31 +716,33 @@
                     claimsData.push({ id: key, ...claims[key] });
                 });
                 
-                // --- MODIFIKASI DI SINI ---
                 // Urutkan berdasarkan Claim No. secara ascending (dari terkecil ke terbesar)
                 claimsData.sort((a, b) => a.noUrut - b.noUrut); 
                 
+                // Panggil renderClaimsTable terlebih dahulu untuk memastikan header dibuat
+                renderClaimsTable(claimsData); // PENTING: Panggil ini sebelum mencoba mengakses headers
+
                 // Reset sort state for table headers
                 currentSortColumn = 0; // Set default sort column to Claim No.
                 currentSortDirection = 'asc'; // Set default sort direction to ascending
                 
                 // Update sort icons to reflect default sorting
                 const headers = document.querySelectorAll('#claimsTable th');
-                headers.forEach((header, index) => {
-                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
-                    if (icon) {
-                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                        icon.classList.add('fa-sort');
+                // Tambahkan pengecekan di sini untuk memastikan headers tidak kosong
+                if (headers.length > 0) {
+                    headers.forEach((header, index) => {
+                        const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
+                        if (icon) {
+                            icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                            icon.classList.add('fa-sort');
+                        }
+                    });
+                    const defaultSortIcon = headers[0].querySelector('.fa-sort'); // Claim No. header
+                    if (defaultSortIcon) {
+                        defaultSortIcon.classList.remove('fa-sort');
+                        defaultSortIcon.classList.add('fa-sort-up');
                     }
-                });
-                const defaultSortIcon = headers[0].querySelector('.fa-sort'); // Claim No. header
-                if (defaultSortIcon) {
-                    defaultSortIcon.classList.remove('fa-sort');
-                    defaultSortIcon.classList.add('fa-sort-up');
                 }
-                // --- AKHIR MODIFIKASI ---
-
-                renderClaimsTable(claimsData);
             } catch (error) {
                 console.error("Error loading claims:", error);
                 claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" class="error" style="text-align:center;">Failed to load claim data.</td></tr>`; 
