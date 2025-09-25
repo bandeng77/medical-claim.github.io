@@ -157,7 +157,7 @@
 
         th, td {
             padding: 8px; /* Reduce padding to make rows and columns tighter */
-            text-align: left;
+            text-align: center; /* MODIFIED: All table data and headers are now centered */
             border-bottom: 1px solid #eee;
         }
 
@@ -166,7 +166,7 @@
             color: var(--white);
             cursor: pointer;
             transition: background 0.3s;
-            text-align: center; /* Center alignment for table headers */
+            /* text-align: center; REMOVED: Already set in combined th, td rule */
         }
 
         th i.fas.fa-sort,
@@ -325,6 +325,13 @@
         }
         .action-buttons button.delete-btn:hover {
             color: #d32f2f;
+        }
+
+        /* NEW CSS for blurred amounts */
+        .blurred-amount {
+            filter: blur(3px); /* Efek blur */
+            color: #888; /* Warna teks agar tidak terlalu mencolok */
+            font-style: italic; /* Gaya teks */
         }
 
         @media (max-width: 768px) {
@@ -755,10 +762,33 @@
                 const row = claimsBody.insertRow();
                 row.insertCell(0).textContent = claim.noUrut; 
                 row.insertCell(1).textContent = claim.tanggalPengajuan;
-                row.insertCell(2).textContent = claim.namaKaryawan;
+                
+                // Employee Name (Modifikasi untuk Guest)
+                const employeeNameCell = row.insertCell(2);
+                if (currentUserRole === 'guest' && claim.namaKaryawan) {
+                    const firstChar = claim.namaKaryawan.charAt(0);
+                    employeeNameCell.textContent = firstChar + '****'; // Menampilkan huruf pertama diikuti ****
+                } else {
+                    employeeNameCell.textContent = claim.namaKaryawan;
+                }
+
                 row.insertCell(3).textContent = claim.departemen;
-                row.insertCell(4).textContent = formatRupiah(claim.nominalDiajukan);
-                row.insertCell(5).textContent = formatRupiah(claim.nominalDisetujui);
+                
+                // Claimed Amount (Modifikasi untuk Guest)
+                const claimedAmountCell = row.insertCell(4);
+                if (currentUserRole === 'guest') {
+                    claimedAmountCell.innerHTML = '<span class="blurred-amount">Rp X.XXX.XXX</span>'; // Teks blur
+                } else {
+                    claimedAmountCell.textContent = formatRupiah(claim.nominalDiajukan);
+                }
+
+                // Approved Amount (Modifikasi untuk Guest)
+                const approvedAmountCell = row.insertCell(5);
+                if (currentUserRole === 'guest') {
+                    approvedAmountCell.innerHTML = '<span class="blurred-amount">Rp X.XXX.XXX</span>'; // Teks blur
+                } else {
+                    approvedAmountCell.textContent = formatRupiah(claim.nominalDisetujui);
+                }
                 
                 const statusCell = row.insertCell(6); 
                 if (currentUserRole === 'guest') {
@@ -937,12 +967,12 @@
                 <p><strong>Claim No.:</strong> ${claimData.noUrut}</p>
                 <p><strong>TALENTA Upload Date:</strong> ${claimData.tanggalUpload}</p>
                 <p><strong>Submission Date:</strong> ${claimData.tanggalPengajuan}</p>
-                <p><strong>Employee Name:</strong> ${claimData.namaKaryawan}</p>
+                <p><strong>Employee Name:</strong> ${currentUserRole === 'guest' && claimData.namaKaryawan ? claimData.namaKaryawan.charAt(0) + '****' : claimData.namaKaryawan}</p>
                 <p><strong>Relationship As:</strong> ${claimData.hubungan}</p>
                 <p><strong>Department:</strong> ${claimData.departemen}</p>
                 <p><strong>Claim Type:</strong> ${claimData.jenisKlaim}</p>
-                <p><strong>Claimed Amount:</strong> ${formatRupiah(claimData.nominalDiajukan)}</p>
-                <p><strong>Approved Amount:</strong> ${formatRupiah(claimData.nominalDisetujui)}</p>
+                <p><strong>Claimed Amount:</strong> ${currentUserRole === 'guest' ? '<span class="blurred-amount">Rp X.XXX.XXX</span>' : formatRupiah(claimData.nominalDiajukan)}</p>
+                <p><strong>Approved Amount:</strong> ${currentUserRole === 'guest' ? '<span class="blurred-amount">Rp X.XXX.XXX</span>' : formatRupiah(claimData.nominalDisetujui)}</p>
                 <p><strong>Receipt Date:</strong> ${claimData.tanggalPenerimaan || '-'}</p>
                 <p><strong>Notes:</strong> ${claimData.catatan || '-'}</p>
                 <p><strong>Status:</strong> <span class="status-${(claimData.status || 'Pending').toLowerCase()}">${claimData.status || 'Pending'}</span></p>
