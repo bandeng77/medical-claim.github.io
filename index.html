@@ -362,115 +362,6 @@
                 padding: 2px;
             }
         }
-
-        /* --- Login Page Specific Styles --- */
-        #loginPage {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh; /* Make login page take full viewport height */
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%); /* Keep existing body gradient for main page */
-            padding: 0; /* Remove padding from container for login page */
-            box-shadow: none; /* Remove shadow from container for login page */
-            border-radius: 0; /* Remove border-radius from container for login page */
-            animation: none; /* Remove fadeIn animation from container for login page */
-        }
-
-        #loginPage .container { /* Target the container specifically for login page */
-            max-width: 400px; /* Smaller width for login form */
-            padding: 40px;
-            background: var(--white);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.5s ease-in;
-            position: relative;
-        }
-
-        #loginPage h1 {
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        #loginForm {
-            background: none; /* Remove background from form itself */
-            border: none; /* Remove border from form itself */
-            padding: 0; /* Remove padding from form itself */
-            gap: 20px; /* Increase gap between elements */
-        }
-
-        #loginForm label {
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-
-        #loginForm input[type="email"],
-        #loginForm input[type="password"] {
-            padding: 14px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        #loginForm input[type="email"]:focus,
-        #loginForm input[type="password"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(0, 168, 150, 0.4);
-            transform: translateY(-2px);
-        }
-
-        #loginBtn, #guestLoginBtn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
-            border-radius: 10px;
-            margin-top: 15px; /* Space between buttons */
-        }
-
-        #guestLoginBtn {
-            background: #6c757d; /* Grey color for guest button */
-        }
-
-        #guestLoginBtn:hover {
-            background: #5a6268;
-            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
-        }
-
-        /* Shake animation for error */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            20% { transform: translateX(-10px); }
-            40% { transform: translateX(10px); }
-            60% { transform: translateX(-10px); }
-            80% { transform: translateX(10px); }
-            100% { transform: translateX(0); }
-        }
-
-        .shake-animation {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        /* Responsive adjustments for login page */
-        @media (max-width: 768px) {
-            #loginPage .container {
-                max-width: 90%;
-                padding: 25px;
-            }
-            #loginPage h1 {
-                font-size: 2em;
-            }
-            #loginForm input {
-                padding: 12px;
-                font-size: 15px;
-            }
-            #loginBtn, #guestLoginBtn {
-                padding: 12px;
-                font-size: 1em;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1056,8 +947,8 @@
                 hubungan: document.getElementById('editHubungan').value,
                 departemen: document.getElementById('editDepartemen').value,
                 jenisKlaim: document.getElementById('editJenisKlaim').value,
-                nominalDiajukan: editedNominalDiajukan, 
-                nominalDisetujui: editedNominalDisetujui, 
+                nominalDiajukan: editedNominalDiajukan,
+                nominalDisetujui: editedNominalDisetujui,
                 tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
                 catatan: document.getElementById('editCatatan').value,
                 status: document.getElementById('editStatus').value,
@@ -1121,12 +1012,10 @@
                 const loginBtn = document.getElementById('loginBtn');
                 const loginSpinner = document.getElementById('loginSpinner');
                 const loginError = document.getElementById('loginError');
-                const loginForm = document.getElementById('loginForm'); // Get the login form element
 
                 loginBtn.disabled = true;
                 loginSpinner.classList.remove('hidden');
                 loginError.classList.add('hidden');
-                loginForm.classList.remove('shake-animation'); // Remove shake class before new attempt
 
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
@@ -1140,7 +1029,6 @@
                         errorMessage = "Invalid email format.";
                     }
                     showMessage('loginError', errorMessage);
-                    loginForm.classList.add('shake-animation'); // Add shake class on error
                 } finally {
                     loginBtn.disabled = false;
                     loginSpinner.classList.add('hidden');
