@@ -23,22 +23,128 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0; /* Remove padding from body, container will handle it */
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%);
             color: var(--text-color);
             min-height: 100vh;
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            overflow: hidden; /* Hide overflow for background animations */
+            position: relative; /* For pseudo-element background */
+        }
+
+        /* Animated background effect */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            z-index: -1; /* Send behind content */
+            opacity: 0.7; /* Make it subtle */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
             max-width: 900px;
-            margin: 0 auto;
+            margin: 0 auto; /* Keep for general containers, but body flexbox handles centering for login */
             background: var(--white);
             padding: 30px;
             border-radius: 15px;
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
+            z-index: 1; /* Ensure container is above animated background */
         }
+
+        /* Specific styling for login page container */
+        #loginPage {
+            max-width: 450px; /* Make login form a bit narrower */
+            padding: 40px; /* More padding for a substantial feel */
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            backdrop-filter: blur(5px); /* Frosted glass effect */
+            border: 1px solid rgba(0, 168, 150, 0.1); /* Subtle border */
+        }
+
+        #loginPage h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: var(--accent-color); /* Darker primary color for heading */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #loginPage form {
+            background: none; /* Remove background from form itself */
+            border: none; /* Remove border from form itself */
+            padding: 0; /* Remove padding from form itself */
+            gap: 20px; /* Increase gap between elements */
+        }
+
+        #loginPage label {
+            text-align: left;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        #loginPage input {
+            padding: 15px; /* Larger input fields */
+            border: 1px solid var(--secondary-color);
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: var(--bg-color); /* Light background for inputs */
+        }
+
+        #loginPage input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(4, 93, 93, 0.4);
+        }
+
+        #loginPage button {
+            width: 100%; /* Full width buttons */
+            padding: 15px;
+            font-size: 1.1em;
+            margin-top: 15px; /* Space above buttons */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 168, 150, 0.2);
+        }
+
+        #loginPage button:hover {
+            transform: translateY(-3px); /* More pronounced hover effect */
+            box-shadow: 0 6px 15px rgba(0, 168, 150, 0.4);
+        }
+
+        #loginPage .error {
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive adjustments for login page */
+        @media (max-width: 768px) {
+            #loginPage {
+                max-width: 90%;
+                padding: 30px 20px;
+            }
+            #loginPage h1 {
+                font-size: 2em;
+            }
+            #loginPage input, #loginPage button {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -326,6 +432,12 @@
             color: #d32f2f;
         }
 
+        /* Hide Actions column for guest view */
+        #claimsTable.guest-view th:last-child,
+        #claimsTable.guest-view td:last-child {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 15px; }
             #claimForm { grid-template-columns: 1fr; }
@@ -379,6 +491,9 @@
                 Login
             </button>
             <p id="loginError" class="error hidden"></p>
+            <button type="button" id="guestLoginBtn" style="background: var(--accent-color); margin-top: 10px;">
+                <i class="fas fa-user-secret icon"></i> Login as Guest
+            </button>
         </form>
     </div>
 
@@ -566,6 +681,8 @@
         const auth = app.auth();
         const database = app.database();
 
+        let currentUserRole = 'admin'; // Default role is admin
+
         // --- Firebase Database Rules Check ---
         // The "PERMISSION_DENIED" error indicates that your Firebase Realtime Database rules
         // are not configured to allow write access for authenticated users.
@@ -630,7 +747,31 @@
         function showMainPage() {
             fadeOut(document.getElementById('loginPage'), () => {
                 fadeIn(document.getElementById('mainPage'));
-                showPage('claimFormPage'); // Show claim form by default
+                
+                // Hide/show elements based on user role
+                const claimFormPage = document.getElementById('claimFormPage');
+                const showClaimFormBtn = document.getElementById('showClaimFormBtn');
+                const submitBtn = document.getElementById('submitBtn');
+                const claimsTable = document.getElementById('claimsTable'); // Get the table itself
+
+                if (currentUserRole === 'guest') {
+                    claimFormPage.classList.add('hidden');
+                    showClaimFormBtn.classList.add('hidden');
+                    if (submitBtn) submitBtn.classList.add('hidden'); // Hide submit button if it exists
+                    
+                    // Hide action buttons in the table for guests
+                    claimsTable.classList.add('guest-view'); // Add a class to hide action buttons via CSS
+                    
+                    showPage('claimsListPage'); // Guests only see the claim list
+                } else {
+                    claimFormPage.classList.remove('hidden');
+                    showClaimFormBtn.classList.remove('hidden');
+                    if (submitBtn) submitBtn.classList.remove('hidden');
+                    
+                    claimsTable.classList.remove('guest-view'); // Remove class for admin
+                    
+                    showPage('claimFormPage'); // Admins see the claim form by default
+                }
             });
         }
 
@@ -705,21 +846,41 @@
 
         async function loadClaims() {
             const claimsBody = document.getElementById('claimsBody');
-            claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>'; // Updated colspan
+            claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>';
 
             try {
-                const snapshot = await database.ref('claims').orderByChild('noUrut').once('value'); // Order by noUrut
+                const snapshot = await database.ref('claims').orderByChild('noUrut').once('value');
                 const claims = snapshot.val() || {};
                 claimsData = [];
                 Object.keys(claims).forEach(key => {
                     claimsData.push({ id: key, ...claims[key] });
                 });
-                // Sort by Claim No. descending by default for new claims to appear on top
-                claimsData.sort((a, b) => b.noUrut - a.noUrut);
+
+                // Default sort by Claim No. (columnIndex 0) descending
+                currentSortColumn = 0;
+                currentSortDirection = 'desc';
+                claimsData.sort((a, b) => b.noUrut - a.noUrut); // Initial sort for default view
+
                 renderClaimsTable(claimsData);
+                
+                // Update sort icons for the default sort
+                const headers = document.querySelectorAll('#claimsTable th');
+                headers.forEach((header, index) => {
+                    const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
+                    if (icon) {
+                        icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                        icon.classList.add('fa-sort');
+                    }
+                });
+                const defaultSortIcon = headers[currentSortColumn].querySelector('.fa-sort');
+                if (defaultSortIcon) {
+                    defaultSortIcon.classList.remove('fa-sort');
+                    defaultSortIcon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                }
+
             } catch (error) {
                 console.error("Error loading claims:", error);
-                claimsBody.innerHTML = '<tr><td colspan="8" class="error" style="text-align:center;">Failed to load claim data.</td></tr>'; // Updated colspan
+                claimsBody.innerHTML = '<tr><td colspan="8" class="error" style="text-align:center;">Failed to load claim data.</td></tr>';
             }
         }
 
@@ -728,43 +889,51 @@
             claimsBody.innerHTML = '';
 
             if (data.length === 0) {
-                claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No claim data available.</td></tr>'; // Updated colspan
+                claimsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No claim data available.</td></tr>';
                 return;
             }
 
             data.forEach(claim => {
                 const row = claimsBody.insertRow();
-                // Displayed columns: Claim No., Submission Date, Employee Name, Department, Claimed Amount, Approved Amount, Status, Actions
-                row.insertCell(0).textContent = claim.noUrut; // Claim No.
+                row.insertCell(0).textContent = claim.noUrut;
                 row.insertCell(1).textContent = claim.tanggalPengajuan;
                 row.insertCell(2).textContent = claim.namaKaryawan;
                 row.insertCell(3).textContent = claim.departemen;
                 row.insertCell(4).textContent = formatRupiah(claim.nominalDiajukan);
                 row.insertCell(5).textContent = formatRupiah(claim.nominalDisetujui);
                 
-                const statusCell = row.insertCell(6); // Updated index
-                const statusDropdown = document.createElement('select');
-                statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
-                statusDropdown.innerHTML = `
-                    <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                    <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
-                    <option value="Rejected" ${claim.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
-                `;
-                statusDropdown.addEventListener('change', async (e) => {
-                    const newStatus = e.target.value;
-                    try {
-                        await database.ref('claims/' + claim.id).update({ status: newStatus });
-                        e.target.className = ''; // Clear existing classes
-                        e.target.classList.add(`status-${newStatus.toLowerCase()}`);
-                        showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
-                    } catch (error) {
-                        console.error("Update Status Error:", error);
-                        showMessage('submitError', 'Failed to update status: ' + error.message);
-                    }
-                });
-                statusCell.appendChild(statusDropdown);
+                const statusCell = row.insertCell(6);
+                if (currentUserRole === 'guest') {
+                    // For guests, just display the status as text
+                    const statusSpan = document.createElement('span');
+                    statusSpan.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusSpan.textContent = claim.status || 'Pending';
+                    statusCell.appendChild(statusSpan);
+                } else {
+                    // For admins, display the dropdown
+                    const statusDropdown = document.createElement('select');
+                    statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusDropdown.innerHTML = `
+                        <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
+                        <option value="Rejected" ${claim.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                    `;
+                    statusDropdown.addEventListener('change', async (e) => {
+                        const newStatus = e.target.value;
+                        try {
+                            await database.ref('claims/' + claim.id).update({ status: newStatus });
+                            e.target.className = '';
+                            e.target.classList.add(`status-${newStatus.toLowerCase()}`);
+                            showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
+                        } catch (error) {
+                            console.error("Update Status Error:", error);
+                            showMessage('submitError', 'Failed to update status: ' + error.message);
+                        }
+                    });
+                    statusCell.appendChild(statusDropdown);
+                }
 
-                const actionsCell = row.insertCell(7); // Updated index
+                const actionsCell = row.insertCell(7);
                 actionsCell.classList.add('action-buttons');
 
                 const detailButton = document.createElement('button');
@@ -773,18 +942,21 @@
                 detailButton.onclick = () => openDetailModal(claim);
                 actionsCell.appendChild(detailButton);
 
-                const editButton = document.createElement('button');
-                editButton.innerHTML = '<i class="fas fa-edit"></i>';
-                editButton.title = 'Edit Claim';
-                editButton.onclick = () => openEditModal(claim.id, claim);
-                actionsCell.appendChild(editButton);
+                // Only show edit and delete buttons if not a guest
+                if (currentUserRole !== 'guest') {
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                    editButton.title = 'Edit Claim';
+                    editButton.onclick = () => openEditModal(claim.id, claim);
+                    actionsCell.appendChild(editButton);
 
-                const deleteButton = document.createElement('button');
-                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                deleteButton.title = 'Delete Claim';
-                deleteButton.classList.add('delete-btn');
-                deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
-                actionsCell.appendChild(deleteButton);
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteButton.title = 'Delete Claim';
+                    deleteButton.classList.add('delete-btn');
+                    deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
+                    actionsCell.appendChild(deleteButton);
+                }
             });
         }
 
@@ -874,6 +1046,10 @@
         });
 
         window.openEditModal = (claimId, claimData) => {
+            if (currentUserRole === 'guest') {
+                showMessage('submitError', 'Guests do not have permission to edit claims.');
+                return;
+            }
             document.getElementById('editClaimId').value = claimId;
             document.getElementById('editNoUrut').value = claimData.noUrut;
             document.getElementById('editTanggalUpload').value = claimData.tanggalUpload;
@@ -959,6 +1135,10 @@
         });
 
         window.deleteClaim = async (claimId, noUrut) => {
+            if (currentUserRole === 'guest') {
+                showMessage('submitError', 'Guests do not have permission to delete claims.');
+                return;
+            }
             if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
                 try {
                     await database.ref('claims/' + claimId).remove();
@@ -980,9 +1160,14 @@
             // Check authentication status when page loads
             auth.onAuthStateChanged(user => {
                 if (user) {
+                    currentUserRole = 'admin'; // Authenticated user is admin
                     showMainPage();
                 } else {
-                    showLoginPage();
+                    // If no user is authenticated, and it's not a guest session, show login page
+                    // If it's a guest session, showMainPage() would have already been called
+                    if (currentUserRole !== 'guest') {
+                        showLoginPage();
+                    }
                 }
             });
 
@@ -1021,11 +1206,19 @@
             document.getElementById('logoutBtn').addEventListener('click', async () => {
                 try {
                     await auth.signOut();
+                    currentUserRole = 'admin'; // Reset role on logout
                     // Logout successful, onAuthStateChanged will handle showLoginPage()
                 } catch (error) {
                     console.error("Logout Error:", error.message);
                     alert("Failed to logout: " + error.message);
                 }
+            });
+
+            // Event Listener for Guest Login Button
+            document.getElementById('guestLoginBtn').addEventListener('click', () => {
+                currentUserRole = 'guest';
+                // For guest, we don't need Firebase Auth login, just show main page with guest permissions
+                showMainPage();
             });
 
             // --- Claim Form Section ---
