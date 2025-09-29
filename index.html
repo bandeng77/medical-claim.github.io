@@ -798,12 +798,8 @@
 
                 // Employee Name (Modifikasi untuk Guest)
                 const employeeNameCell = row.insertCell(cellIndex++);
-                if (currentUserRole === 'guest' && claim.namaKaryawan) {
-                    const firstChar = claim.namaKaryawan.charAt(0);
-                    employeeNameCell.textContent = firstChar + '****'; // Menampilkan huruf pertama diikuti ****
-                } else {
-                    employeeNameCell.textContent = claim.namaKaryawan;
-                }
+                // Menampilkan nama karyawan secara keseluruhan untuk semua peran, termasuk guest
+                employeeNameCell.textContent = claim.namaKaryawan;
 
                 row.insertCell(cellIndex++).textContent = claim.departemen;
                 row.insertCell(cellIndex++).textContent = claim.tanggalPenerimaan || '-'; // Receipt Date
@@ -996,7 +992,7 @@
                 <p><strong>Claim No.:</strong> ${claimData.noUrut}</p>
                 <p><strong>TALENTA Date:</strong> ${claimData.tanggalUpload}</p>
                 <p><strong>Submission Date:</strong> ${claimData.tanggalPengajuan}</p>
-                <p><strong>Employee Name:</strong> ${currentUserRole === 'guest' && claimData.namaKaryawan ? claimData.namaKaryawan.charAt(0) + '****' : claimData.namaKaryawan}</p>
+                <p><strong>Employee Name:</strong> ${claimData.namaKaryawan}</p>
                 <p><strong>Relationship As:</strong> ${claimData.hubungan}</p>
                 <p><strong>Department:</strong> ${claimData.departemen}</p>
                 <p><strong>Claim Type:</strong> ${claimData.jenisKlaim}</p>
