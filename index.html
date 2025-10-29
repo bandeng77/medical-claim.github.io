@@ -18,6 +18,7 @@
             --bg-color: #F8FFF9;
             --white: #FFFFFF;
             --shadow: 0 4px 15px rgba(0, 168, 150, 0.2);
+            --border-radius: 10px;
         }
 
         body {
@@ -37,7 +38,7 @@
             margin: 0 auto;
             background: var(--white);
             padding: 30px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
@@ -60,9 +61,10 @@
             display: grid;
             gap: 15px;
             background: var(--bg-color);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: var(--border-radius);
             border: 1px solid var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         #claimForm {
@@ -89,17 +91,19 @@
             font-weight: bold;
             color: var(--accent-color);
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         input, select, textarea {
-            padding: 12px;
+            padding: 12px 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
             width: 100%;
             box-sizing: border-box;
             transition: border-color 0.3s, box-shadow 0.3s;
             font-size: 14px;
+            font-family: inherit;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -148,14 +152,14 @@
             border-collapse: collapse;
             margin-top: 20px;
             background: var(--white);
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             font-size: 0.9em;
         }
 
         th, td {
-            padding: 8px;
+            padding: 12px 15px;
             text-align: center;
             border-bottom: 1px solid #eee;
         }
@@ -165,6 +169,7 @@
             color: var(--white);
             cursor: pointer;
             transition: background 0.3s;
+            font-weight: bold;
         }
 
         th i.fas.fa-sort,
@@ -228,7 +233,7 @@
         .tab-navigation button {
             background: var(--secondary-color);
             color: var(--accent-color);
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 8px;
             font-weight: bold;
             transition: background 0.3s, color 0.3s;
@@ -272,7 +277,7 @@
         .modal-content {
             background-color: var(--white);
             padding: 30px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             width: 80%; 
             max-width: 600px;
@@ -374,7 +379,7 @@
             margin: 0 auto;
             background: var(--white);
             padding: 40px 30px;
-            border-radius: 20px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
@@ -440,7 +445,7 @@
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
@@ -458,17 +463,6 @@
 
         .login-btn:active {
             transform: translateY(0);
-        }
-
-        .guest-btn {
-            background: #6c757d;
-            margin-top: 10px;
-        }
-
-        .guest-btn:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
         }
 
         .login-footer {
@@ -518,7 +512,7 @@
 
         @media (max-width: 768px) {
             .container { 
-                padding: 15px; 
+                padding: 20px; 
                 max-width: 95%;
             }
             #claimForm { grid-template-columns: 1fr; }
@@ -528,7 +522,7 @@
                 font-size: 0.8em;
             }
             th, td {
-                padding: 6px;
+                padding: 10px 12px;
             }
             .logout-btn {
                 position: static;
@@ -545,6 +539,7 @@
             }
             .modal-content {
                 width: 95%;
+                padding: 20px;
             }
             .status-pending, .status-approved, .status-rejected {
                 font-size: 0.7em;
@@ -595,9 +590,6 @@
             <button type="submit" id="loginBtn" class="login-btn">
                 <span id="loginSpinner" class="loading hidden"></span>
                 <span>Login</span>
-            </button>
-            <button type="button" id="guestLoginBtn" class="login-btn guest-btn">
-                <i class="fas fa-user-secret"></i> Login as Guest
             </button>
             <p id="loginError" class="error hidden"></p>
         </form>
@@ -854,7 +846,7 @@
                 claimFormPage.classList.add('hidden');
                 showClaimFormBtn.classList.add('hidden');
                 if (actionsHeader) actionsHeader.classList.add('hidden');
-                mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (Guest View)';
+                mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (View Only)';
                 adminOnlyHeaders.forEach(header => header.classList.add('hidden'));
                 // Show pagination for guest
                 paginationControls.classList.remove('hidden');
@@ -1349,19 +1341,16 @@
 
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    // Check if the user is one of the admin users
-                    const adminEmails = ['anisah@genetek.co.id', 'anggita-s@genetek.co.id'];
-                    if (adminEmails.includes(user.email)) {
+                    // Check if the user is one of the authorized users
+                    const authorizedEmails = ['anisah@genetek.co.id', 'anggita-s@genetek.co.id'];
+                    if (authorizedEmails.includes(user.email)) {
                         showMainPage('admin');
                     } else {
+                        // Other users can only view (guest mode)
                         showMainPage('guest');
                     }
                 } else {
-                    if (sessionStorage.getItem('isGuest') === 'true') {
-                        showMainPage('guest');
-                    } else {
-                        showLoginPage();
-                    }
+                    showLoginPage();
                 }
             });
 
@@ -1379,7 +1368,6 @@
 
                 try {
                     await auth.signInWithEmailAndPassword(email, password);
-                    sessionStorage.removeItem('isGuest');
                 } catch (error) {
                     console.error("Login Error:", error.code, error.message);
                     let errorMessage = "An error occurred during login.";
@@ -1395,19 +1383,9 @@
                 }
             });
 
-            document.getElementById('guestLoginBtn').addEventListener('click', () => {
-                sessionStorage.setItem('isGuest', 'true');
-                showMainPage('guest');
-            });
-
             document.getElementById('logoutBtn').addEventListener('click', async () => {
                 try {
-                    if (currentUserRole === 'guest') {
-                        sessionStorage.removeItem('isGuest');
-                        showLoginPage();
-                    } else {
-                        await auth.signOut();
-                    }
+                    await auth.signOut();
                 } catch (error) {
                     console.error("Logout Error:", error.message);
                     alert("Failed to logout: " + error.message);
