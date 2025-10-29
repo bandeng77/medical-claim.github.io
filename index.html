@@ -599,7 +599,7 @@
         <form id="loginForm" class="login-form">
             <div class="form-group">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="email" placeholder="Enter your email" required>
+                <input type="email" id="email" placeholder="Enter your email" required autocomplete="username">
             </div>
             <div class="form-group">
                 <i class="fas fa-lock"></i>
@@ -929,7 +929,7 @@
             if (numberString === '') return 'Rp 0';
             const number = parseInt(numberString);
             if (isNaN(number) || number === 0) return 'Rp 0';
-            return `Rp ${number.toLocaleString('en-US')}`;
+            return 'Rp ' + number.toLocaleString('en-US');
         }
 
         // Function to clean rupiah format from a string (returns only numbers)
@@ -964,7 +964,7 @@
             nextPageBtn.disabled = currentPage === totalPages;
             lastPageBtn.disabled = currentPage === totalPages;
 
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
         }
 
         function goToPage(page) {
@@ -990,7 +990,7 @@
             
             // Adjust colspan based on role
             const colspanValue = currentUserRole === 'guest' ? 7 : 9;
-            claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>`; 
+            claimsBody.innerHTML = '<tr><td colspan="' + colspanValue + '" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>'; 
 
             try {
                 const snapshot = await database.ref('claims').once('value');
@@ -1036,7 +1036,7 @@
                 }
             } catch (error) {
                 console.error("Error loading claims:", error);
-                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" class="error" style="text-align:center;">Failed to load claim data.</td></tr>`;
+                claimsBody.innerHTML = '<tr><td colspan="' + colspanValue + '" class="error" style="text-align:center;">Failed to load claim data.</td></tr>';
             }
         }
 
@@ -1075,7 +1075,7 @@
 
             if (data.length === 0) {
                 const colspanValue = currentUserRole === 'guest' ? 7 : 9;
-                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;">No claim data available.</td></tr>`;
+                claimsBody.innerHTML = '<tr><td colspan="' + colspanValue + '" style="text-align:center;">No claim data available.</td></tr>';
                 return;
             }
 
@@ -1104,12 +1104,12 @@
                 const statusCell = row.insertCell(cellIndex++);
                 if (currentUserRole === 'guest') {
                     const statusSpan = document.createElement('span');
-                    statusSpan.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusSpan.classList.add('status-' + (claim.status || 'Pending').toLowerCase());
                     statusSpan.textContent = claim.status || 'Pending';
                     statusCell.appendChild(statusSpan);
                 } else {
                     const statusDropdown = document.createElement('select');
-                    statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusDropdown.classList.add('status-' + (claim.status || 'Pending').toLowerCase());
                     statusDropdown.innerHTML = `
                         <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
                         <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
@@ -1120,8 +1120,8 @@
                         try {
                             await database.ref('claims/' + claim.id).update({ status: newStatus });
                             e.target.className = '';
-                            e.target.classList.add(`status-${newStatus.toLowerCase()}`);
-                            showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
+                            e.target.classList.add('status-' + newStatus.toLowerCase());
+                            showMessage('submitSuccess', 'Status for claim ' + claim.noUrut + ' updated to ' + newStatus + '!', false);
                         } catch (error) {
                             console.error("Update Status Error:", error);
                             showMessage('submitError', 'Failed to update status: ' + error.message);
@@ -1344,10 +1344,10 @@
         window.deleteClaim = async (claimId, noUrut) => {
             if (currentUserRole === 'guest') return;
 
-            if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
+            if (confirm('Are you sure you want to delete claim No. ' + noUrut + '?')) {
                 try {
                     await database.ref('claims/' + claimId).remove();
-                    showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
+                    showMessage('submitSuccess', 'Claim No. ' + noUrut + ' deleted successfully!', false);
                     loadClaims();
                 } catch (error) {
                     console.error("Delete Claim Error:", error);
