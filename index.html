@@ -23,13 +23,10 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background: linear-gradient(135deg, var(--secondary-color) 0%, var(--bg-color) 100%);
             color: var(--text-color);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .container {
@@ -367,154 +364,6 @@
             margin: 0 15px;
         }
 
-        /* NEW CSS for improved login page */
-        .login-container {
-            max-width: 400px;
-            width: 90%;
-            margin: 0 auto;
-            background: var(--white);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.5s ease-in;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .login-header h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        .login-header p {
-            color: var(--accent-color);
-            margin: 0;
-            font-size: 14px;
-        }
-
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-group {
-            position: relative;
-        }
-
-        .form-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-color);
-        }
-
-        .form-group input {
-            padding-left: 45px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            padding-left: 50px;
-        }
-
-        .login-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 168, 150, 0.3);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: var(--accent-color);
-        }
-
-        .login-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .floating-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.1;
-            background: var(--primary-color);
-            border-radius: 50%;
-        }
-
-        .shape:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: -20px;
-            right: -20px;
-        }
-
-        .shape:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            bottom: 30px;
-            left: -20px;
-        }
-
-        .shape:nth-child(3) {
-            width: 40px;
-            height: 40px;
-            top: 50%;
-            right: 30px;
-        }
-
         @media (max-width: 768px) {
             .container { 
                 padding: 15px; 
@@ -565,41 +414,28 @@
                 margin: 0 8px;
                 font-size: 0.9em;
             }
-            .login-container {
-                padding: 30px 20px;
-            }
         }
     </style>
 </head>
 <body>
-    <div id="loginPage" class="login-container">
-        <div class="floating-shapes">
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
-        </div>
-        <div class="login-header">
-            <h1><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
-            <p>Access your medical claim dashboard</p>
-        </div>
-        <form id="loginForm" class="login-form">
-            <div class="form-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
-            </div>
-            <button type="submit" id="loginBtn" class="login-btn">
+    <div id="loginPage" class="container">
+        <h1><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
+        <form id="loginForm">
+            <label for="email"><i class="fas fa-envelope icon"></i>Email:</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password"><i class="fas fa-lock icon"></i>Password:</label>
+            <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
+
+            <button type="submit" id="loginBtn">
                 <span id="loginSpinner" class="loading hidden"></span>
-                <span>Login</span>
+                Login
+            </button>
+            <button type="button" id="guestLoginBtn" class="full-width" style="background: #6c757d; margin-top: 10px;">
+                <i class="fas fa-user-secret"></i> Login as Guest
             </button>
             <p id="loginError" class="error hidden"></p>
         </form>
-        <div class="login-footer">
-            <p>Secure access to medical claim management</p>
-        </div>
     </div>
 
     <div id="mainPage" class="container hidden">
@@ -1012,163 +848,140 @@
                 }
             } catch (error) {
                 console.error("Error loading claims:", error);
-                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;color:red;">Error loading data</td></tr>`;
+                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" class="error" style="text-align:center;">Failed to load claim data.</td></tr>`;
             }
         }
 
-        function renderClaimsTable(claims) {
+        function renderClaimsTable(data) {
             const claimsBody = document.getElementById('claimsBody');
+            claimsBody.innerHTML = '';
+
             const claimsTableHeader = document.getElementById('claimsTableHeader');
-            const paginationControls = document.getElementById('paginationControls');
-            
-            // Show/hide pagination based on role
+            claimsTableHeader.innerHTML = '';
+
             if (currentUserRole === 'guest') {
-                paginationControls.classList.remove('hidden');
+                claimsTableHeader.innerHTML = `
+                    <th onclick="sortTable(0)">Claim No. <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(1)">TALENTA Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(2)">Submission Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(3)">Employee Name <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(4)">Department <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(5)">Receipt Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(6)">Status <i class="fas fa-sort"></i></th>
+                `;
             } else {
-                paginationControls.classList.add('hidden');
+                claimsTableHeader.innerHTML = `
+                    <th onclick="sortTable(0)">Claim No. <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(1)">TALENTA Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(2)">Submission Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(3)">Employee Name <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(4)">Department <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(5)">Receipt Date <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(6)">Claimed Amount <i class="fas fa-sort"></i></th>
+                    <th onclick="sortTable(7)">Approved Amount <i class="fas fa-sort"></i></th>
+                    <th id="actionsHeader">Actions</th>
+                    <th></th>
+                    <th></th>
+                `;
             }
 
-            // Clear existing content
-            claimsBody.innerHTML = '';
-            
-            if (claims.length === 0) {
+            if (data.length === 0) {
                 const colspanValue = currentUserRole === 'guest' ? 7 : 9;
-                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;">No claims found</td></tr>`;
+                claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;">No claim data available.</td></tr>`;
                 return;
             }
 
-            // Create table headers based on role
-            claimsTableHeader.innerHTML = '';
-            const headers = [
-                { text: 'No.', sortable: true },
-                { text: 'TALENTA Date', sortable: true },
-                { text: 'Submission Date', sortable: true },
-                { text: 'Employee Name', sortable: true },
-                { text: 'Relationship', sortable: true },
-                { text: 'Department', sortable: true },
-                { text: 'Claim Type', sortable: true },
-                { text: 'Claimed Amount', sortable: true },
-                { text: 'Approved Amount', sortable: true },
-                { text: 'Receipt Date', sortable: true },
-                { text: 'Notes', sortable: false },
-                { text: 'Status', sortable: true },
-                { text: 'Actions', sortable: false }
-            ];
+            data.forEach(claim => {
+                const row = claimsBody.insertRow();
+                let cellIndex = 0;
 
-            // Filter headers based on role
-            const visibleHeaders = currentUserRole === 'guest' 
-                ? headers.filter((_, index) => [0, 1, 2, 3, 4, 5, 6, 11].includes(index))
-                : headers;
+                row.insertCell(cellIndex++).textContent = claim.noUrut;
+                row.insertCell(cellIndex++).textContent = claim.tanggalUpload;
+                row.insertCell(cellIndex++).textContent = claim.tanggalPengajuan;
 
-            visibleHeaders.forEach((header, index) => {
-                const th = document.createElement('th');
-                th.innerHTML = header.text;
-                if (header.sortable) {
-                    th.innerHTML += ` <i class="fas fa-sort"></i>`;
-                    th.addEventListener('click', () => sortTable(index));
+                const employeeNameCell = row.insertCell(cellIndex++);
+                employeeNameCell.textContent = claim.namaKaryawan;
+
+                row.insertCell(cellIndex++).textContent = claim.departemen;
+                row.insertCell(cellIndex++).textContent = claim.tanggalPenerimaan || '-';
+
+                if (currentUserRole !== 'guest') {
+                    const claimedAmountCell = row.insertCell(cellIndex++);
+                    claimedAmountCell.textContent = formatRupiah(claim.nominalDiajukan);
+
+                    const approvedAmountCell = row.insertCell(cellIndex++);
+                    approvedAmountCell.textContent = formatRupiah(claim.nominalDisetujui);
                 }
-                claimsTableHeader.appendChild(th);
-            });
-
-            // Populate table rows
-            claims.forEach(claim => {
-                const row = document.createElement('tr');
                 
-                // Helper function to create a cell
-                const createCell = (content, className = '') => {
-                    const cell = document.createElement('td');
-                    cell.innerHTML = content;
-                    if (className) cell.classList.add(className);
-                    return cell;
-                };
-
-                // Create cells based on role
+                const statusCell = row.insertCell(cellIndex++);
                 if (currentUserRole === 'guest') {
-                    row.appendChild(createCell(claim.noUrut || ''));
-                    row.appendChild(createCell(claim.tanggalUpload || ''));
-                    row.appendChild(createCell(claim.tanggalPengajuan || ''));
-                    row.appendChild(createCell(claim.namaKaryawan || ''));
-                    row.appendChild(createCell(claim.hubungan || ''));
-                    row.appendChild(createCell(claim.departemen || ''));
-                    row.appendChild(createCell(claim.jenisKlaim || ''));
-                    
-                    // Status cell with styling
-                    const statusCell = document.createElement('td');
-                    let statusClass = '';
-                    let statusText = claim.status || 'Pending';
-                    if (statusText === 'Pending') statusClass = 'status-pending';
-                    else if (statusText === 'Approved') statusClass = 'status-approved';
-                    else if (statusText === 'Rejected') statusClass = 'status-rejected';
-                    statusCell.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
-                    row.appendChild(statusCell);
+                    const statusSpan = document.createElement('span');
+                    statusSpan.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusSpan.textContent = claim.status || 'Pending';
+                    statusCell.appendChild(statusSpan);
                 } else {
-                    // Admin view - show all columns
-                    row.appendChild(createCell(claim.noUrut || ''));
-                    row.appendChild(createCell(claim.tanggalUpload || ''));
-                    row.appendChild(createCell(claim.tanggalPengajuan || ''));
-                    row.appendChild(createCell(claim.namaKaryawan || ''));
-                    row.appendChild(createCell(claim.hubungan || ''));
-                    row.appendChild(createCell(claim.departemen || ''));
-                    row.appendChild(createCell(claim.jenisKlaim || ''));
-                    row.appendChild(createCell(formatRupiah(claim.nominalDiajukan)));
-                    row.appendChild(createCell(formatRupiah(claim.nominalDisetujui)));
-                    row.appendChild(createCell(claim.tanggalPenerimaan || ''));
-                    row.appendChild(createCell(claim.catatan || ''));
-                    
-                    // Status cell with styling
-                    const statusCell = document.createElement('td');
-                    let statusClass = '';
-                    let statusText = claim.status || 'Pending';
-                    if (statusText === 'Pending') statusClass = 'status-pending';
-                    else if (statusText === 'Approved') statusClass = 'status-approved';
-                    else if (statusText === 'Rejected') statusClass = 'status-rejected';
-                    statusCell.innerHTML = `<span class="${statusClass}">${statusText}</span>`;
-                    row.appendChild(statusCell);
-                    
-                    // Actions cell
-                    const actionsCell = document.createElement('td');
-                    actionsCell.className = 'action-buttons';
-                    actionsCell.innerHTML = `
-                        <button class="edit-btn" title="Edit" data-id="${claim.id}"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" title="Delete" data-id="${claim.id}"><i class="fas fa-trash-alt"></i></button>
-                        <button class="detail-btn" title="View Details" data-id="${claim.id}"><i class="fas fa-eye"></i></button>
+                    const statusDropdown = document.createElement('select');
+                    statusDropdown.classList.add(`status-${(claim.status || 'Pending').toLowerCase()}`);
+                    statusDropdown.innerHTML = `
+                        <option value="Pending" ${claim.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Approved" ${claim.status === 'Approved' ? 'selected' : ''}>Approved</option>
+                        <option value="Rejected" ${claim.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
                     `;
-                    row.appendChild(actionsCell);
+                    statusDropdown.addEventListener('change', async (e) => {
+                        const newStatus = e.target.value;
+                        try {
+                            await database.ref('claims/' + claim.id).update({ status: newStatus });
+                            e.target.className = '';
+                            e.target.classList.add(`status-${newStatus.toLowerCase()}`);
+                            showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
+                        } catch (error) {
+                            console.error("Update Status Error:", error);
+                            showMessage('submitError', 'Failed to update status: ' + error.message);
+                        }
+                    });
+                    statusCell.appendChild(statusDropdown);
                 }
-                
-                claimsBody.appendChild(row);
+
+                if (currentUserRole !== 'guest') {
+                    const actionsCell = row.insertCell(cellIndex++);
+                    actionsCell.classList.add('action-buttons');
+
+                    const detailButton = document.createElement('button');
+                    detailButton.innerHTML = '<i class="fas fa-info-circle"></i>';
+                    detailButton.title = 'View Details';
+                    detailButton.onclick = () => openDetailModal(claim);
+                    actionsCell.appendChild(detailButton);
+
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                    editButton.title = 'Edit Claim';
+                    editButton.onclick = () => openEditModal(claim.id, claim);
+                    actionsCell.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteButton.title = 'Delete Claim';
+                    deleteButton.classList.add('delete-btn');
+                    deleteButton.onclick = () => deleteClaim(claim.id, claim.noUrut);
+                    actionsCell.appendChild(deleteButton);
+                }
             });
-
-            // Add event listeners for action buttons (admin only)
-            if (currentUserRole !== 'guest') {
-                document.querySelectorAll('.edit-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const claimId = e.currentTarget.getAttribute('data-id');
-                        openEditModal(claimId);
-                    });
-                });
-
-                document.querySelectorAll('.delete-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const claimId = e.currentTarget.getAttribute('data-id');
-                        deleteClaim(claimId);
-                    });
-                });
-
-                document.querySelectorAll('.detail-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const claimId = e.currentTarget.getAttribute('data-id');
-                        showClaimDetails(claimId);
-                    });
-                });
-            }
         }
 
-        // --- Sorting Function ---
-        function sortTable(columnIndex) {
+        window.sortTable = function(columnIndex) {
             const headers = document.querySelectorAll('#claimsTable th');
-            
-            // Reset all sort icons
+            let dataKeys;
+            if (currentUserRole === 'guest') {
+                dataKeys = ['noUrut', 'tanggalUpload', 'tanggalPengajuan', 'namaKaryawan', 'departemen', 'tanggalPenerimaan', 'status'];
+            } else {
+                dataKeys = ['noUrut', 'tanggalUpload', 'tanggalPengajuan', 'namaKaryawan', 'departemen', 'tanggalPenerimaan', 'nominalDiajukan', 'nominalDisetujui', 'status'];
+            }
+
+            if (currentUserRole === 'guest' && columnIndex > dataKeys.length - 1) {
+                console.warn("Attempted to sort a hidden column for guest user.");
+                return;
+            }
+
             headers.forEach((header, index) => {
                 const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
                 if (icon) {
@@ -1177,7 +990,6 @@
                 }
             });
 
-            // Update current sort column and direction
             if (currentSortColumn === columnIndex) {
                 currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
             } else {
@@ -1185,380 +997,321 @@
                 currentSortDirection = 'asc';
             }
 
-            // Update sort icon for current column
-            const currentHeader = headers[columnIndex];
-            const currentIcon = currentHeader.querySelector('.fa-sort');
-            if (currentIcon) {
-                currentIcon.classList.remove('fa-sort');
-                currentIcon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+            const icon = headers[columnIndex].querySelector('.fa-sort');
+            if (icon) {
+                icon.classList.remove('fa-sort');
+                icon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
             }
 
-            // Sort the data
-            paginatedClaimsData.sort((a, b) => {
-                let aValue, bValue;
-                
-                // Map column index to data property
-                const columnMap = [
-                    'noUrut', 'tanggalUpload', 'tanggalPengajuan', 'namaKaryawan', 
-                    'hubungan', 'departemen', 'jenisKlaim', 'nominalDiajukan', 
-                    'nominalDisetujui', 'tanggalPenerimaan', 'catatan', 'status'
-                ];
-                
-                const property = columnMap[columnIndex];
-                aValue = a[property] || '';
-                bValue = b[property] || '';
-                
-                // Handle numeric sorting for claim number and amounts
-                if (property === 'noUrut') {
-                    aValue = parseInt(aValue) || 0;
-                    bValue = parseInt(bValue) || 0;
-                } else if (property === 'nominalDiajukan' || property === 'nominalDisetujui') {
-                    aValue = parseInt(cleanRupiahFormat(aValue)) || 0;
-                    bValue = parseInt(cleanRupiahFormat(bValue)) || 0;
+            claimsData.sort((a, b) => {
+                let valA, valB;
+
+                const key = dataKeys[columnIndex];
+
+                valA = a[key];
+                valB = b[key];
+
+                if (key === 'noUrut' || key.includes('nominal')) {
+                    valA = parseInt(valA);
+                    valB = parseInt(valB);
+                } else if (key.includes('tanggal')) {
+                    valA = new Date(valA);
+                    valB = new Date(valB);
+                } else {
+                    valA = String(valA || '').toLowerCase();
+                    valB = String(valB || '').toLowerCase();
                 }
-                
-                // Compare values
-                if (aValue < bValue) return currentSortDirection === 'asc' ? -1 : 1;
-                if (aValue > bValue) return currentSortDirection === 'asc' ? 1 : -1;
+
+                if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
                 return 0;
             });
 
-            // Re-render table with sorted data
+            // Update paginated data with sorted data
+            paginatedClaimsData = [...claimsData];
+            
             if (currentUserRole === 'guest') {
                 renderClaimsTable(getCurrentPageData());
             } else {
-                renderClaimsTable(paginatedClaimsData);
+                renderClaimsTable(claimsData);
             }
-        }
+        };
 
-        // --- Submit Claim Function ---
-        document.getElementById('claimForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const submitSpinner = document.getElementById('submitSpinner');
-            const submitError = document.getElementById('submitError');
-            const submitSuccess = document.getElementById('submitSuccess');
-            
-            submitBtn.disabled = true;
-            submitSpinner.classList.remove('hidden');
-            submitError.classList.add('hidden');
-            submitSuccess.classList.add('hidden');
+        // --- Edit Modal Logic ---
+        const editClaimModal = document.getElementById('editClaimModal');
+        const detailClaimModal = document.getElementById('detailClaimModal');
+        const closeButtons = document.querySelectorAll('.close-button');
+        const editClaimForm = document.getElementById('editClaimForm');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const editSpinner = document.getElementById('editSpinner');
+        const editError = document.getElementById('editError');
+        const editSuccess = document.getElementById('editSuccess');
 
-            try {
-                const claimData = {
-                    noUrut: parseInt(document.getElementById('noUrutForm').value) || 0,
-                    tanggalUpload: document.getElementById('tanggalUpload').value,
-                    tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
-                    namaKaryawan: document.getElementById('namaKaryawan').value.trim(),
-                    hubungan: document.getElementById('hubungan').value.trim(),
-                    departemen: document.getElementById('departemen').value,
-                    jenisKlaim: document.getElementById('jenisKlaim').value.trim(),
-                    nominalDiajukan: cleanRupiahFormat(document.getElementById('nominalDiajukanBaru').value),
-                    nominalDisetujui: cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value),
-                    tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
-                    catatan: document.getElementById('catatan').value.trim(),
-                    status: 'Pending',
-                    createdAt: new Date().toISOString()
-                };
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                editClaimModal.style.display = 'none';
+                detailClaimModal.style.display = 'none';
+                editError.classList.add('hidden');
+                editSuccess.classList.add('hidden');
+            });
+        });
 
-                // Validate required fields
-                if (!claimData.tanggalUpload || !claimData.tanggalPengajuan || !claimData.namaKaryawan || 
-                    !claimData.hubungan || !claimData.departemen || !claimData.jenisKlaim) {
-                    throw new Error('Please fill in all required fields');
-                }
-
-                // Save to Firebase
-                await database.ref('claims').push(claimData);
-                
-                // Show success message
-                submitSuccess.textContent = 'Claim submitted successfully!';
-                submitSuccess.classList.remove('hidden');
-                
-                // Reset form
-                document.getElementById('claimForm').reset();
-                updateNextClaimNumber();
-                
-                // Reload claims list
-                loadClaims();
-                
-            } catch (error) {
-                console.error("Error submitting claim:", error);
-                submitError.textContent = error.message || 'Error submitting claim. Please try again.';
-                submitError.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitSpinner.classList.add('hidden');
+        window.addEventListener('click', (event) => {
+            if (event.target === editClaimModal) {
+                editClaimModal.style.display = 'none';
+                editError.classList.add('hidden');
+                editSuccess.classList.add('hidden');
+            }
+            if (event.target === detailClaimModal) {
+                detailClaimModal.style.display = 'none';
             }
         });
 
-        // --- Edit Claim Modal Functions ---
-        async function openEditModal(claimId) {
-            try {
-                const snapshot = await database.ref(`claims/${claimId}`).once('value');
-                const claim = snapshot.val();
-                
-                if (!claim) {
-                    alert('Claim not found');
-                    return;
-                }
+        window.openEditModal = (claimId, claimData) => {
+            if (currentUserRole === 'guest') return;
 
-                // Populate form with claim data
-                document.getElementById('editClaimId').value = claimId;
-                document.getElementById('editNoUrut').value = claim.noUrut || '';
-                document.getElementById('editTanggalUpload').value = claim.tanggalUpload || '';
-                document.getElementById('editTanggalPengajuan').value = claim.tanggalPengajuan || '';
-                document.getElementById('editNamaKaryawan').value = claim.namaKaryawan || '';
-                document.getElementById('editHubungan').value = claim.hubungan || '';
-                document.getElementById('editDepartemen').value = claim.departemen || '';
-                document.getElementById('editJenisKlaim').value = claim.jenisKlaim || '';
-                document.getElementById('editNominalDiajukan').value = formatRupiah(claim.nominalDiajukan);
-                document.getElementById('editNominalDisetujui').value = formatRupiah(claim.nominalDisetujui);
-                document.getElementById('editTanggalPenerimaan').value = claim.tanggalPenerimaan || '';
-                document.getElementById('editCatatan').value = claim.catatan || '';
-                document.getElementById('editStatus').value = claim.status || 'Pending';
+            document.getElementById('editClaimId').value = claimId;
+            document.getElementById('editNoUrut').value = claimData.noUrut;
+            document.getElementById('editTanggalUpload').value = claimData.tanggalUpload;
+            document.getElementById('editTanggalPengajuan').value = claimData.tanggalPengajuan;
+            document.getElementById('editNamaKaryawan').value = claimData.namaKaryawan;
+            document.getElementById('editHubungan').value = claimData.hubungan;
+            document.getElementById('editDepartemen').value = claimData.departemen;
+            document.getElementById('editJenisKlaim').value = claimData.jenisKlaim;
+            document.getElementById('editNominalDiajukan').value = formatRupiah(claimData.nominalDiajukan);
+            document.getElementById('editNominalDisetujui').value = formatRupiah(claimData.nominalDisetujui);
+            document.getElementById('editTanggalPenerimaan').value = claimData.tanggalPenerimaan;
+            document.getElementById('editCatatan').value = claimData.catatan;
+            document.getElementById('editStatus').value = claimData.status || 'Pending';
 
-                // Show modal
-                document.getElementById('editClaimModal').style.display = 'flex';
-            } catch (error) {
-                console.error("Error opening edit modal:", error);
-                alert('Error loading claim data');
-            }
-        }
+            editClaimModal.style.display = 'flex';
+        };
 
-        // Save edited claim
-        document.getElementById('editClaimForm').addEventListener('submit', async (e) => {
+        window.openDetailModal = (claimData) => {
+            const detailsContent = document.getElementById('claimDetailsContent');
+            detailsContent.innerHTML = `
+                <p><strong>Claim No.:</strong> ${claimData.noUrut}</p>
+                <p><strong>TALENTA Date:</strong> ${claimData.tanggalUpload}</p>
+                <p><strong>Submission Date:</strong> ${claimData.tanggalPengajuan}</p>
+                <p><strong>Employee Name:</strong> ${claimData.namaKaryawan}</p>
+                <p><strong>Relationship As:</strong> ${claimData.hubungan}</p>
+                <p><strong>Department:</strong> ${claimData.departemen}</p>
+                <p><strong>Claim Type:</strong> ${claimData.jenisKlaim}</p>
+                <p><strong>Claimed Amount:</strong> ${currentUserRole === 'guest' ? '<span class="blurred-amount">Rp X.XXX.XXX</span>' : formatRupiah(claimData.nominalDiajukan)}</p>
+                <p><strong>Approved Amount:</strong> ${currentUserRole === 'guest' ? '<span class="blurred-amount">Rp X.XXX.XXX</span>' : formatRupiah(claimData.nominalDisetujui)}</p>
+                <p><strong>Receipt Date:</strong> ${claimData.tanggalPenerimaan || '-'}</p>
+                <p><strong>Notes:</strong> ${claimData.catatan || '-'}</p>
+                <p><strong>Status:</strong> <span class="status-${(claimData.status || 'Pending').toLowerCase()}">${claimData.status || 'Pending'}</span></p>
+            `;
+            detailClaimModal.style.display = 'flex';
+        };
+
+        editClaimForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            const saveEditBtn = document.getElementById('saveEditBtn');
-            const editSpinner = document.getElementById('editSpinner');
-            const editError = document.getElementById('editError');
-            const editSuccess = document.getElementById('editSuccess');
-            
+            if (currentUserRole === 'guest') return;
+
             saveEditBtn.disabled = true;
             editSpinner.classList.remove('hidden');
             editError.classList.add('hidden');
             editSuccess.classList.add('hidden');
 
+            const claimId = document.getElementById('editClaimId').value;
+            
+            const editedNominalDiajukan = parseInt(cleanRupiahFormat(document.getElementById('editNominalDiajukan').value)) || 0;
+            const editedNominalDisetujui = parseInt(cleanRupiahFormat(document.getElementById('editNominalDisetujui').value)) || 0;
+
+            const updatedClaimData = {
+                noUrut: parseInt(document.getElementById('editNoUrut').value),
+                tanggalUpload: document.getElementById('editTanggalUpload').value,
+                tanggalPengajuan: document.getElementById('editTanggalPengajuan').value,
+                namaKaryawan: document.getElementById('editNamaKaryawan').value,
+                hubungan: document.getElementById('editHubungan').value,
+                departemen: document.getElementById('editDepartemen').value,
+                jenisKlaim: document.getElementById('editJenisKlaim').value,
+                nominalDiajukan: editedNominalDiajukan,
+                nominalDisetujui: editedNominalDisetujui,
+                tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
+                catatan: document.getElementById('editCatatan').value,
+                status: document.getElementById('editStatus').value,
+            };
+
             try {
-                const claimId = document.getElementById('editClaimId').value;
-                const claimData = {
-                    noUrut: parseInt(document.getElementById('editNoUrut').value) || 0,
-                    tanggalUpload: document.getElementById('editTanggalUpload').value,
-                    tanggalPengajuan: document.getElementById('editTanggalPengajuan').value,
-                    namaKaryawan: document.getElementById('editNamaKaryawan').value.trim(),
-                    hubungan: document.getElementById('editHubungan').value.trim(),
-                    departemen: document.getElementById('editDepartemen').value,
-                    jenisKlaim: document.getElementById('editJenisKlaim').value.trim(),
-                    nominalDiajukan: cleanRupiahFormat(document.getElementById('editNominalDiajukan').value),
-                    nominalDisetujui: cleanRupiahFormat(document.getElementById('editNominalDisetujui').value),
-                    tanggalPenerimaan: document.getElementById('editTanggalPenerimaan').value,
-                    catatan: document.getElementById('editCatatan').value.trim(),
-                    status: document.getElementById('editStatus').value,
-                    updatedAt: new Date().toISOString()
-                };
-
-                // Validate required fields
-                if (!claimData.tanggalUpload || !claimData.tanggalPengajuan || !claimData.namaKaryawan || 
-                    !claimData.hubungan || !claimData.departemen || !claimData.jenisKlaim) {
-                    throw new Error('Please fill in all required fields');
-                }
-
-                // Update in Firebase
-                await database.ref(`claims/${claimId}`).update(claimData);
-                
-                // Show success message
-                editSuccess.textContent = 'Claim updated successfully!';
-                editSuccess.classList.remove('hidden');
-                
-                // Close modal after a delay
+                await database.ref('claims/' + claimId).update(updatedClaimData);
+                showMessage('editSuccess', 'Claim updated successfully!', false);
+                loadClaims();
                 setTimeout(() => {
-                    closeEditModal();
-                    loadClaims();
+                    editClaimModal.style.display = 'none';
+                    editError.classList.add('hidden');
+                    editSuccess.classList.add('hidden');
                 }, 1500);
-                
             } catch (error) {
-                console.error("Error updating claim:", error);
-                editError.textContent = error.message || 'Error updating claim. Please try again.';
-                editError.classList.remove('hidden');
+                console.error("Update Claim Error:", error);
+                showMessage('editError', 'Failed to update claim: ' + error.message);
             } finally {
                 saveEditBtn.disabled = false;
                 editSpinner.classList.add('hidden');
             }
         });
 
-        function closeEditModal() {
-            document.getElementById('editClaimModal').style.display = 'none';
-            document.getElementById('editError').classList.add('hidden');
-            document.getElementById('editSuccess').classList.add('hidden');
-        }
+        window.deleteClaim = async (claimId, noUrut) => {
+            if (currentUserRole === 'guest') return;
 
-        // --- Delete Claim Function ---
-        async function deleteClaim(claimId) {
-            if (!confirm('Are you sure you want to delete this claim?')) return;
-            
-            try {
-                await database.ref(`claims/${claimId}`).remove();
-                loadClaims();
-                alert('Claim deleted successfully');
-            } catch (error) {
-                console.error("Error deleting claim:", error);
-                alert('Error deleting claim');
-            }
-        }
-
-        // --- Show Claim Details ---
-        async function showClaimDetails(claimId) {
-            try {
-                const snapshot = await database.ref(`claims/${claimId}`).once('value');
-                const claim = snapshot.val();
-                
-                if (!claim) {
-                    alert('Claim not found');
-                    return;
+            if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
+                try {
+                    await database.ref('claims/' + claimId).remove();
+                    showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
+                    loadClaims();
+                } catch (error) {
+                    console.error("Delete Claim Error:", error);
+                    showMessage('submitError', 'Failed to delete claim: ' + error.message);
                 }
-
-                const detailsContent = document.getElementById('claimDetailsContent');
-                detailsContent.innerHTML = `
-                    <p><strong>Claim Number:</strong> ${claim.noUrut || ''}</p>
-                    <p><strong>TALENTA Date:</strong> ${claim.tanggalUpload || ''}</p>
-                    <p><strong>Submission Date:</strong> ${claim.tanggalPengajuan || ''}</p>
-                    <p><strong>Employee Name:</strong> ${claim.namaKaryawan || ''}</p>
-                    <p><strong>Relationship:</strong> ${claim.hubungan || ''}</p>
-                    <p><strong>Department:</strong> ${claim.departemen || ''}</p>
-                    <p><strong>Claim Type:</strong> ${claim.jenisKlaim || ''}</p>
-                    <p><strong>Claimed Amount:</strong> ${formatRupiah(claim.nominalDiajukan)}</p>
-                    <p><strong>Approved Amount:</strong> ${formatRupiah(claim.nominalDisetujui)}</p>
-                    <p><strong>Receipt Date:</strong> ${claim.tanggalPenerimaan || ''}</p>
-                    <p><strong>Notes:</strong> ${claim.catatan || ''}</p>
-                    <p><strong>Status:</strong> <span class="${getStatusClass(claim.status || 'Pending')}">${claim.status || 'Pending'}</span></p>
-                `;
-
-                document.getElementById('detailClaimModal').style.display = 'flex';
-            } catch (error) {
-                console.error("Error loading claim details:", error);
-                alert('Error loading claim details');
             }
-        }
+        };
 
-        function getStatusClass(status) {
-            if (status === 'Pending') return 'status-pending';
-            if (status === 'Approved') return 'status-approved';
-            if (status === 'Rejected') return 'status-rejected';
-            return '';
-        }
+        // --- Login/Logout Section and DOMContentLoaded Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
+            document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
 
-        // --- Login Functions ---
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const loginBtn = document.getElementById('loginBtn');
-            const loginSpinner = document.getElementById('loginSpinner');
-            const loginError = document.getElementById('loginError');
-            
-            loginBtn.disabled = true;
-            loginSpinner.classList.remove('hidden');
-            loginError.classList.add('hidden');
+            // Pagination event listeners
+            document.getElementById('firstPageBtn').addEventListener('click', () => goToPage(1));
+            document.getElementById('prevPageBtn').addEventListener('click', () => goToPage(currentPage - 1));
+            document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
+            document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                // Check if this is an admin login attempt
-                if (email === 'admin@medicalclaim.com' && password === 'admin123') {
-                    // Simulate successful admin login
-                    showMainPage('admin');
-                    return;
-                }
-                
-                // Try to sign in with Firebase Auth
-                await auth.signInWithEmailAndPassword(email, password);
-                
-                // If successful, show main page as guest
-                showMainPage('guest');
-                
-            } catch (error) {
-                console.error("Login error:", error);
-                loginError.textContent = 'Invalid email or password. Please try again.';
-                loginError.classList.remove('hidden');
-            } finally {
-                loginBtn.disabled = false;
-                loginSpinner.classList.add('hidden');
-            }
-        });
-
-        // --- Logout Function ---
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                await auth.signOut();
-                showLoginPage();
-            } catch (error) {
-                console.error("Logout error:", error);
-            }
-        });
-
-        // --- Auto-format Nominal Inputs ---
-        function setupNominalFormatting() {
-            const nominalInputs = [
-                document.getElementById('nominalDiajukanBaru'),
-                document.getElementById('nominalDisetujuiBaru'),
-                document.getElementById('editNominalDiajukan'),
-                document.getElementById('editNominalDisetujui')
-            ];
-
-            nominalInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('input', function() {
-                        const cleaned = cleanRupiahFormat(this.value);
-                        this.value = formatRupiah(cleaned);
-                    });
-                }
-            });
-        }
-
-        // --- Event Listeners for Page Navigation ---
-        document.getElementById('showClaimFormBtn').addEventListener('click', () => showPage('claimFormPage'));
-        document.getElementById('showClaimsListBtn').addEventListener('click', () => showPage('claimsListPage'));
-
-        // --- Modal Close Event Listeners ---
-        document.querySelectorAll('.close-button').forEach(button => {
-            button.addEventListener('click', function() {
-                this.closest('.modal').style.display = 'none';
-            });
-        });
-
-        // Close modals when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
-
-        // --- Pagination Event Listeners ---
-        document.getElementById('firstPageBtn').addEventListener('click', () => goToPage(1));
-        document.getElementById('prevPageBtn').addEventListener('click', () => goToPage(currentPage - 1));
-        document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
-        document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
-
-        // --- Initialize the Application ---
-        function initApp() {
-            // Set up nominal formatting
-            setupNominalFormatting();
-            
-            // Check if user is already logged in
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    // User is signed in, show as guest
-                    showMainPage('guest');
+                    showMainPage('admin');
                 } else {
-                    // No user is signed in, show login page
-                    showLoginPage();
+                    if (sessionStorage.getItem('isGuest') === 'true') {
+                        showMainPage('guest');
+                    } else {
+                        showLoginPage();
+                    }
                 }
             });
-        }
 
-        // Start the application
-        initApp();
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const loginBtn = document.getElementById('loginBtn');
+                const loginSpinner = document.getElementById('loginSpinner');
+                const loginError = document.getElementById('loginError');
+
+                loginBtn.disabled = true;
+                loginSpinner.classList.remove('hidden');
+                loginError.classList.add('hidden');
+
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    sessionStorage.removeItem('isGuest');
+                } catch (error) {
+                    console.error("Login Error:", error.code, error.message);
+                    let errorMessage = "An error occurred during login.";
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        errorMessage = "Invalid email or password.";
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = "Invalid email format.";
+                    }
+                    showMessage('loginError', errorMessage);
+                } finally {
+                    loginBtn.disabled = false;
+                    loginSpinner.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('guestLoginBtn').addEventListener('click', () => {
+                sessionStorage.setItem('isGuest', 'true');
+                showMainPage('guest');
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    if (currentUserRole === 'guest') {
+                        sessionStorage.removeItem('isGuest');
+                        showLoginPage();
+                    } else {
+                        await auth.signOut();
+                    }
+                } catch (error) {
+                    console.error("Logout Error:", error.message);
+                    alert("Failed to logout: " + error.message);
+                }
+            });
+
+            document.getElementById('claimForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (currentUserRole === 'guest') return;
+
+                const submitBtn = document.getElementById('submitBtn');
+                const submitSpinner = document.getElementById('submitSpinner');
+                const submitError = document.getElementById('submitError');
+                const submitSuccess = document.getElementById('submitSuccess');
+
+                submitBtn.disabled = true;
+                submitSpinner.classList.remove('hidden');
+                submitError.classList.add('hidden');
+                submitSuccess.classList.add('hidden');
+
+                try {
+                    const currentNoUrut = parseInt(document.getElementById('noUrutForm').value);
+
+                    const nominalDiajukanValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDiajukanBaru').value)) || 0;
+                    const nominalDisetujuiValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value)) || 0;
+
+                    const claimData = {
+                        noUrut: currentNoUrut,
+                        tanggalUpload: document.getElementById('tanggalUpload').value,
+                        tanggalPengajuan: document.getElementById('tanggalPengajuan').value,
+                        namaKaryawan: document.getElementById('namaKaryawan').value,
+                        hubungan: document.getElementById('hubungan').value,
+                        departemen: document.getElementById('departemen').value,
+                        jenisKlaim: document.getElementById('jenisKlaim').value,
+                        nominalDiajukan: nominalDiajukanValue,
+                        nominalDisetujui: nominalDisetujuiValue,
+                        tanggalPenerimaan: document.getElementById('tanggalPenerimaan').value,
+                        catatan: document.getElementById('catatan').value,
+                        status: 'Pending',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+
+                    await database.ref('claims').push(claimData);
+                    showMessage('submitSuccess', 'Claim submitted successfully!', false);
+                    document.getElementById('claimForm').reset();
+                    document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
+                    document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
+                    updateNextClaimNumber();
+                } catch (error) {
+                    console.error("Submit Claim Error:", error);
+                    showMessage('submitError', 'Failed to submit claim: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitSpinner.classList.add('hidden');
+                }
+            });
+
+            ['nominalDiajukanBaru', 'nominalDisetujuiBaru', 'editNominalDiajukan', 'editNominalDisetujui'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', (e) => {
+                        let value = e.target.value;
+                        let cleanValue = cleanRupiahFormat(value);
+                        e.target.value = formatRupiah(cleanValue);
+                    });
+
+                    if (input.value && input.value !== 'Rp 0') {
+                        const initialCleanValue = cleanRupiahFormat(input.value);
+                        input.value = formatRupiah(initialCleanValue);
+                    }
+                }
+            });
+
+            document.getElementById('showClaimFormBtn').addEventListener('click', () => showPage('claimFormPage'));
+            document.getElementById('showClaimsListBtn').addEventListener('click', () => showPage('claimsListPage'));
+
+            updateNextClaimNumber();
+        });
     </script>
 </body>
 </html>
