@@ -42,6 +42,7 @@
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease-in;
             position: relative;
+            width: 100%;
         }
 
         @keyframes fadeIn {
@@ -150,7 +151,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 0;
             background: var(--white);
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -183,7 +184,9 @@
             transition: background 0.3s;
         }
 
-        .hidden { display: none; }
+        .hidden { 
+            display: none !important; 
+        }
 
         .error { color: #ff6b6b; background: #ffebee; padding: 10px; border-radius: 5px; margin: 10px 0; }
 
@@ -252,10 +255,21 @@
             color: var(--white);
         }
 
-        /* Page content */
+        /* Page content - FIXED: Same size for both pages */
         .page-content {
-            padding-top: 20px;
-            border-top: 1px solid var(--secondary-color);
+            padding: 25px;
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
         }
 
         /* Modal Styling */
@@ -564,6 +578,10 @@
             .login-container {
                 padding: 30px 20px;
             }
+            .page-content {
+                padding: 20px;
+                min-height: 400px;
+            }
         }
     </style>
 </head>
@@ -817,7 +835,7 @@
             }, 500);
         }
 
-        // Show/Hide Pages with Animation
+        // Show/Hide Pages with Animation - FIXED: No resizing
         function showLoginPage() {
             fadeOut(document.getElementById('mainPage'), () => {
                 fadeIn(document.getElementById('loginPage'));
@@ -862,14 +880,24 @@
             loadClaims();
         }
 
-        // Function to display a specific page
+        // Function to display a specific page - FIXED: No resizing effect
         function showPage(pageId) {
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => {
                 if (page.id === pageId) {
-                    fadeIn(page);
+                    page.classList.remove('hidden');
+                    // Use opacity transition instead of display changes
+                    page.style.opacity = '0';
+                    setTimeout(() => {
+                        page.style.transition = 'opacity 0.3s ease';
+                        page.style.opacity = '1';
+                    }, 10);
                 } else {
-                    fadeOut(page);
+                    page.style.transition = 'opacity 0.3s ease';
+                    page.style.opacity = '0';
+                    setTimeout(() => {
+                        page.classList.add('hidden');
+                    }, 300);
                 }
             });
 
@@ -1311,7 +1339,7 @@
                 saveEditBtn.disabled = false;
                 editSpinner.classList.add('hidden');
             }
-        });
+        };
 
         window.deleteClaim = async (claimId, noUrut) => {
             if (currentUserRole === 'guest') return;
