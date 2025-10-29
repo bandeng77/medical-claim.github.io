@@ -68,9 +68,12 @@
         }
 
         #claimForm {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
+            width: 100%;
+            display: block; /* Hilangkan grid agar tidak menyempit */
+        }
+            #claimForm input,
+            #claimForm select,
+            #claimForm textarea {
             width: 100%;
         }
 
