@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
+        /* CSS styles tetap sama seperti sebelumnya */
         :root {
             --primary-color: #00A896;
             --secondary-color: #A8E6CF;
@@ -842,7 +843,6 @@
             const actionsHeader = document.getElementById('actionsHeader');
             const mainPageTitle = document.getElementById('mainPageTitle');
             const adminOnlyHeaders = document.querySelectorAll('.admin-only-header');
-            const paginationControls = document.getElementById('paginationControls');
 
             if (role === 'guest') {
                 claimFormPage.classList.add('hidden');
@@ -850,16 +850,12 @@
                 if (actionsHeader) actionsHeader.classList.add('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (View Only)';
                 adminOnlyHeaders.forEach(header => header.classList.add('hidden'));
-                // Show pagination for guest
-                paginationControls.classList.remove('hidden');
             } else {
                 claimFormPage.classList.remove('hidden');
                 showClaimFormBtn.classList.remove('hidden');
                 if (actionsHeader) actionsHeader.classList.remove('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim';
                 adminOnlyHeaders.forEach(header => header.classList.remove('hidden'));
-                // Hide pagination for admin
-                paginationControls.classList.add('hidden');
             }
             loadClaims();
         }
@@ -934,8 +930,8 @@
             const lastPageBtn = document.getElementById('lastPageBtn');
             const pageInfo = document.getElementById('pageInfo');
 
-            // Show/hide pagination based on role
-            if (currentUserRole === 'guest') {
+            // Show pagination only for admin
+            if (currentUserRole === 'admin') {
                 paginationControls.classList.remove('hidden');
             } else {
                 paginationControls.classList.add('hidden');
@@ -994,8 +990,8 @@
                 totalPages = Math.ceil(totalRecords / itemsPerPage);
                 currentPage = 1;
 
-                // Render table with paginated data for guest, full data for admin
-                if (currentUserRole === 'guest') {
+                // Render table with paginated data for admin, full data for guest
+                if (currentUserRole === 'admin') {
                     renderClaimsTable(getCurrentPageData());
                     updatePaginationControls();
                 } else {
@@ -1208,7 +1204,7 @@
             totalPages = Math.ceil(totalRecords / itemsPerPage);
             currentPage = 1;
             
-            if (currentUserRole === 'guest') {
+            if (currentUserRole === 'admin') {
                 renderClaimsTable(getCurrentPageData());
                 updatePaginationControls();
             } else {
@@ -1330,7 +1326,7 @@
                 saveEditBtn.disabled = false;
                 editSpinner.classList.add('hidden');
             }
-        });
+        };
 
         window.deleteClaim = async (claimId, noUrut) => {
             if (currentUserRole === 'guest') return;
@@ -1394,6 +1390,8 @@
                         errorMessage = "Invalid email or password.";
                     } else if (error.code === 'auth/invalid-email') {
                         errorMessage = "Invalid email format.";
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = "Too many failed login attempts. Please try again later.";
                     }
                     showMessage('loginError', errorMessage);
                 } finally {
