@@ -10,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
-        /* CSS styles tetap sama seperti sebelumnya */
         :root {
             --primary-color: #00A896;
             --secondary-color: #A8E6CF;
@@ -822,15 +821,25 @@
 
         // Show/Hide Pages with Animation
         function showLoginPage() {
-            fadeOut(document.getElementById('mainPage'), () => {
-                fadeIn(document.getElementById('loginPage'));
-            });
+            const mainPage = document.getElementById('mainPage');
+            const loginPage = document.getElementById('loginPage');
+            
+            if (!mainPage.classList.contains('hidden')) {
+                fadeOut(mainPage, () => {
+                    fadeIn(loginPage);
+                });
+            } else {
+                fadeIn(loginPage);
+            }
         }
 
         function showMainPage(role) {
             currentUserRole = role;
-            fadeOut(document.getElementById('loginPage'), () => {
-                fadeIn(document.getElementById('mainPage'));
+            const loginPage = document.getElementById('loginPage');
+            const mainPage = document.getElementById('mainPage');
+            
+            fadeOut(loginPage, () => {
+                fadeIn(mainPage);
                 updateUIForRole(role);
                 showPage('claimsListPage');
             });
@@ -1051,8 +1060,6 @@
                     <th onclick="sortTable(6)">Claimed Amount <i class="fas fa-sort"></i></th>
                     <th onclick="sortTable(7)">Approved Amount <i class="fas fa-sort"></i></th>
                     <th id="actionsHeader">Actions</th>
-                    <th></th>
-                    <th></th>
                 `;
             }
 
@@ -1354,7 +1361,9 @@
             document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
             document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
 
+            // Auth state listener
             auth.onAuthStateChanged(user => {
+                console.log('Auth state changed:', user);
                 if (user) {
                     // Check if the user is one of the authorized users
                     const authorizedEmails = ['anisah@genetek.co.id', 'anggita-s@genetek.co.id'];
@@ -1382,7 +1391,9 @@
                 loginError.classList.add('hidden');
 
                 try {
+                    console.log('Attempting login with:', email);
                     await auth.signInWithEmailAndPassword(email, password);
+                    console.log('Login successful');
                 } catch (error) {
                     console.error("Login Error:", error.code, error.message);
                     let errorMessage = "An error occurred during login.";
@@ -1392,6 +1403,8 @@
                         errorMessage = "Invalid email format.";
                     } else if (error.code === 'auth/too-many-requests') {
                         errorMessage = "Too many failed login attempts. Please try again later.";
+                    } else {
+                        errorMessage = error.message;
                     }
                     showMessage('loginError', errorMessage);
                 } finally {
