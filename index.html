@@ -794,6 +794,7 @@
         let currentPage = 1;
         const itemsPerPage = 10;
         let totalPages = 1;
+        let totalRecords = 0;
         let paginatedClaimsData = [];
 
         // Fade animation functions
@@ -926,21 +927,32 @@
 
         // --- Pagination Functions ---
         function updatePaginationControls() {
+            const paginationControls = document.getElementById('paginationControls');
             const firstPageBtn = document.getElementById('firstPageBtn');
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
             const lastPageBtn = document.getElementById('lastPageBtn');
             const pageInfo = document.getElementById('pageInfo');
 
+            // Show/hide pagination based on role
+            if (currentUserRole === 'guest') {
+                paginationControls.classList.remove('hidden');
+            } else {
+                paginationControls.classList.add('hidden');
+                return;
+            }
+
             firstPageBtn.disabled = currentPage === 1;
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages;
             lastPageBtn.disabled = currentPage === totalPages;
 
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages} (Total: ${totalRecords} records)`;
         }
 
         function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            
             currentPage = page;
             renderClaimsTable(getCurrentPageData());
             updatePaginationControls();
@@ -973,11 +985,13 @@
                     claimsData.push({ id: key, ...claims[key] });
                 });
                 
-                claimsData.sort((a, b) => a.noUrut - b.noUrut);
+                // Default sort by claim number
+                claimsData.sort((a, b) => (a.noUrut || 0) - (b.noUrut || 0));
                 
                 // Set data for pagination
                 paginatedClaimsData = [...claimsData];
-                totalPages = Math.ceil(paginatedClaimsData.length / itemsPerPage);
+                totalRecords = paginatedClaimsData.length;
+                totalPages = Math.ceil(totalRecords / itemsPerPage);
                 currentPage = 1;
 
                 // Render table with paginated data for guest, full data for admin
@@ -1173,11 +1187,11 @@
                 valB = b[key];
 
                 if (key === 'noUrut' || key.includes('nominal')) {
-                    valA = parseInt(valA);
-                    valB = parseInt(valB);
+                    valA = parseInt(valA) || 0;
+                    valB = parseInt(valB) || 0;
                 } else if (key.includes('tanggal')) {
-                    valA = new Date(valA);
-                    valB = new Date(valB);
+                    valA = new Date(valA || 0);
+                    valB = new Date(valB || 0);
                 } else {
                     valA = String(valA || '').toLowerCase();
                     valB = String(valB || '').toLowerCase();
@@ -1190,9 +1204,13 @@
 
             // Update paginated data with sorted data
             paginatedClaimsData = [...claimsData];
+            totalRecords = paginatedClaimsData.length;
+            totalPages = Math.ceil(totalRecords / itemsPerPage);
+            currentPage = 1;
             
             if (currentUserRole === 'guest') {
                 renderClaimsTable(getCurrentPageData());
+                updatePaginationControls();
             } else {
                 renderClaimsTable(claimsData);
             }
