@@ -794,8 +794,8 @@
         let currentPage = 1;
         const itemsPerPage = 10;
         let totalPages = 1;
-        let totalRecords = 0;
         let paginatedClaimsData = [];
+        let claimsData = [];
 
         // Fade animation functions
         function fadeIn(element) {
@@ -821,25 +821,15 @@
 
         // Show/Hide Pages with Animation
         function showLoginPage() {
-            const mainPage = document.getElementById('mainPage');
-            const loginPage = document.getElementById('loginPage');
-            
-            if (!mainPage.classList.contains('hidden')) {
-                fadeOut(mainPage, () => {
-                    fadeIn(loginPage);
-                });
-            } else {
-                fadeIn(loginPage);
-            }
+            fadeOut(document.getElementById('mainPage'), () => {
+                fadeIn(document.getElementById('loginPage'));
+            });
         }
 
         function showMainPage(role) {
             currentUserRole = role;
-            const loginPage = document.getElementById('loginPage');
-            const mainPage = document.getElementById('mainPage');
-            
-            fadeOut(loginPage, () => {
-                fadeIn(mainPage);
+            fadeOut(document.getElementById('loginPage'), () => {
+                fadeIn(document.getElementById('mainPage'));
                 updateUIForRole(role);
                 showPage('claimsListPage');
             });
@@ -852,6 +842,7 @@
             const actionsHeader = document.getElementById('actionsHeader');
             const mainPageTitle = document.getElementById('mainPageTitle');
             const adminOnlyHeaders = document.querySelectorAll('.admin-only-header');
+            const paginationControls = document.getElementById('paginationControls');
 
             if (role === 'guest') {
                 claimFormPage.classList.add('hidden');
@@ -859,12 +850,16 @@
                 if (actionsHeader) actionsHeader.classList.add('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (View Only)';
                 adminOnlyHeaders.forEach(header => header.classList.add('hidden'));
+                // Show pagination for guest
+                paginationControls.classList.remove('hidden');
             } else {
                 claimFormPage.classList.remove('hidden');
                 showClaimFormBtn.classList.remove('hidden');
                 if (actionsHeader) actionsHeader.classList.remove('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim';
                 adminOnlyHeaders.forEach(header => header.classList.remove('hidden'));
+                // Show pagination for admin as well
+                paginationControls.classList.remove('hidden');
             }
             loadClaims();
         }
@@ -932,32 +927,21 @@
 
         // --- Pagination Functions ---
         function updatePaginationControls() {
-            const paginationControls = document.getElementById('paginationControls');
             const firstPageBtn = document.getElementById('firstPageBtn');
             const prevPageBtn = document.getElementById('prevPageBtn');
             const nextPageBtn = document.getElementById('nextPageBtn');
             const lastPageBtn = document.getElementById('lastPageBtn');
             const pageInfo = document.getElementById('pageInfo');
 
-            // Show pagination only for admin
-            if (currentUserRole === 'admin') {
-                paginationControls.classList.remove('hidden');
-            } else {
-                paginationControls.classList.add('hidden');
-                return;
-            }
-
             firstPageBtn.disabled = currentPage === 1;
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages;
             lastPageBtn.disabled = currentPage === totalPages;
 
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages} (Total: ${totalRecords} records)`;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
         }
 
         function goToPage(page) {
-            if (page < 1 || page > totalPages) return;
-            
             currentPage = page;
             renderClaimsTable(getCurrentPageData());
             updatePaginationControls();
@@ -972,7 +956,6 @@
         // --- Load Claims and Sorting Section ---
         let currentSortColumn = -1;
         let currentSortDirection = 'asc';
-        let claimsData = [];
 
         async function loadClaims() {
             const claimsBody = document.getElementById('claimsBody');
@@ -990,22 +973,16 @@
                     claimsData.push({ id: key, ...claims[key] });
                 });
                 
-                // Default sort by claim number
-                claimsData.sort((a, b) => (a.noUrut || 0) - (b.noUrut || 0));
+                claimsData.sort((a, b) => a.noUrut - b.noUrut);
                 
                 // Set data for pagination
                 paginatedClaimsData = [...claimsData];
-                totalRecords = paginatedClaimsData.length;
-                totalPages = Math.ceil(totalRecords / itemsPerPage);
+                totalPages = Math.ceil(paginatedClaimsData.length / itemsPerPage);
                 currentPage = 1;
 
-                // Render table with paginated data for admin, full data for guest
-                if (currentUserRole === 'admin') {
-                    renderClaimsTable(getCurrentPageData());
-                    updatePaginationControls();
-                } else {
-                    renderClaimsTable(claimsData);
-                }
+                // Render table with paginated data for both guest and admin
+                renderClaimsTable(getCurrentPageData());
+                updatePaginationControls();
 
                 // Reset sort state for table headers
                 currentSortColumn = 0;
@@ -1060,6 +1037,8 @@
                     <th onclick="sortTable(6)">Claimed Amount <i class="fas fa-sort"></i></th>
                     <th onclick="sortTable(7)">Approved Amount <i class="fas fa-sort"></i></th>
                     <th id="actionsHeader">Actions</th>
+                    <th></th>
+                    <th></th>
                 `;
             }
 
@@ -1190,11 +1169,11 @@
                 valB = b[key];
 
                 if (key === 'noUrut' || key.includes('nominal')) {
-                    valA = parseInt(valA) || 0;
-                    valB = parseInt(valB) || 0;
+                    valA = parseInt(valA);
+                    valB = parseInt(valB);
                 } else if (key.includes('tanggal')) {
-                    valA = new Date(valA || 0);
-                    valB = new Date(valB || 0);
+                    valA = new Date(valA);
+                    valB = new Date(valB);
                 } else {
                     valA = String(valA || '').toLowerCase();
                     valB = String(valB || '').toLowerCase();
@@ -1207,16 +1186,10 @@
 
             // Update paginated data with sorted data
             paginatedClaimsData = [...claimsData];
-            totalRecords = paginatedClaimsData.length;
-            totalPages = Math.ceil(totalRecords / itemsPerPage);
-            currentPage = 1;
             
-            if (currentUserRole === 'admin') {
-                renderClaimsTable(getCurrentPageData());
-                updatePaginationControls();
-            } else {
-                renderClaimsTable(claimsData);
-            }
+            // Always use pagination for both guest and admin
+            renderClaimsTable(getCurrentPageData());
+            updatePaginationControls();
         };
 
         // --- Edit Modal Logic ---
@@ -1333,7 +1306,7 @@
                 saveEditBtn.disabled = false;
                 editSpinner.classList.add('hidden');
             }
-        };
+        });
 
         window.deleteClaim = async (claimId, noUrut) => {
             if (currentUserRole === 'guest') return;
@@ -1361,9 +1334,7 @@
             document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
             document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
 
-            // Auth state listener
             auth.onAuthStateChanged(user => {
-                console.log('Auth state changed:', user);
                 if (user) {
                     // Check if the user is one of the authorized users
                     const authorizedEmails = ['anisah@genetek.co.id', 'anggita-s@genetek.co.id'];
@@ -1391,9 +1362,7 @@
                 loginError.classList.add('hidden');
 
                 try {
-                    console.log('Attempting login with:', email);
                     await auth.signInWithEmailAndPassword(email, password);
-                    console.log('Login successful');
                 } catch (error) {
                     console.error("Login Error:", error.code, error.message);
                     let errorMessage = "An error occurred during login.";
@@ -1401,10 +1370,6 @@
                         errorMessage = "Invalid email or password.";
                     } else if (error.code === 'auth/invalid-email') {
                         errorMessage = "Invalid email format.";
-                    } else if (error.code === 'auth/too-many-requests') {
-                        errorMessage = "Too many failed login attempts. Please try again later.";
-                    } else {
-                        errorMessage = error.message;
                     }
                     showMessage('loginError', errorMessage);
                 } finally {
