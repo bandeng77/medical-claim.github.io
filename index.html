@@ -607,6 +607,110 @@
             font-weight: bold;
         }
 
+        /* NEW: Employee filter and detail button */
+        .employee-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .employee-select-container {
+            flex: 1;
+        }
+
+        .employee-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .employee-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .view-detail-btn {
+            padding: 8px 15px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+
+        .view-detail-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .view-detail-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* NEW: Employee detail modal */
+        .employee-detail-content {
+            padding: 10px 0;
+        }
+
+        .employee-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .employee-detail-label {
+            font-weight: bold;
+            color: var(--accent-color);
+            flex: 1;
+        }
+
+        .employee-detail-value {
+            flex: 2;
+            text-align: right;
+        }
+
+        .employee-detail-value.claimed {
+            color: var(--primary-color);
+        }
+
+        .employee-detail-value.approved {
+            color: #4caf50;
+        }
+
+        .employee-claims-table {
+            margin-top: 20px;
+        }
+
+        .employee-claims-table table {
+            font-size: 0.8em;
+        }
+
+        /* Action button in employee stats table */
+        .employee-action-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 2px 5px;
+            transition: color 0.2s;
+        }
+
+        .employee-action-btn:hover {
+            color: var(--accent-color);
+        }
+
         @media (max-width: 768px) {
             .container { 
                 padding: 20px; 
@@ -676,6 +780,22 @@
             .stats-controls {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            .employee-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .view-detail-btn {
+                width: 100%;
+            }
+            .employee-detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .employee-detail-value {
+                text-align: left;
+                width: 100%;
             }
         }
 
@@ -852,6 +972,17 @@
                 </div>
                 
                 <div class="stats-card">
+                    <div class="employee-controls">
+                        <div class="employee-select-container">
+                            <select id="employeeSelect" class="employee-select">
+                                <option value="">Select Employee</option>
+                                <!-- Employee options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <button id="viewEmployeeDetailBtn" class="view-detail-btn" disabled>
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                    </div>
                     <h3>Employee Claim Statistics</h3>
                     <div class="stats-table">
                         <table id="employeeStatsTable">
@@ -862,6 +993,7 @@
                                     <th>Claim Count</th>
                                     <th>Total Claimed</th>
                                     <th>Approved Amount</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="employeeStatsBody"></tbody>
@@ -959,6 +1091,17 @@
         </div>
     </div>
 
+    <!-- Employee Detail Modal -->
+    <div id="employeeDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="employeeDetailTitle">Employee Claim Details</h2>
+            <div id="employeeDetailContent" class="employee-detail-content">
+                <!-- Employee details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -991,6 +1134,10 @@
 
         // Chart instance
         let departmentChart = null;
+
+        // Global variables for employee statistics
+        let allEmployeesData = [];
+        let deptStatsData = {};
 
         // Fade animation functions
         function fadeIn(element) {
@@ -1431,6 +1578,9 @@
                 let totalClaimedAmount = 0;
                 let totalApprovedAmount = 0;
                 
+                // Clear previous employee data
+                allEmployeesData = [];
+                
                 filteredClaims.forEach(claim => {
                     const dept = claim.departemen || 'Unknown';
                     const claimedAmount = parseInt(claim.nominalDiajukan) || 0;
@@ -1455,16 +1605,24 @@
                         deptStats[dept].employees[employeeName] = {
                             count: 0,
                             totalClaimed: 0,
-                            totalApproved: 0
+                            totalApproved: 0,
+                            claims: []
                         };
                     }
                     deptStats[dept].employees[employeeName].count++;
                     deptStats[dept].employees[employeeName].totalClaimed += claimedAmount;
                     deptStats[dept].employees[employeeName].totalApproved += approvedAmount;
+                    deptStats[dept].employees[employeeName].claims.push(claim);
                     
                     totalClaimedAmount += claimedAmount;
                     totalApprovedAmount += approvedAmount;
                 });
+                
+                // Store department stats globally
+                deptStatsData = deptStats;
+                
+                // Collect all employees for dropdown
+                populateEmployeeDropdown(deptStats);
                 
                 // Render department statistics
                 renderDepartmentStats(deptStats, totalClaimedAmount);
@@ -1478,8 +1636,41 @@
             } catch (error) {
                 console.error("Error loading statistics:", error);
                 document.getElementById('deptStatsBody').innerHTML = '<tr><td colspan="4" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
-                document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="5" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
+                document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="6" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
             }
+        }
+
+        function populateEmployeeDropdown(deptStats) {
+            const employeeSelect = document.getElementById('employeeSelect');
+            employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+            allEmployeesData = [];
+            
+            Object.keys(deptStats).forEach(dept => {
+                const employees = deptStats[dept].employees;
+                Object.keys(employees).forEach(empName => {
+                    const employeeData = {
+                        name: empName,
+                        department: dept,
+                        count: employees[empName].count,
+                        totalClaimed: employees[empName].totalClaimed,
+                        totalApproved: employees[empName].totalApproved,
+                        claims: employees[empName].claims
+                    };
+                    
+                    allEmployeesData.push(employeeData);
+                    
+                    const option = document.createElement('option');
+                    option.value = empName;
+                    option.textContent = `${empName} (${dept}) - ${employees[empName].count} claims`;
+                    employeeSelect.appendChild(option);
+                });
+            });
+            
+            // Enable/disable view detail button based on selection
+            employeeSelect.addEventListener('change', function() {
+                const viewDetailBtn = document.getElementById('viewEmployeeDetailBtn');
+                viewDetailBtn.disabled = !this.value;
+            });
         }
 
         function renderDepartmentStats(deptStats, totalClaimedAmount) {
@@ -1525,13 +1716,14 @@
                         department: dept,
                         count: employees[empName].count,
                         totalClaimed: employees[empName].totalClaimed,
-                        totalApproved: employees[empName].totalApproved
+                        totalApproved: employees[empName].totalApproved,
+                        claims: employees[empName].claims
                     });
                 });
             });
             
             if (allEmployees.length === 0) {
-                employeeStatsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No data available for selected year.</td></tr>';
+                employeeStatsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No data available for selected year.</td></tr>';
                 document.getElementById('employeeCount').textContent = '0';
                 return;
             }
@@ -1556,9 +1748,114 @@
                 const approvedCell = row.insertCell();
                 approvedCell.textContent = formatRupiah(emp.totalApproved);
                 approvedCell.classList.add('approved-amount');
+                
+                // Action cell with view detail button
+                const actionCell = row.insertCell();
+                const viewButton = document.createElement('button');
+                viewButton.innerHTML = '<i class="fas fa-eye"></i>';
+                viewButton.title = 'View Employee Details';
+                viewButton.classList.add('employee-action-btn');
+                viewButton.onclick = () => showEmployeeDetail(emp.name);
+                actionCell.appendChild(viewButton);
             });
             
             document.getElementById('employeeCount').textContent = topEmployees.length;
+        }
+
+        function showEmployeeDetail(employeeName) {
+            // Find employee data
+            const employeeData = allEmployeesData.find(emp => emp.name === employeeName);
+            
+            if (!employeeData) {
+                alert('Employee data not found!');
+                return;
+            }
+            
+            // Populate modal content
+            const modalTitle = document.getElementById('employeeDetailTitle');
+            const modalContent = document.getElementById('employeeDetailContent');
+            
+            modalTitle.textContent = `Employee Claim Details - ${employeeName}`;
+            
+            let contentHTML = `
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Employee Name:</div>
+                    <div class="employee-detail-value">${employeeData.name}</div>
+                </div>
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Department:</div>
+                    <div class="employee-detail-value">${employeeData.department}</div>
+                </div>
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Total Claims:</div>
+                    <div class="employee-detail-value">${employeeData.count}</div>
+                </div>
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Total Claimed Amount:</div>
+                    <div class="employee-detail-value claimed">${formatRupiah(employeeData.totalClaimed)}</div>
+                </div>
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Total Approved Amount:</div>
+                    <div class="employee-detail-value approved">${formatRupiah(employeeData.totalApproved)}</div>
+                </div>
+                <div class="employee-detail-row">
+                    <div class="employee-detail-label">Approval Rate:</div>
+                    <div class="employee-detail-value">
+                        ${employeeData.totalClaimed > 0 ? 
+                            Math.round((employeeData.totalApproved / employeeData.totalClaimed) * 100) + '%' : 
+                            'N/A'}
+                    </div>
+                </div>
+            `;
+            
+            // Add claims table if there are claims
+            if (employeeData.claims && employeeData.claims.length > 0) {
+                contentHTML += `
+                    <div class="employee-claims-table">
+                        <h4 style="margin-top: 20px; color: var(--accent-color);">Individual Claims</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Claim No.</th>
+                                    <th>Submission Date</th>
+                                    <th>Claim Type</th>
+                                    <th>Claimed Amount</th>
+                                    <th>Approved Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                // Sort claims by submission date (newest first)
+                const sortedClaims = [...employeeData.claims].sort((a, b) => 
+                    new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan)
+                );
+                
+                sortedClaims.forEach(claim => {
+                    contentHTML += `
+                        <tr>
+                            <td>${claim.noUrut}</td>
+                            <td>${claim.tanggalPengajuan}</td>
+                            <td>${claim.jenisKlaim}</td>
+                            <td>${formatRupiah(claim.nominalDiajukan)}</td>
+                            <td class="approved-amount">${formatRupiah(claim.nominalDisetujui)}</td>
+                            <td><span class="status-${(claim.status || 'Pending').toLowerCase()}">${claim.status || 'Pending'}</span></td>
+                        </tr>
+                    `;
+                });
+                
+                contentHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            modalContent.innerHTML = contentHTML;
+            
+            // Show modal
+            document.getElementById('employeeDetailModal').style.display = 'flex';
         }
 
         function createDepartmentChart(deptStats) {
@@ -1680,6 +1977,7 @@
         // --- Edit Modal Logic ---
         const editClaimModal = document.getElementById('editClaimModal');
         const detailClaimModal = document.getElementById('detailClaimModal');
+        const employeeDetailModal = document.getElementById('employeeDetailModal');
         const closeButtons = document.querySelectorAll('.close-button');
         const editClaimForm = document.getElementById('editClaimForm');
         const saveEditBtn = document.getElementById('saveEditBtn');
@@ -1691,6 +1989,7 @@
             button.addEventListener('click', () => {
                 editClaimModal.style.display = 'none';
                 detailClaimModal.style.display = 'none';
+                employeeDetailModal.style.display = 'none';
                 editError.classList.add('hidden');
                 editSuccess.classList.add('hidden');
             });
@@ -1704,6 +2003,9 @@
             }
             if (event.target === detailClaimModal) {
                 detailClaimModal.style.display = 'none';
+            }
+            if (event.target === employeeDetailModal) {
+                employeeDetailModal.style.display = 'none';
             }
         });
 
@@ -1833,6 +2135,14 @@
             // Year filter event listener for statistics
             document.getElementById('statsYearFilter').addEventListener('change', function() {
                 loadStatistics();
+            });
+
+            // View employee detail button event listener
+            document.getElementById('viewEmployeeDetailBtn').addEventListener('click', function() {
+                const selectedEmployee = document.getElementById('employeeSelect').value;
+                if (selectedEmployee) {
+                    showEmployeeDetail(selectedEmployee);
+                }
             });
 
             auth.onAuthStateChanged(user => {
