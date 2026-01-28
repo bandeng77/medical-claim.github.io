@@ -601,6 +601,12 @@
             gap: 15px;
         }
 
+        /* Styling untuk approved amount */
+        .approved-amount {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
             .container { 
                 padding: 20px; 
@@ -855,6 +861,7 @@
                                     <th>Department</th>
                                     <th>Claim Count</th>
                                     <th>Total Claimed</th>
+                                    <th>Approved Amount</th>
                                 </tr>
                             </thead>
                             <tbody id="employeeStatsBody"></tbody>
@@ -1422,40 +1429,47 @@
                 // Calculate department statistics
                 const deptStats = {};
                 let totalClaimedAmount = 0;
+                let totalApprovedAmount = 0;
                 
                 filteredClaims.forEach(claim => {
                     const dept = claim.departemen || 'Unknown';
                     const claimedAmount = parseInt(claim.nominalDiajukan) || 0;
+                    const approvedAmount = parseInt(claim.nominalDisetujui) || 0;
                     
                     if (!deptStats[dept]) {
                         deptStats[dept] = {
                             count: 0,
                             totalClaimed: 0,
+                            totalApproved: 0,
                             employees: {}
                         };
                     }
                     
                     deptStats[dept].count++;
                     deptStats[dept].totalClaimed += claimedAmount;
+                    deptStats[dept].totalApproved += approvedAmount;
                     
                     // Track employee statistics within department
                     const employeeName = claim.namaKaryawan || 'Unknown';
                     if (!deptStats[dept].employees[employeeName]) {
                         deptStats[dept].employees[employeeName] = {
                             count: 0,
-                            totalClaimed: 0
+                            totalClaimed: 0,
+                            totalApproved: 0
                         };
                     }
                     deptStats[dept].employees[employeeName].count++;
                     deptStats[dept].employees[employeeName].totalClaimed += claimedAmount;
+                    deptStats[dept].employees[employeeName].totalApproved += approvedAmount;
                     
                     totalClaimedAmount += claimedAmount;
+                    totalApprovedAmount += approvedAmount;
                 });
                 
                 // Render department statistics
                 renderDepartmentStats(deptStats, totalClaimedAmount);
                 
-                // Render employee statistics
+                // Render employee statistics (now with approved amount)
                 renderEmployeeStats(deptStats);
                 
                 // Create chart
@@ -1464,7 +1478,7 @@
             } catch (error) {
                 console.error("Error loading statistics:", error);
                 document.getElementById('deptStatsBody').innerHTML = '<tr><td colspan="4" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
-                document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="4" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
+                document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="5" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
             }
         }
 
@@ -1510,13 +1524,14 @@
                         name: empName,
                         department: dept,
                         count: employees[empName].count,
-                        totalClaimed: employees[empName].totalClaimed
+                        totalClaimed: employees[empName].totalClaimed,
+                        totalApproved: employees[empName].totalApproved
                     });
                 });
             });
             
             if (allEmployees.length === 0) {
-                employeeStatsBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data available for selected year.</td></tr>';
+                employeeStatsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No data available for selected year.</td></tr>';
                 document.getElementById('employeeCount').textContent = '0';
                 return;
             }
@@ -1532,7 +1547,15 @@
                 row.insertCell().textContent = emp.name;
                 row.insertCell().textContent = emp.department;
                 row.insertCell().textContent = emp.count;
-                row.insertCell().textContent = formatRupiah(emp.totalClaimed);
+                
+                // Total Claimed cell
+                const claimedCell = row.insertCell();
+                claimedCell.textContent = formatRupiah(emp.totalClaimed);
+                
+                // Approved Amount cell with special styling
+                const approvedCell = row.insertCell();
+                approvedCell.textContent = formatRupiah(emp.totalApproved);
+                approvedCell.classList.add('approved-amount');
             });
             
             document.getElementById('employeeCount').textContent = topEmployees.length;
@@ -1548,12 +1571,17 @@
             
             const departments = Object.keys(deptStats);
             const claimedAmounts = departments.map(dept => deptStats[dept].totalClaimed);
+            const approvedAmounts = departments.map(dept => deptStats[dept].totalApproved);
             const claimCounts = departments.map(dept => deptStats[dept].count);
             
-            // Create gradient for chart
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(0, 168, 150, 0.8)');
-            gradient.addColorStop(1, 'rgba(0, 168, 150, 0.1)');
+            // Create gradients for chart
+            const gradientClaimed = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientClaimed.addColorStop(0, 'rgba(0, 168, 150, 0.8)');
+            gradientClaimed.addColorStop(1, 'rgba(0, 168, 150, 0.1)');
+            
+            const gradientApproved = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientApproved.addColorStop(0, 'rgba(76, 175, 80, 0.8)');
+            gradientApproved.addColorStop(1, 'rgba(76, 175, 80, 0.1)');
             
             departmentChart = new Chart(ctx, {
                 type: 'bar',
@@ -1563,8 +1591,16 @@
                         {
                             label: 'Total Claimed Amount',
                             data: claimedAmounts,
-                            backgroundColor: gradient,
+                            backgroundColor: gradientClaimed,
                             borderColor: 'rgba(0, 168, 150, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Total Approved Amount',
+                            data: approvedAmounts,
+                            backgroundColor: gradientApproved,
+                            borderColor: 'rgba(76, 175, 80, 1)',
                             borderWidth: 1,
                             yAxisID: 'y'
                         },
@@ -1599,7 +1635,7 @@
                             position: 'left',
                             title: {
                                 display: true,
-                                text: 'Claimed Amount (Rp)'
+                                text: 'Claim Amount (Rp)'
                             },
                             ticks: {
                                 callback: function(value) {
