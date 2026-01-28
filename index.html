@@ -283,7 +283,7 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             width: 80%; 
-            max-width: 600px;
+            max-width: 800px;
             position: relative;
             max-height: 90vh; 
             overflow-y: auto; 
@@ -607,7 +607,8 @@
             font-weight: bold;
         }
 
-        /* NEW: Employee filter and detail button */
+        /* NEW: Department and Employee filter and detail button */
+        .department-controls,
         .employee-controls {
             display: flex;
             justify-content: space-between;
@@ -616,10 +617,12 @@
             gap: 10px;
         }
 
+        .department-select-container,
         .employee-select-container {
             flex: 1;
         }
 
+        .department-select,
         .employee-select {
             width: 100%;
             padding: 8px 12px;
@@ -629,6 +632,7 @@
             transition: border-color 0.3s;
         }
 
+        .department-select:focus,
         .employee-select:focus {
             border-color: var(--primary-color);
             outline: none;
@@ -656,12 +660,12 @@
             cursor: not-allowed;
         }
 
-        /* NEW: Employee detail modal */
-        .employee-detail-content {
+        /* NEW: Detail modals content */
+        .detail-content {
             padding: 10px 0;
         }
 
-        .employee-detail-row {
+        .detail-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -669,35 +673,35 @@
             border-bottom: 1px solid #eee;
         }
 
-        .employee-detail-label {
+        .detail-label {
             font-weight: bold;
             color: var(--accent-color);
             flex: 1;
         }
 
-        .employee-detail-value {
+        .detail-value {
             flex: 2;
             text-align: right;
         }
 
-        .employee-detail-value.claimed {
+        .detail-value.claimed {
             color: var(--primary-color);
         }
 
-        .employee-detail-value.approved {
+        .detail-value.approved {
             color: #4caf50;
         }
 
-        .employee-claims-table {
+        .detail-table {
             margin-top: 20px;
         }
 
-        .employee-claims-table table {
+        .detail-table table {
             font-size: 0.8em;
         }
 
-        /* Action button in employee stats table */
-        .employee-action-btn {
+        /* Action button in stats tables */
+        .stats-action-btn {
             background: none;
             border: none;
             color: var(--primary-color);
@@ -707,8 +711,35 @@
             transition: color 0.2s;
         }
 
-        .employee-action-btn:hover {
+        .stats-action-btn:hover {
             color: var(--accent-color);
+        }
+
+        /* Department summary stats */
+        .department-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .department-summary-item {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--secondary-color);
+            text-align: center;
+        }
+
+        .department-summary-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+
+        .department-summary-value.approved {
+            color: #4caf50;
         }
 
         @media (max-width: 768px) {
@@ -781,6 +812,7 @@
                 flex-direction: column;
                 align-items: stretch;
             }
+            .department-controls,
             .employee-controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -788,14 +820,17 @@
             .view-detail-btn {
                 width: 100%;
             }
-            .employee-detail-row {
+            .detail-row {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 5px;
             }
-            .employee-detail-value {
+            .detail-value {
                 text-align: left;
                 width: 100%;
+            }
+            .department-summary-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -951,6 +986,17 @@
             
             <div class="stats-container">
                 <div class="stats-card">
+                    <div class="department-controls">
+                        <div class="department-select-container">
+                            <select id="departmentSelect" class="department-select">
+                                <option value="">Select Department</option>
+                                <!-- Department options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <button id="viewDepartmentDetailBtn" class="view-detail-btn" disabled>
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                    </div>
                     <h3>Department Statistics</h3>
                     <div class="stats-table">
                         <table id="deptStatsTable">
@@ -958,16 +1004,17 @@
                                 <tr>
                                     <th>Department</th>
                                     <th>Total Claims</th>
-                                    <th>Total Claimed Amount</th>
+                                    <th>Total Claimed</th>
                                     <th>Avg per Claim</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="deptStatsBody"></tbody>
                         </table>
                     </div>
                     <div class="stats-summary">
-                        <span>Total:</span>
-                        <span id="deptTotalAmount">Rp 0</span>
+                        <span>Total Departments:</span>
+                        <span id="deptCount">0</span>
                     </div>
                 </div>
                 
@@ -1096,8 +1143,19 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2 id="employeeDetailTitle">Employee Claim Details</h2>
-            <div id="employeeDetailContent" class="employee-detail-content">
+            <div id="employeeDetailContent" class="detail-content">
                 <!-- Employee details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Detail Modal -->
+    <div id="departmentDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="departmentDetailTitle">Department Claim Details</h2>
+            <div id="departmentDetailContent" class="detail-content">
+                <!-- Department details will be loaded here -->
             </div>
         </div>
     </div>
@@ -1135,8 +1193,9 @@
         // Chart instance
         let departmentChart = null;
 
-        // Global variables for employee statistics
+        // Global variables for statistics
         let allEmployeesData = [];
+        let allDepartmentsData = [];
         let deptStatsData = {};
 
         // Fade animation functions
@@ -1577,9 +1636,11 @@
                 const deptStats = {};
                 let totalClaimedAmount = 0;
                 let totalApprovedAmount = 0;
+                let totalClaimsCount = 0;
                 
-                // Clear previous employee data
+                // Clear previous data
                 allEmployeesData = [];
+                allDepartmentsData = [];
                 
                 filteredClaims.forEach(claim => {
                     const dept = claim.departemen || 'Unknown';
@@ -1591,13 +1652,15 @@
                             count: 0,
                             totalClaimed: 0,
                             totalApproved: 0,
-                            employees: {}
+                            employees: {},
+                            claims: []
                         };
                     }
                     
                     deptStats[dept].count++;
                     deptStats[dept].totalClaimed += claimedAmount;
                     deptStats[dept].totalApproved += approvedAmount;
+                    deptStats[dept].claims.push(claim);
                     
                     // Track employee statistics within department
                     const employeeName = claim.namaKaryawan || 'Unknown';
@@ -1616,10 +1679,14 @@
                     
                     totalClaimedAmount += claimedAmount;
                     totalApprovedAmount += approvedAmount;
+                    totalClaimsCount++;
                 });
                 
                 // Store department stats globally
                 deptStatsData = deptStats;
+                
+                // Collect all departments for dropdown
+                populateDepartmentDropdown(deptStats);
                 
                 // Collect all employees for dropdown
                 populateEmployeeDropdown(deptStats);
@@ -1627,7 +1694,7 @@
                 // Render department statistics
                 renderDepartmentStats(deptStats, totalClaimedAmount);
                 
-                // Render employee statistics (now with approved amount)
+                // Render employee statistics
                 renderEmployeeStats(deptStats);
                 
                 // Create chart
@@ -1635,9 +1702,39 @@
                 
             } catch (error) {
                 console.error("Error loading statistics:", error);
-                document.getElementById('deptStatsBody').innerHTML = '<tr><td colspan="4" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
+                document.getElementById('deptStatsBody').innerHTML = '<tr><td colspan="5" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
                 document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="6" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
             }
+        }
+
+        function populateDepartmentDropdown(deptStats) {
+            const departmentSelect = document.getElementById('departmentSelect');
+            departmentSelect.innerHTML = '<option value="">Select Department</option>';
+            allDepartmentsData = [];
+            
+            Object.keys(deptStats).forEach(dept => {
+                const deptData = {
+                    name: dept,
+                    count: deptStats[dept].count,
+                    totalClaimed: deptStats[dept].totalClaimed,
+                    totalApproved: deptStats[dept].totalApproved,
+                    employees: deptStats[dept].employees,
+                    claims: deptStats[dept].claims
+                };
+                
+                allDepartmentsData.push(deptData);
+                
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = `${dept} - ${deptStats[dept].count} claims`;
+                departmentSelect.appendChild(option);
+            });
+            
+            // Enable/disable view detail button based on selection
+            departmentSelect.addEventListener('change', function() {
+                const viewDetailBtn = document.getElementById('viewDepartmentDetailBtn');
+                viewDetailBtn.disabled = !this.value;
+            });
         }
 
         function populateEmployeeDropdown(deptStats) {
@@ -1680,8 +1777,8 @@
             const departments = Object.keys(deptStats);
             
             if (departments.length === 0) {
-                deptStatsBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data available for selected year.</td></tr>';
-                document.getElementById('deptTotalAmount').textContent = 'Rp 0';
+                deptStatsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No data available for selected year.</td></tr>';
+                document.getElementById('deptCount').textContent = '0';
                 return;
             }
             
@@ -1696,9 +1793,18 @@
                 row.insertCell().textContent = stats.count;
                 row.insertCell().textContent = formatRupiah(stats.totalClaimed);
                 row.insertCell().textContent = formatRupiah(avgPerClaim);
+                
+                // Action cell with view detail button
+                const actionCell = row.insertCell();
+                const viewButton = document.createElement('button');
+                viewButton.innerHTML = '<i class="fas fa-eye"></i>';
+                viewButton.title = 'View Department Details';
+                viewButton.classList.add('stats-action-btn');
+                viewButton.onclick = () => showDepartmentDetail(dept);
+                actionCell.appendChild(viewButton);
             });
             
-            document.getElementById('deptTotalAmount').textContent = formatRupiah(totalClaimedAmount);
+            document.getElementById('deptCount').textContent = departments.length;
         }
 
         function renderEmployeeStats(deptStats) {
@@ -1754,12 +1860,185 @@
                 const viewButton = document.createElement('button');
                 viewButton.innerHTML = '<i class="fas fa-eye"></i>';
                 viewButton.title = 'View Employee Details';
-                viewButton.classList.add('employee-action-btn');
+                viewButton.classList.add('stats-action-btn');
                 viewButton.onclick = () => showEmployeeDetail(emp.name);
                 actionCell.appendChild(viewButton);
             });
             
             document.getElementById('employeeCount').textContent = topEmployees.length;
+        }
+
+        function showDepartmentDetail(departmentName) {
+            // Find department data
+            const deptData = allDepartmentsData.find(dept => dept.name === departmentName);
+            
+            if (!deptData) {
+                alert('Department data not found!');
+                return;
+            }
+            
+            // Populate modal content
+            const modalTitle = document.getElementById('departmentDetailTitle');
+            const modalContent = document.getElementById('departmentDetailContent');
+            
+            modalTitle.textContent = `Department Claim Details - ${departmentName}`;
+            
+            const avgPerClaim = deptData.count > 0 ? Math.round(deptData.totalClaimed / deptData.count) : 0;
+            const approvalRate = deptData.totalClaimed > 0 ? 
+                Math.round((deptData.totalApproved / deptData.totalClaimed) * 100) : 0;
+            
+            let contentHTML = `
+                <div class="department-summary-grid">
+                    <div class="department-summary-item">
+                        <div>Total Claims</div>
+                        <div class="department-summary-value">${deptData.count}</div>
+                    </div>
+                    <div class="department-summary-item">
+                        <div>Total Claimed Amount</div>
+                        <div class="department-summary-value">${formatRupiah(deptData.totalClaimed)}</div>
+                    </div>
+                    <div class="department-summary-item">
+                        <div>Total Approved Amount</div>
+                        <div class="department-summary-value approved">${formatRupiah(deptData.totalApproved)}</div>
+                    </div>
+                    <div class="department-summary-item">
+                        <div>Approval Rate</div>
+                        <div class="department-summary-value">${approvalRate}%</div>
+                    </div>
+                    <div class="department-summary-item">
+                        <div>Average per Claim</div>
+                        <div class="department-summary-value">${formatRupiah(avgPerClaim)}</div>
+                    </div>
+                    <div class="department-summary-item">
+                        <div>Number of Employees</div>
+                        <div class="department-summary-value">${Object.keys(deptData.employees).length}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-row">
+                    <div class="detail-label">Department:</div>
+                    <div class="detail-value">${deptData.name}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Claims:</div>
+                    <div class="detail-value">${deptData.count}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Claimed Amount:</div>
+                    <div class="detail-value claimed">${formatRupiah(deptData.totalClaimed)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Approved Amount:</div>
+                    <div class="detail-value approved">${formatRupiah(deptData.totalApproved)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Approval Rate:</div>
+                    <div class="detail-value">${approvalRate}%</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Average per Claim:</div>
+                    <div class="detail-value">${formatRupiah(avgPerClaim)}</div>
+                </div>
+            `;
+            
+            // Add employees table
+            const employees = deptData.employees;
+            const employeeNames = Object.keys(employees);
+            
+            if (employeeNames.length > 0) {
+                contentHTML += `
+                    <div class="detail-table">
+                        <h4 style="margin-top: 20px; color: var(--accent-color);">Employees in Department (${employeeNames.length})</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee Name</th>
+                                    <th>Claim Count</th>
+                                    <th>Total Claimed</th>
+                                    <th>Approved Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                // Sort employees by total claimed (descending)
+                employeeNames.sort((a, b) => employees[b].totalClaimed - employees[a].totalClaimed);
+                
+                employeeNames.forEach(empName => {
+                    const emp = employees[empName];
+                    contentHTML += `
+                        <tr>
+                            <td>${empName}</td>
+                            <td>${emp.count}</td>
+                            <td>${formatRupiah(emp.totalClaimed)}</td>
+                            <td class="approved-amount">${formatRupiah(emp.totalApproved)}</td>
+                            <td>
+                                <button class="stats-action-btn" onclick="showEmployeeDetail('${empName}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                contentHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            // Add claims table if there are claims
+            if (deptData.claims && deptData.claims.length > 0) {
+                contentHTML += `
+                    <div class="detail-table">
+                        <h4 style="margin-top: 20px; color: var(--accent-color);">Recent Claims (Latest 20)</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Claim No.</th>
+                                    <th>Employee</th>
+                                    <th>Submission Date</th>
+                                    <th>Claim Type</th>
+                                    <th>Claimed Amount</th>
+                                    <th>Approved Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                // Sort claims by submission date (newest first) and take top 20
+                const sortedClaims = [...deptData.claims]
+                    .sort((a, b) => new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan))
+                    .slice(0, 20);
+                
+                sortedClaims.forEach(claim => {
+                    contentHTML += `
+                        <tr>
+                            <td>${claim.noUrut}</td>
+                            <td>${claim.namaKaryawan}</td>
+                            <td>${claim.tanggalPengajuan}</td>
+                            <td>${claim.jenisKlaim}</td>
+                            <td>${formatRupiah(claim.nominalDiajukan)}</td>
+                            <td class="approved-amount">${formatRupiah(claim.nominalDisetujui)}</td>
+                            <td><span class="status-${(claim.status || 'Pending').toLowerCase()}">${claim.status || 'Pending'}</span></td>
+                        </tr>
+                    `;
+                });
+                
+                contentHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+            
+            modalContent.innerHTML = contentHTML;
+            
+            // Show modal
+            document.getElementById('departmentDetailModal').style.display = 'flex';
         }
 
         function showEmployeeDetail(employeeName) {
@@ -1777,41 +2056,40 @@
             
             modalTitle.textContent = `Employee Claim Details - ${employeeName}`;
             
+            const approvalRate = employeeData.totalClaimed > 0 ? 
+                Math.round((employeeData.totalApproved / employeeData.totalClaimed) * 100) : 0;
+            
             let contentHTML = `
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Employee Name:</div>
-                    <div class="employee-detail-value">${employeeData.name}</div>
+                <div class="detail-row">
+                    <div class="detail-label">Employee Name:</div>
+                    <div class="detail-value">${employeeData.name}</div>
                 </div>
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Department:</div>
-                    <div class="employee-detail-value">${employeeData.department}</div>
+                <div class="detail-row">
+                    <div class="detail-label">Department:</div>
+                    <div class="detail-value">${employeeData.department}</div>
                 </div>
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Total Claims:</div>
-                    <div class="employee-detail-value">${employeeData.count}</div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Claims:</div>
+                    <div class="detail-value">${employeeData.count}</div>
                 </div>
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Total Claimed Amount:</div>
-                    <div class="employee-detail-value claimed">${formatRupiah(employeeData.totalClaimed)}</div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Claimed Amount:</div>
+                    <div class="detail-value claimed">${formatRupiah(employeeData.totalClaimed)}</div>
                 </div>
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Total Approved Amount:</div>
-                    <div class="employee-detail-value approved">${formatRupiah(employeeData.totalApproved)}</div>
+                <div class="detail-row">
+                    <div class="detail-label">Total Approved Amount:</div>
+                    <div class="detail-value approved">${formatRupiah(employeeData.totalApproved)}</div>
                 </div>
-                <div class="employee-detail-row">
-                    <div class="employee-detail-label">Approval Rate:</div>
-                    <div class="employee-detail-value">
-                        ${employeeData.totalClaimed > 0 ? 
-                            Math.round((employeeData.totalApproved / employeeData.totalClaimed) * 100) + '%' : 
-                            'N/A'}
-                    </div>
+                <div class="detail-row">
+                    <div class="detail-label">Approval Rate:</div>
+                    <div class="detail-value">${approvalRate}%</div>
                 </div>
             `;
             
             // Add claims table if there are claims
             if (employeeData.claims && employeeData.claims.length > 0) {
                 contentHTML += `
-                    <div class="employee-claims-table">
+                    <div class="detail-table">
                         <h4 style="margin-top: 20px; color: var(--accent-color);">Individual Claims</h4>
                         <table>
                             <thead>
@@ -1978,6 +2256,7 @@
         const editClaimModal = document.getElementById('editClaimModal');
         const detailClaimModal = document.getElementById('detailClaimModal');
         const employeeDetailModal = document.getElementById('employeeDetailModal');
+        const departmentDetailModal = document.getElementById('departmentDetailModal');
         const closeButtons = document.querySelectorAll('.close-button');
         const editClaimForm = document.getElementById('editClaimForm');
         const saveEditBtn = document.getElementById('saveEditBtn');
@@ -1990,6 +2269,7 @@
                 editClaimModal.style.display = 'none';
                 detailClaimModal.style.display = 'none';
                 employeeDetailModal.style.display = 'none';
+                departmentDetailModal.style.display = 'none';
                 editError.classList.add('hidden');
                 editSuccess.classList.add('hidden');
             });
@@ -2006,6 +2286,9 @@
             }
             if (event.target === employeeDetailModal) {
                 employeeDetailModal.style.display = 'none';
+            }
+            if (event.target === departmentDetailModal) {
+                departmentDetailModal.style.display = 'none';
             }
         });
 
@@ -2135,6 +2418,14 @@
             // Year filter event listener for statistics
             document.getElementById('statsYearFilter').addEventListener('change', function() {
                 loadStatistics();
+            });
+
+            // View department detail button event listener
+            document.getElementById('viewDepartmentDetailBtn').addEventListener('click', function() {
+                const selectedDepartment = document.getElementById('departmentSelect').value;
+                if (selectedDepartment) {
+                    showDepartmentDetail(selectedDepartment);
+                }
             });
 
             // View employee detail button event listener
