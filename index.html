@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for Statistics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Excel Export Library -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -136,6 +138,64 @@
             background: #ccc;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* NEW: Export button styling */
+        .export-btn {
+            background: #4CAF50;
+            padding: 8px 15px;
+            font-size: 14px;
+            position: absolute;
+            top: 20px;
+            right: 90px;
+            z-index: 10;
+        }
+
+        .export-btn:hover { 
+            background: #45a049; 
+        }
+
+        /* NEW: Export dropdown styling */
+        .export-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 90px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 200px;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+        }
+
+        .export-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .export-dropdown-item {
+            padding: 12px 15px;
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .export-dropdown-item:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .export-dropdown-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .export-dropdown-item:last-child {
+            border-bottom: none;
         }
 
         .logout-btn {
@@ -756,10 +816,20 @@
             th, td {
                 padding: 10px 12px;
             }
-            .logout-btn {
+            .logout-btn, .export-btn {
                 position: static;
                 float: right;
                 margin-bottom: 15px;
+                margin-left: 5px;
+            }
+            .export-dropdown {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 300px;
+                right: auto;
             }
             .tab-navigation {
                 flex-direction: column;
@@ -873,6 +943,17 @@
     </div>
 
     <div id="mainPage" class="container hidden">
+        <!-- NEW: Export button and dropdown -->
+        <button id="exportBtn" class="export-btn"><i class="fas fa-file-export"></i> Export Excel</button>
+        <div id="exportDropdown" class="export-dropdown">
+            <a href="#" class="export-dropdown-item" id="exportClaimsBtn">
+                <i class="fas fa-list"></i> Export Claim List
+            </a>
+            <a href="#" class="export-dropdown-item" id="exportStatsBtn">
+                <i class="fas fa-chart-bar"></i> Export Statistics
+            </a>
+        </div>
+        
         <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         <h1 id="mainPageTitle"><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
         
@@ -1220,6 +1301,230 @@
             }, 500);
         }
 
+        // NEW: Export Excel Functions
+        function exportToExcel(data, filename, sheetName = 'Sheet1') {
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            
+            // Auto-size columns
+            const max_width = data.reduce((w, r) => Math.max(w, r.name ? r.name.length : 0), 10);
+            ws['!cols'] = [{ wch: max_width + 2 }];
+            
+            XLSX.writeFile(wb, `${filename}_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        async function exportClaimsList() {
+            try {
+                const exportSpinner = document.createElement('span');
+                exportSpinner.className = 'loading';
+                exportSpinner.style.marginRight = '5px';
+                
+                const exportBtn = document.getElementById('exportBtn');
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '';
+                exportBtn.appendChild(exportSpinner);
+                exportBtn.appendChild(document.createTextNode(' Exporting...'));
+                exportBtn.disabled = true;
+                
+                const snapshot = await database.ref('claims').once('value');
+                const claims = snapshot.val() || {};
+                const claimsArray = [];
+                
+                Object.keys(claims).forEach(key => {
+                    const claim = claims[key];
+                    claimsArray.push({
+                        'Claim No.': claim.noUrut || '',
+                        'TALENTA Date': claim.tanggalUpload || '',
+                        'Submission Date': claim.tanggalPengajuan || '',
+                        'Employee Name': claim.namaKaryawan || '',
+                        'Relationship': claim.hubungan || '',
+                        'Department': claim.departemen || '',
+                        'Claim Type': claim.jenisKlaim || '',
+                        'Claimed Amount': formatRupiah(claim.nominalDiajukan || 0),
+                        'Approved Amount': formatRupiah(claim.nominalDisetujui || 0),
+                        'Receipt Date': claim.tanggalPenerimaan || '',
+                        'Notes': claim.catatan || '',
+                        'Status': claim.status || 'Pending',
+                        'Year': claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : ''
+                    });
+                });
+                
+                // Sort by claim number
+                claimsArray.sort((a, b) => a['Claim No.'] - b['Claim No.']);
+                
+                exportToExcel(claimsArray, 'Medical_Claims_List', 'Claims');
+                
+                // Show success message
+                showMessage('submitSuccess', 'Claim list exported successfully!', false);
+                
+            } catch (error) {
+                console.error("Export Error:", error);
+                showMessage('submitError', 'Failed to export claim list: ' + error.message);
+            } finally {
+                // Reset button
+                setTimeout(() => {
+                    const exportBtn = document.getElementById('exportBtn');
+                    exportBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Excel';
+                    exportBtn.disabled = false;
+                }, 1000);
+            }
+        }
+
+        async function exportStatistics() {
+            try {
+                const exportSpinner = document.createElement('span');
+                exportSpinner.className = 'loading';
+                exportSpinner.style.marginRight = '5px';
+                
+                const exportBtn = document.getElementById('exportBtn');
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '';
+                exportBtn.appendChild(exportSpinner);
+                exportBtn.appendChild(document.createTextNode(' Exporting...'));
+                exportBtn.disabled = true;
+                
+                const statsYear = document.getElementById('statsYearFilter').value;
+                const snapshot = await database.ref('claims').once('value');
+                const claims = snapshot.val() || {};
+                const claimsArray = [];
+                
+                Object.keys(claims).forEach(key => {
+                    claimsArray.push({ id: key, ...claims[key] });
+                });
+                
+                // Filter claims by selected year
+                const filteredClaims = claimsArray.filter(claim => {
+                    const claimYear = claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : null;
+                    return claimYear === statsYear;
+                });
+                
+                // Calculate department statistics
+                const deptStats = {};
+                const employeeStats = {};
+                
+                filteredClaims.forEach(claim => {
+                    const dept = claim.departemen || 'Unknown';
+                    const empName = claim.namaKaryawan || 'Unknown';
+                    const claimedAmount = parseInt(claim.nominalDiajukan) || 0;
+                    const approvedAmount = parseInt(claim.nominalDisetujui) || 0;
+                    
+                    // Department stats
+                    if (!deptStats[dept]) {
+                        deptStats[dept] = {
+                            department: dept,
+                            totalClaims: 0,
+                            totalClaimed: 0,
+                            totalApproved: 0,
+                            avgPerClaim: 0,
+                            approvalRate: 0
+                        };
+                    }
+                    deptStats[dept].totalClaims++;
+                    deptStats[dept].totalClaimed += claimedAmount;
+                    deptStats[dept].totalApproved += approvedAmount;
+                    
+                    // Employee stats
+                    const empKey = `${empName} (${dept})`;
+                    if (!employeeStats[empKey]) {
+                        employeeStats[empKey] = {
+                            employee: empName,
+                            department: dept,
+                            claimCount: 0,
+                            totalClaimed: 0,
+                            totalApproved: 0,
+                            approvalRate: 0
+                        };
+                    }
+                    employeeStats[empKey].claimCount++;
+                    employeeStats[empKey].totalClaimed += claimedAmount;
+                    employeeStats[empKey].totalApproved += approvedAmount;
+                });
+                
+                // Calculate averages and rates
+                Object.keys(deptStats).forEach(dept => {
+                    const stats = deptStats[dept];
+                    stats.avgPerClaim = stats.totalClaims > 0 ? Math.round(stats.totalClaimed / stats.totalClaims) : 0;
+                    stats.approvalRate = stats.totalClaimed > 0 ? 
+                        Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
+                });
+                
+                Object.keys(employeeStats).forEach(empKey => {
+                    const stats = employeeStats[empKey];
+                    stats.approvalRate = stats.totalClaimed > 0 ? 
+                        Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
+                });
+                
+                // Prepare data for export
+                const deptExportData = Object.values(deptStats).map(dept => ({
+                    'Department': dept.department,
+                    'Total Claims': dept.totalClaims,
+                    'Total Claimed Amount': formatRupiah(dept.totalClaimed),
+                    'Total Approved Amount': formatRupiah(dept.totalApproved),
+                    'Average per Claim': formatRupiah(dept.avgPerClaim),
+                    'Approval Rate (%)': dept.approvalRate
+                }));
+                
+                const empExportData = Object.values(employeeStats)
+                    .sort((a, b) => b.totalClaimed - a.totalClaimed)
+                    .slice(0, 20)
+                    .map(emp => ({
+                        'Employee': emp.employee,
+                        'Department': emp.department,
+                        'Claim Count': emp.claimCount,
+                        'Total Claimed': formatRupiah(emp.totalClaimed),
+                        'Total Approved': formatRupiah(emp.totalApproved),
+                        'Approval Rate (%)': emp.approvalRate
+                    }));
+                
+                // Create workbook with multiple sheets
+                const wb = XLSX.utils.book_new();
+                
+                // Department Statistics sheet
+                const deptWs = XLSX.utils.json_to_sheet(deptExportData);
+                XLSX.utils.book_append_sheet(wb, deptWs, 'Department Statistics');
+                
+                // Employee Statistics sheet
+                const empWs = XLSX.utils.json_to_sheet(empExportData);
+                XLSX.utils.book_append_sheet(wb, empWs, 'Employee Statistics');
+                
+                // Summary sheet
+                const totalClaims = filteredClaims.length;
+                const totalClaimed = filteredClaims.reduce((sum, claim) => sum + (parseInt(claim.nominalDiajukan) || 0), 0);
+                const totalApproved = filteredClaims.reduce((sum, claim) => sum + (parseInt(claim.nominalDisetujui) || 0), 0);
+                const overallApprovalRate = totalClaimed > 0 ? Math.round((totalApproved / totalClaimed) * 100) : 0;
+                
+                const summaryData = [{
+                    'Year': statsYear,
+                    'Total Claims': totalClaims,
+                    'Total Claimed Amount': formatRupiah(totalClaimed),
+                    'Total Approved Amount': formatRupiah(totalApproved),
+                    'Overall Approval Rate (%)': overallApprovalRate,
+                    'Number of Departments': Object.keys(deptStats).length,
+                    'Number of Employees': Object.keys(employeeStats).length
+                }];
+                
+                const summaryWs = XLSX.utils.json_to_sheet(summaryData);
+                XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+                
+                XLSX.writeFile(wb, `Medical_Claims_Statistics_${statsYear}_${new Date().toISOString().slice(0,10)}.xlsx`);
+                
+                // Show success message
+                showMessage('submitSuccess', 'Statistics exported successfully!', false);
+                
+            } catch (error) {
+                console.error("Export Statistics Error:", error);
+                showMessage('submitError', 'Failed to export statistics: ' + error.message);
+            } finally {
+                // Reset button
+                setTimeout(() => {
+                    const exportBtn = document.getElementById('exportBtn');
+                    exportBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Excel';
+                    exportBtn.disabled = false;
+                }, 1000);
+            }
+        }
+
         // Show/Hide Pages with Animation
         function showLoginPage() {
             fadeOut(document.getElementById('mainPage'), () => {
@@ -1240,10 +1545,11 @@
         function updateUIForRole(role) {
             const claimFormPage = document.getElementById('claimFormPage');
             const showClaimFormBtn = document.getElementById('showClaimFormBtn');
-            const actionsHeader = document.getElementById('actionsHeader');
+            const actionsHeader = document.querySelector('#actionsHeader');
             const mainPageTitle = document.getElementById('mainPageTitle');
             const adminOnlyHeaders = document.querySelectorAll('.admin-only-header');
             const paginationControls = document.getElementById('paginationControls');
+            const exportBtn = document.getElementById('exportBtn');
 
             if (role === 'guest') {
                 claimFormPage.classList.add('hidden');
@@ -1253,6 +1559,8 @@
                 adminOnlyHeaders.forEach(header => header.classList.add('hidden'));
                 // Show pagination for guest
                 paginationControls.classList.remove('hidden');
+                // Show export button for guest too
+                exportBtn.classList.remove('hidden');
             } else {
                 claimFormPage.classList.remove('hidden');
                 showClaimFormBtn.classList.remove('hidden');
@@ -1261,6 +1569,8 @@
                 adminOnlyHeaders.forEach(header => header.classList.remove('hidden'));
                 // Show pagination for admin as well
                 paginationControls.classList.remove('hidden');
+                // Show export button for admin
+                exportBtn.classList.remove('hidden');
             }
             loadClaims();
         }
@@ -2402,6 +2712,36 @@
             const currentYear = new Date().getFullYear();
             document.getElementById('yearFilter').value = 'all';
             document.getElementById('statsYearFilter').value = currentYear.toString();
+
+            // NEW: Export button functionality
+            const exportBtn = document.getElementById('exportBtn');
+            const exportDropdown = document.getElementById('exportDropdown');
+            const exportClaimsBtn = document.getElementById('exportClaimsBtn');
+            const exportStatsBtn = document.getElementById('exportStatsBtn');
+
+            exportBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                exportDropdown.classList.toggle('active');
+            });
+
+            exportClaimsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportDropdown.classList.remove('active');
+                exportClaimsList();
+            });
+
+            exportStatsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportDropdown.classList.remove('active');
+                exportStatistics();
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                    exportDropdown.classList.remove('active');
+                }
+            });
 
             // Pagination event listeners
             document.getElementById('firstPageBtn').addEventListener('click', () => goToPage(1));
