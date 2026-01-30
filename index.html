@@ -1682,7 +1682,8 @@
         let currentSortColumn = -1;
         let currentSortDirection = 'asc';
 
-        async function loadClaims() {
+        // Function to load claims without resetting current page
+        async function loadClaims(preservePage = false) {
             const claimsBody = document.getElementById('claimsBody');
             const paginationControls = document.getElementById('paginationControls');
             
@@ -1701,12 +1702,17 @@
                 // Apply year filter
                 const filteredClaims = filterClaimsByYear(claimsData, yearFilter);
                 
+                // Sort by claim number
                 filteredClaims.sort((a, b) => a.noUrut - b.noUrut);
                 
                 // Set data for pagination
                 paginatedClaimsData = [...filteredClaims];
-                totalPages = Math.ceil(paginatedClaimsData.length / itemsPerPage);
-                currentPage = 1;
+                totalPages = Math.max(1, Math.ceil(paginatedClaimsData.length / itemsPerPage));
+                
+                // Only reset to page 1 if not preserving current page
+                if (!preservePage || currentPage > totalPages) {
+                    currentPage = 1;
+                }
 
                 // Render table with paginated data for both guest and admin
                 renderClaimsTable(getCurrentPageData());
@@ -1819,6 +1825,8 @@
                             e.target.className = '';
                             e.target.classList.add(`status-${newStatus.toLowerCase()}`);
                             showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
+                            // Reload data but preserve current page
+                            loadClaims(true);
                         } catch (error) {
                             console.error("Update Status Error:", error);
                             showMessage('submitError', 'Failed to update status: ' + error.message);
@@ -2673,7 +2681,8 @@
             try {
                 await database.ref('claims/' + claimId).update(updatedClaimData);
                 showMessage('editSuccess', 'Claim updated successfully!', false);
-                loadClaims();
+                // Load claims but preserve current page
+                loadClaims(true);
                 setTimeout(() => {
                     editClaimModal.style.display = 'none';
                     editError.classList.add('hidden');
@@ -2695,7 +2704,8 @@
                 try {
                     await database.ref('claims/' + claimId).remove();
                     showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
-                    loadClaims();
+                    // Load claims but preserve current page
+                    loadClaims(true);
                 } catch (error) {
                     console.error("Delete Claim Error:", error);
                     showMessage('submitError', 'Failed to delete claim: ' + error.message);
@@ -2871,6 +2881,8 @@
                     document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
                     document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
                     updateNextClaimNumber();
+                    // Reload claims but preserve current page
+                    loadClaims(true);
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Failed to submit claim: ' + error.message);
