@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Claim</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for Statistics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Excel Export Library -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -140,7 +137,6 @@
             transform: none;
         }
 
-        /* NEW: Export button styling */
         .export-btn {
             background: #4CAF50;
             padding: 8px 15px;
@@ -151,11 +147,8 @@
             z-index: 10;
         }
 
-        .export-btn:hover { 
-            background: #45a049; 
-        }
+        .export-btn:hover { background: #45a049; }
 
-        /* NEW: Export dropdown styling */
         .export-dropdown {
             position: absolute;
             top: 55px;
@@ -194,9 +187,7 @@
             color: var(--primary-color);
         }
 
-        .export-dropdown-item:last-child {
-            border-bottom: none;
-        }
+        .export-dropdown-item:last-child { border-bottom: none; }
 
         .logout-btn {
             position: absolute;
@@ -250,11 +241,11 @@
 
         .error { color: #ff6b6b; background: #ffebee; padding: 10px; border-radius: 5px; margin: 10px 0; }
 
-        .success { 
-            color: var(--primary-color); 
-            background: #e8f5e8; 
-            padding: 10px; 
-            border-radius: 5px; 
+        .success {
+            color: var(--primary-color);
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
             margin: 10px 0;
             animation: pulse 0.5s;
         }
@@ -285,7 +276,6 @@
 
         .icon { color: var(--primary-color); margin-right: 8px; }
 
-        /* Styling for tab navigation */
         .tab-navigation {
             display: flex;
             justify-content: center;
@@ -315,23 +305,21 @@
             color: var(--white);
         }
 
-        /* Page content */
         .page-content {
             padding-top: 20px;
             border-top: 1px solid var(--secondary-color);
         }
 
-        /* Modal Styling */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 100; 
+            display: none;
+            position: fixed;
+            z-index: 100;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
             animation: fadeIn 0.3s;
             align-items: center;
             justify-content: center;
@@ -342,11 +330,11 @@
             padding: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            width: 80%; 
+            width: 80%;
             max-width: 800px;
             position: relative;
-            max-height: 90vh; 
-            overflow-y: auto; 
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .close-button {
@@ -366,12 +354,10 @@
             cursor: pointer;
         }
 
-        /* Status Styling */
         .status-pending { background-color: #ffeb3b; color: #333; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; }
         .status-approved { background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; }
         .status-rejected { background-color: #f44336; color: white; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; }
 
-        /* Action Buttons in table */
         .action-buttons button {
             background: none;
             border: none;
@@ -381,24 +367,16 @@
             color: var(--accent-color);
             transition: color 0.2s;
         }
-        .action-buttons button:hover {
-            color: var(--primary-color);
-        }
-        .action-buttons button.delete-btn {
-            color: #f44336;
-        }
-        .action-buttons button.delete-btn:hover {
-            color: #d32f2f;
-        }
+        .action-buttons button:hover { color: var(--primary-color); }
+        .action-buttons button.delete-btn { color: #f44336; }
+        .action-buttons button.delete-btn:hover { color: #d32f2f; }
 
-        /* NEW CSS for blurred amounts */
         .blurred-amount {
             filter: blur(3px);
             color: #888;
             font-style: italic;
         }
 
-        /* Pagination Styling */
         .pagination {
             display: flex;
             justify-content: center;
@@ -435,7 +413,6 @@
             margin: 0 15px;
         }
 
-        /* NEW CSS for improved login page */
         .login-container {
             max-width: 450px;
             width: 90%;
@@ -482,9 +459,7 @@
             gap: 20px;
         }
 
-        .form-group {
-            position: relative;
-        }
+        .form-group { position: relative; }
 
         .form-group i {
             position: absolute;
@@ -499,9 +474,7 @@
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
-            padding-left: 50px;
-        }
+        .form-group input:focus { padding-left: 50px; }
 
         .login-btn {
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
@@ -524,9 +497,7 @@
             box-shadow: 0 6px 15px rgba(0, 168, 150, 0.3);
         }
 
-        .login-btn:active {
-            transform: translateY(0);
-        }
+        .login-btn:active { transform: translateY(0); }
 
         .login-footer {
             text-align: center;
@@ -552,28 +523,10 @@
             border-radius: 50%;
         }
 
-        .shape:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: -20px;
-            right: -20px;
-        }
+        .shape:nth-child(1) { width: 80px; height: 80px; top: -20px; right: -20px; }
+        .shape:nth-child(2) { width: 60px; height: 60px; bottom: 30px; left: -20px; }
+        .shape:nth-child(3) { width: 40px; height: 40px; top: 50%; right: 30px; }
 
-        .shape:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            bottom: 30px;
-            left: -20px;
-        }
-
-        .shape:nth-child(3) {
-            width: 40px;
-            height: 40px;
-            top: 50%;
-            right: 30px;
-        }
-
-        /* NEW CSS for Statistics Page */
         .stats-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -661,13 +614,11 @@
             gap: 15px;
         }
 
-        /* Styling untuk approved amount */
         .approved-amount {
             color: #4caf50;
             font-weight: bold;
         }
 
-        /* NEW: Department and Employee filter and detail button */
         .department-controls,
         .employee-controls {
             display: flex;
@@ -678,9 +629,7 @@
         }
 
         .department-select-container,
-        .employee-select-container {
-            flex: 1;
-        }
+        .employee-select-container { flex: 1; }
 
         .department-select,
         .employee-select {
@@ -711,19 +660,10 @@
             white-space: nowrap;
         }
 
-        .view-detail-btn:hover {
-            background: var(--primary-color);
-        }
+        .view-detail-btn:hover { background: var(--primary-color); }
+        .view-detail-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-        .view-detail-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* NEW: Detail modals content */
-        .detail-content {
-            padding: 10px 0;
-        }
+        .detail-content { padding: 10px 0; }
 
         .detail-row {
             display: flex;
@@ -744,23 +684,12 @@
             text-align: right;
         }
 
-        .detail-value.claimed {
-            color: var(--primary-color);
-        }
+        .detail-value.claimed { color: var(--primary-color); }
+        .detail-value.approved { color: #4caf50; }
 
-        .detail-value.approved {
-            color: #4caf50;
-        }
+        .detail-table { margin-top: 20px; }
+        .detail-table table { font-size: 0.8em; }
 
-        .detail-table {
-            margin-top: 20px;
-        }
-
-        .detail-table table {
-            font-size: 0.8em;
-        }
-
-        /* Action button in stats tables */
         .stats-action-btn {
             background: none;
             border: none;
@@ -771,11 +700,8 @@
             transition: color 0.2s;
         }
 
-        .stats-action-btn:hover {
-            color: var(--accent-color);
-        }
+        .stats-action-btn:hover { color: var(--accent-color); }
 
-        /* Department summary stats */
         .department-summary-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -798,24 +724,21 @@
             margin-top: 5px;
         }
 
-        .department-summary-value.approved {
-            color: #4caf50;
+        .department-summary-value.approved { color: #4caf50; }
+
+        /* NEW: scroll-preserve wrapper */
+        #claimsListPage, #statisticsPage, #claimFormPage {
+            /* prevent layout shift when toggling */
+            min-height: 200px;
         }
 
         @media (max-width: 768px) {
-            .container { 
-                padding: 20px; 
-                max-width: 95%;
-            }
+            .container { padding: 20px; max-width: 95%; }
             #claimForm { grid-template-columns: 1fr; }
             #claimForm .full-width { grid-column: auto; }
             .nominal-group { grid-template-columns: 1fr; }
-            table { 
-                font-size: 0.8em;
-            }
-            th, td {
-                padding: 10px 12px;
-            }
+            table { font-size: 0.8em; }
+            th, td { padding: 10px 12px; }
             .logout-btn, .export-btn {
                 position: static;
                 float: right;
@@ -831,83 +754,32 @@
                 max-width: 300px;
                 right: auto;
             }
-            .tab-navigation {
-                flex-direction: column;
-                align-items: center;
-            }
-            .tab-navigation button {
-                width: 100%;
-                max-width: none;
-            }
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
+            .tab-navigation { flex-direction: column; align-items: center; }
+            .tab-navigation button { width: 100%; max-width: none; }
+            .modal-content { width: 95%; padding: 20px; }
             .status-pending, .status-approved, .status-rejected {
                 font-size: 0.7em;
                 padding: 2px 4px;
             }
-            .action-buttons button {
-                font-size: 0.8em;
-                padding: 2px;
-            }
-            .pagination {
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-            .pagination button {
-                padding: 6px 10px;
-                font-size: 0.9em;
-            }
-            .pagination-info {
-                margin: 0 8px;
-                font-size: 0.9em;
-            }
-            .login-container {
-                padding: 30px 20px;
-            }
-            .stats-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .stats-card {
-                padding: 15px;
-            }
-            .year-filter-container {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            .stats-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            .action-buttons button { font-size: 0.8em; padding: 2px; }
+            .pagination { flex-wrap: wrap; gap: 5px; }
+            .pagination button { padding: 6px 10px; font-size: 0.9em; }
+            .pagination-info { margin: 0 8px; font-size: 0.9em; }
+            .login-container { padding: 30px 20px; }
+            .stats-container { grid-template-columns: 1fr; gap: 20px; }
+            .stats-card { padding: 15px; }
+            .year-filter-container { flex-direction: column; gap: 10px; text-align: center; }
+            .stats-controls { flex-direction: column; align-items: stretch; }
             .department-controls,
-            .employee-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .view-detail-btn {
-                width: 100%;
-            }
-            .detail-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            .detail-value {
-                text-align: left;
-                width: 100%;
-            }
-            .department-summary-grid {
-                grid-template-columns: 1fr;
-            }
+            .employee-controls { flex-direction: column; align-items: stretch; }
+            .view-detail-btn { width: 100%; }
+            .detail-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .detail-value { text-align: left; width: 100%; }
+            .department-summary-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 1024px) {
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
+            .stats-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -943,7 +815,6 @@
     </div>
 
     <div id="mainPage" class="container hidden">
-        <!-- NEW: Export button and dropdown -->
         <button id="exportBtn" class="export-btn"><i class="fas fa-file-export"></i> Export Excel</button>
         <div id="exportDropdown" class="export-dropdown">
             <a href="#" class="export-dropdown-item" id="exportClaimsBtn">
@@ -953,10 +824,10 @@
                 <i class="fas fa-chart-bar"></i> Export Statistics
             </a>
         </div>
-        
+
         <button id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         <h1 id="mainPageTitle"><i class="fas fa-stethoscope icon"></i>Medical Claim</h1>
-        
+
         <div class="tab-navigation">
             <button id="showClaimFormBtn" class="active"><i class="fas fa-file-medical icon"></i> Claim Submission Form</button>
             <button id="showClaimsListBtn"><i class="fas fa-list-alt icon"></i> Claim List</button>
@@ -1032,18 +903,15 @@
                     <option value="2026">2026</option>
                 </select>
             </div>
-            
+
             <h2><i class="fas fa-list icon"></i>Claim List</h2>
             <table id="claimsTable">
                 <thead>
-                    <tr id="claimsTableHeader">
-                        <!-- Headers will be dynamically generated by JS based on role -->
-                    </tr>
+                    <tr id="claimsTableHeader"></tr>
                 </thead>
                 <tbody id="claimsBody"></tbody>
             </table>
-            
-            <!-- Pagination Controls -->
+
             <div id="paginationControls" class="pagination hidden">
                 <button id="firstPageBtn" title="First Page"><i class="fas fa-angle-double-left"></i></button>
                 <button id="prevPageBtn" title="Previous Page"><i class="fas fa-angle-left"></i></button>
@@ -1064,14 +932,13 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="stats-container">
                 <div class="stats-card">
                     <div class="department-controls">
                         <div class="department-select-container">
                             <select id="departmentSelect" class="department-select">
                                 <option value="">Select Department</option>
-                                <!-- Department options will be populated dynamically -->
                             </select>
                         </div>
                         <button id="viewDepartmentDetailBtn" class="view-detail-btn" disabled>
@@ -1098,13 +965,12 @@
                         <span id="deptCount">0</span>
                     </div>
                 </div>
-                
+
                 <div class="stats-card">
                     <div class="employee-controls">
                         <div class="employee-select-container">
                             <select id="employeeSelect" class="employee-select">
                                 <option value="">Select Employee</option>
-                                <!-- Employee options will be populated dynamically -->
                             </select>
                         </div>
                         <button id="viewEmployeeDetailBtn" class="view-detail-btn" disabled>
@@ -1133,7 +999,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="stats-card" style="grid-column: 1 / -1; margin-top: 20px;">
                 <h3>Department Comparison Chart</h3>
                 <canvas id="departmentChart" height="80"></canvas>
@@ -1213,9 +1079,7 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Claim Details</h2>
-            <div id="claimDetailsContent">
-                <!-- Details will be loaded here -->
-            </div>
+            <div id="claimDetailsContent"></div>
         </div>
     </div>
 
@@ -1224,9 +1088,7 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2 id="employeeDetailTitle">Employee Claim Details</h2>
-            <div id="employeeDetailContent" class="detail-content">
-                <!-- Employee details will be loaded here -->
-            </div>
+            <div id="employeeDetailContent" class="detail-content"></div>
         </div>
     </div>
 
@@ -1235,14 +1097,14 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2 id="departmentDetailTitle">Department Claim Details</h2>
-            <div id="departmentDetailContent" class="detail-content">
-                <!-- Department details will be loaded here -->
-            </div>
+            <div id="departmentDetailContent" class="detail-content"></div>
         </div>
     </div>
 
     <script>
-        // Firebase configuration
+        /* ============================================================
+           FIREBASE CONFIG
+           ============================================================ */
         const firebaseConfig = {
             apiKey: "AIzaSyCgXWrv-yNSGV1cCzMghgNksY1XNHAfl38",
             authDomain: "badmintonefk.firebaseapp.com",
@@ -1253,33 +1115,33 @@
             appId: "1:987525154148:web:faba3301c884e9cf6a2671"
         };
 
-        // Initialize Firebase App
         const app = firebase.initializeApp(firebaseConfig);
-
-        // Get Auth and Database instances using the compat API
         const auth = app.auth();
         const database = app.database();
 
-        // Global variable to track user role
-        let currentUserRole = 'unauthenticated'; 
-
-        // Variabel global untuk pagination
+        /* ============================================================
+           GLOBAL STATE
+           ============================================================ */
+        let currentUserRole = 'unauthenticated';
         let currentPage = 1;
         const itemsPerPage = 25;
         let totalPages = 1;
         let paginatedClaimsData = [];
         let claimsData = [];
         let yearFilter = 'all';
-
-        // Chart instance
         let departmentChart = null;
-
-        // Global variables for statistics
         let allEmployeesData = [];
         let allDepartmentsData = [];
         let deptStatsData = {};
+        let currentSortColumn = 0;
+        let currentSortDirection = 'asc';
 
-        // Fade animation functions
+        // Tabs that should be preserved after CRUD
+        let activePageId = 'claimsListPage';
+
+        /* ============================================================
+           UTILITY: FADE IN/OUT
+           ============================================================ */
         function fadeIn(element) {
             element.style.opacity = '0';
             element.style.transform = 'translateY(20px)';
@@ -1301,36 +1163,68 @@
             }, 500);
         }
 
-        // NEW: Export Excel Functions
+        /* ============================================================
+           UTILITY: FORMAT RUPIAH
+           ============================================================ */
+        function formatRupiah(amount) {
+            if (amount === null || amount === undefined || amount === '') return 'Rp 0';
+            const numberString = String(amount).replace(/\D/g, '');
+            if (numberString === '') return 'Rp 0';
+            const number = parseInt(numberString);
+            if (isNaN(number) || number === 0) return 'Rp 0';
+            return `Rp ${number.toLocaleString('en-US')}`;
+        }
+
+        function cleanRupiahFormat(formattedString) {
+            if (!formattedString) return '';
+            return formattedString.replace(/[^0-9]/g, '');
+        }
+
+        /* ============================================================
+           UTILITY: FILTER BY YEAR
+           ============================================================ */
+        function filterClaimsByYear(claims, year) {
+            if (year === 'all') return claims;
+            return claims.filter(claim => {
+                const claimYear = claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : null;
+                return claimYear === year;
+            });
+        }
+
+        /* ============================================================
+           UTILITY: MESSAGE
+           ============================================================ */
+        function showMessage(id, msg, isError = true) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden', 'success', 'error');
+            el.classList.add(isError ? 'error' : 'success');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+
+        /* ============================================================
+           EXPORT EXCEL
+           ============================================================ */
         function exportToExcel(data, filename, sheetName = 'Sheet1') {
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            
-            // Auto-size columns
             const max_width = data.reduce((w, r) => Math.max(w, r.name ? r.name.length : 0), 10);
             ws['!cols'] = [{ wch: max_width + 2 }];
-            
             XLSX.writeFile(wb, `${filename}_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
 
         async function exportClaimsList() {
+            const exportBtn = document.getElementById('exportBtn');
+            const originalText = exportBtn.innerHTML;
             try {
-                const exportSpinner = document.createElement('span');
-                exportSpinner.className = 'loading';
-                exportSpinner.style.marginRight = '5px';
-                
-                const exportBtn = document.getElementById('exportBtn');
-                const originalText = exportBtn.innerHTML;
-                exportBtn.innerHTML = '';
-                exportBtn.appendChild(exportSpinner);
-                exportBtn.appendChild(document.createTextNode(' Exporting...'));
+                exportBtn.innerHTML = '<span class="loading"></span> Exporting...';
                 exportBtn.disabled = true;
-                
+
                 const snapshot = await database.ref('claims').once('value');
                 const claims = snapshot.val() || {};
                 const claimsArray = [];
-                
                 Object.keys(claims).forEach(key => {
                     const claim = claims[key];
                     claimsArray.push({
@@ -1349,113 +1243,75 @@
                         'Year': claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : ''
                     });
                 });
-                
-                // Sort by claim number
                 claimsArray.sort((a, b) => a['Claim No.'] - b['Claim No.']);
-                
                 exportToExcel(claimsArray, 'Medical_Claims_List', 'Claims');
-                
-                // Show success message
                 showMessage('submitSuccess', 'Claim list exported successfully!', false);
-                
             } catch (error) {
                 console.error("Export Error:", error);
                 showMessage('submitError', 'Failed to export claim list: ' + error.message);
             } finally {
-                // Reset button
                 setTimeout(() => {
-                    const exportBtn = document.getElementById('exportBtn');
-                    exportBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Excel';
+                    exportBtn.innerHTML = originalText;
                     exportBtn.disabled = false;
                 }, 1000);
             }
         }
 
         async function exportStatistics() {
+            const exportBtn = document.getElementById('exportBtn');
+            const originalText = exportBtn.innerHTML;
             try {
-                const exportSpinner = document.createElement('span');
-                exportSpinner.className = 'loading';
-                exportSpinner.style.marginRight = '5px';
-                
-                const exportBtn = document.getElementById('exportBtn');
-                const originalText = exportBtn.innerHTML;
-                exportBtn.innerHTML = '';
-                exportBtn.appendChild(exportSpinner);
-                exportBtn.appendChild(document.createTextNode(' Exporting...'));
+                exportBtn.innerHTML = '<span class="loading"></span> Exporting...';
                 exportBtn.disabled = true;
-                
+
                 const statsYear = document.getElementById('statsYearFilter').value;
                 const snapshot = await database.ref('claims').once('value');
                 const claims = snapshot.val() || {};
                 const claimsArray = [];
-                
                 Object.keys(claims).forEach(key => {
                     claimsArray.push({ id: key, ...claims[key] });
                 });
-                
-                // Filter claims by selected year
+
                 const filteredClaims = claimsArray.filter(claim => {
                     const claimYear = claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : null;
                     return claimYear === statsYear;
                 });
-                
-                // Calculate department statistics
+
                 const deptStats = {};
                 const employeeStats = {};
-                
+
                 filteredClaims.forEach(claim => {
                     const dept = claim.departemen || 'Unknown';
                     const empName = claim.namaKaryawan || 'Unknown';
                     const claimedAmount = parseInt(claim.nominalDiajukan) || 0;
                     const approvedAmount = parseInt(claim.nominalDisetujui) || 0;
-                    
-                    // Department stats
+
                     if (!deptStats[dept]) {
-                        deptStats[dept] = {
-                            department: dept,
-                            totalClaims: 0,
-                            totalClaimed: 0,
-                            totalApproved: 0,
-                            avgPerClaim: 0,
-                            approvalRate: 0
-                        };
+                        deptStats[dept] = { department: dept, totalClaims: 0, totalClaimed: 0, totalApproved: 0, avgPerClaim: 0, approvalRate: 0 };
                     }
                     deptStats[dept].totalClaims++;
                     deptStats[dept].totalClaimed += claimedAmount;
                     deptStats[dept].totalApproved += approvedAmount;
-                    
-                    // Employee stats
+
                     const empKey = `${empName} (${dept})`;
                     if (!employeeStats[empKey]) {
-                        employeeStats[empKey] = {
-                            employee: empName,
-                            department: dept,
-                            claimCount: 0,
-                            totalClaimed: 0,
-                            totalApproved: 0,
-                            approvalRate: 0
-                        };
+                        employeeStats[empKey] = { employee: empName, department: dept, claimCount: 0, totalClaimed: 0, totalApproved: 0, approvalRate: 0 };
                     }
                     employeeStats[empKey].claimCount++;
                     employeeStats[empKey].totalClaimed += claimedAmount;
                     employeeStats[empKey].totalApproved += approvedAmount;
                 });
-                
-                // Calculate averages and rates
+
                 Object.keys(deptStats).forEach(dept => {
                     const stats = deptStats[dept];
                     stats.avgPerClaim = stats.totalClaims > 0 ? Math.round(stats.totalClaimed / stats.totalClaims) : 0;
-                    stats.approvalRate = stats.totalClaimed > 0 ? 
-                        Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
+                    stats.approvalRate = stats.totalClaimed > 0 ? Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
                 });
-                
                 Object.keys(employeeStats).forEach(empKey => {
                     const stats = employeeStats[empKey];
-                    stats.approvalRate = stats.totalClaimed > 0 ? 
-                        Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
+                    stats.approvalRate = stats.totalClaimed > 0 ? Math.round((stats.totalApproved / stats.totalClaimed) * 100) : 0;
                 });
-                
-                // Prepare data for export
+
                 const deptExportData = Object.values(deptStats).map(dept => ({
                     'Department': dept.department,
                     'Total Claims': dept.totalClaims,
@@ -1464,7 +1320,7 @@
                     'Average per Claim': formatRupiah(dept.avgPerClaim),
                     'Approval Rate (%)': dept.approvalRate
                 }));
-                
+
                 const empExportData = Object.values(employeeStats)
                     .sort((a, b) => b.totalClaimed - a.totalClaimed)
                     .slice(0, 20)
@@ -1476,24 +1332,18 @@
                         'Total Approved': formatRupiah(emp.totalApproved),
                         'Approval Rate (%)': emp.approvalRate
                     }));
-                
-                // Create workbook with multiple sheets
+
                 const wb = XLSX.utils.book_new();
-                
-                // Department Statistics sheet
                 const deptWs = XLSX.utils.json_to_sheet(deptExportData);
                 XLSX.utils.book_append_sheet(wb, deptWs, 'Department Statistics');
-                
-                // Employee Statistics sheet
                 const empWs = XLSX.utils.json_to_sheet(empExportData);
                 XLSX.utils.book_append_sheet(wb, empWs, 'Employee Statistics');
-                
-                // Summary sheet
+
                 const totalClaims = filteredClaims.length;
                 const totalClaimed = filteredClaims.reduce((sum, claim) => sum + (parseInt(claim.nominalDiajukan) || 0), 0);
                 const totalApproved = filteredClaims.reduce((sum, claim) => sum + (parseInt(claim.nominalDisetujui) || 0), 0);
                 const overallApprovalRate = totalClaimed > 0 ? Math.round((totalApproved / totalClaimed) * 100) : 0;
-                
+
                 const summaryData = [{
                     'Year': statsYear,
                     'Total Claims': totalClaims,
@@ -1503,29 +1353,25 @@
                     'Number of Departments': Object.keys(deptStats).length,
                     'Number of Employees': Object.keys(employeeStats).length
                 }];
-                
                 const summaryWs = XLSX.utils.json_to_sheet(summaryData);
                 XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
-                
+
                 XLSX.writeFile(wb, `Medical_Claims_Statistics_${statsYear}_${new Date().toISOString().slice(0,10)}.xlsx`);
-                
-                // Show success message
                 showMessage('submitSuccess', 'Statistics exported successfully!', false);
-                
             } catch (error) {
                 console.error("Export Statistics Error:", error);
                 showMessage('submitError', 'Failed to export statistics: ' + error.message);
             } finally {
-                // Reset button
                 setTimeout(() => {
-                    const exportBtn = document.getElementById('exportBtn');
-                    exportBtn.innerHTML = '<i class="fas fa-file-export"></i> Export Excel';
+                    exportBtn.innerHTML = originalText;
                     exportBtn.disabled = false;
                 }, 1000);
             }
         }
 
-        // Show/Hide Pages with Animation
+        /* ============================================================
+           PAGE NAVIGATION (NO RESET)
+           ============================================================ */
         function showLoginPage() {
             fadeOut(document.getElementById('mainPage'), () => {
                 fadeIn(document.getElementById('loginPage'));
@@ -1541,103 +1387,62 @@
             });
         }
 
-        // Function to update UI elements based on user role
         function updateUIForRole(role) {
             const claimFormPage = document.getElementById('claimFormPage');
             const showClaimFormBtn = document.getElementById('showClaimFormBtn');
-            const actionsHeader = document.querySelector('#actionsHeader');
             const mainPageTitle = document.getElementById('mainPageTitle');
-            const adminOnlyHeaders = document.querySelectorAll('.admin-only-header');
             const paginationControls = document.getElementById('paginationControls');
             const exportBtn = document.getElementById('exportBtn');
 
             if (role === 'guest') {
                 claimFormPage.classList.add('hidden');
                 showClaimFormBtn.classList.add('hidden');
-                if (actionsHeader) actionsHeader.classList.add('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim (View Only)';
-                adminOnlyHeaders.forEach(header => header.classList.add('hidden'));
-                // Show pagination for guest
                 paginationControls.classList.remove('hidden');
-                // Show export button for guest too
                 exportBtn.classList.remove('hidden');
             } else {
                 claimFormPage.classList.remove('hidden');
                 showClaimFormBtn.classList.remove('hidden');
-                if (actionsHeader) actionsHeader.classList.remove('hidden');
                 mainPageTitle.innerHTML = '<i class="fas fa-stethoscope icon"></i>Medical Claim';
-                adminOnlyHeaders.forEach(header => header.classList.remove('hidden'));
-                // Show pagination for admin as well
                 paginationControls.classList.remove('hidden');
-                // Show export button for admin
                 exportBtn.classList.remove('hidden');
             }
-            loadClaims();
+            loadClaims(true); // preserve page on role change
         }
 
-        // Function to display a specific page
         function showPage(pageId) {
+            activePageId = pageId;
+
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => {
                 if (page.id === pageId) {
-                    fadeIn(page);
+                    page.classList.remove('hidden');
+                    page.style.opacity = '1';
+                    page.style.transform = 'translateY(0)';
                 } else {
-                    fadeOut(page);
+                    page.classList.add('hidden');
                 }
             });
 
             document.getElementById('showClaimFormBtn').classList.remove('active');
             document.getElementById('showClaimsListBtn').classList.remove('active');
             document.getElementById('showStatisticsBtn').classList.remove('active');
-            
+
             if (pageId === 'claimFormPage') {
                 document.getElementById('showClaimFormBtn').classList.add('active');
                 updateNextClaimNumber();
             } else if (pageId === 'claimsListPage') {
                 document.getElementById('showClaimsListBtn').classList.add('active');
-                loadClaims();
+                loadClaims(true);
             } else if (pageId === 'statisticsPage') {
                 document.getElementById('showStatisticsBtn').classList.add('active');
                 loadStatistics();
             }
         }
 
-        // Display Error/Success
-        function showMessage(id, msg, isError = true) {
-            const el = document.getElementById(id);
-            el.textContent = msg;
-            el.classList.remove('hidden', 'success', 'error');
-            el.classList.add(isError ? 'error' : 'success');
-            setTimeout(() => el.classList.add('hidden'), 5000);
-        }
-
-        // Format Nominal for display (Rp X.XXX.XXX)
-        function formatRupiah(amount) {
-            if (amount === null || amount === undefined || amount === '') return 'Rp 0';
-            const numberString = String(amount).replace(/\D/g, '');
-            if (numberString === '') return 'Rp 0';
-            const number = parseInt(numberString);
-            if (isNaN(number) || number === 0) return 'Rp 0';
-            return `Rp ${number.toLocaleString('en-US')}`;
-        }
-
-        // Function to clean rupiah format from a string (returns only numbers)
-        function cleanRupiahFormat(formattedString) {
-            if (!formattedString) return '';
-            return formattedString.replace(/[^0-9]/g, '');
-        }
-
-        // Filter claims by year
-        function filterClaimsByYear(claims, year) {
-            if (year === 'all') return claims;
-            
-            return claims.filter(claim => {
-                const claimYear = claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : null;
-                return claimYear === year;
-            });
-        }
-
-        // --- Auto-generate Claim Number ---
+        /* ============================================================
+           CLAIM NUMBER GENERATOR
+           ============================================================ */
         async function updateNextClaimNumber() {
             try {
                 const snapshot = await database.ref('claims').once('value');
@@ -1650,7 +1455,9 @@
             }
         }
 
-        // --- Pagination Functions ---
+        /* ============================================================
+           PAGINATION
+           ============================================================ */
         function updatePaginationControls() {
             const firstPageBtn = document.getElementById('firstPageBtn');
             const prevPageBtn = document.getElementById('prevPageBtn');
@@ -1662,13 +1469,13 @@
             prevPageBtn.disabled = currentPage === 1;
             nextPageBtn.disabled = currentPage === totalPages;
             lastPageBtn.disabled = currentPage === totalPages;
-
             pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
         }
 
         function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
             currentPage = page;
-            renderClaimsTable(getCurrentPageData());
+            renderClaimsTable(getCurrentPageData(), true);
             updatePaginationControls();
         }
 
@@ -1678,18 +1485,13 @@
             return paginatedClaimsData.slice(startIndex, endIndex);
         }
 
-        // --- Load Claims and Sorting Section ---
-        let currentSortColumn = -1;
-        let currentSortDirection = 'asc';
-
-        // Function to load claims without resetting current page
+        /* ============================================================
+           LOAD CLAIMS
+           ============================================================ */
         async function loadClaims(preservePage = false) {
             const claimsBody = document.getElementById('claimsBody');
-            const paginationControls = document.getElementById('paginationControls');
-            
-            // Adjust colspan based on role
             const colspanValue = currentUserRole === 'guest' ? 7 : 9;
-            claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>`; 
+            claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;"><div class="loading"></div> Loading data...</td></tr>`;
 
             try {
                 const snapshot = await database.ref('claims').once('value');
@@ -1698,30 +1500,24 @@
                 Object.keys(claims).forEach(key => {
                     claimsData.push({ id: key, ...claims[key] });
                 });
-                
-                // Apply year filter
+
                 const filteredClaims = filterClaimsByYear(claimsData, yearFilter);
-                
-                // Sort by claim number
                 filteredClaims.sort((a, b) => a.noUrut - b.noUrut);
-                
-                // Set data for pagination
+
                 paginatedClaimsData = [...filteredClaims];
                 totalPages = Math.max(1, Math.ceil(paginatedClaimsData.length / itemsPerPage));
-                
-                // Only reset to page 1 if not preserving current page
+
                 if (!preservePage || currentPage > totalPages) {
                     currentPage = 1;
                 }
 
-                // Render table with paginated data for both guest and admin
-                renderClaimsTable(getCurrentPageData());
+                renderClaimsTable(getCurrentPageData(), preservePage);
                 updatePaginationControls();
 
                 // Reset sort state for table headers
                 currentSortColumn = 0;
                 currentSortDirection = 'asc';
-                
+
                 const headers = document.querySelectorAll('#claimsTable th');
                 if (headers.length > 0) {
                     headers.forEach((header, index) => {
@@ -1743,8 +1539,13 @@
             }
         }
 
-        function renderClaimsTable(data) {
+        /* ============================================================
+           RENDER TABLE (preserveScroll flag)
+           ============================================================ */
+        function renderClaimsTable(data, preserveScroll = false) {
             const claimsBody = document.getElementById('claimsBody');
+            const scrollY = preserveScroll ? window.scrollY : 0;
+
             claimsBody.innerHTML = '';
 
             const claimsTableHeader = document.getElementById('claimsTableHeader');
@@ -1771,14 +1572,13 @@
                     <th onclick="sortTable(6)">Claimed Amount <i class="fas fa-sort"></i></th>
                     <th onclick="sortTable(7)">Approved Amount <i class="fas fa-sort"></i></th>
                     <th id="actionsHeader">Actions</th>
-                    <th></th>
-                    <th></th>
                 `;
             }
 
             if (data.length === 0) {
                 const colspanValue = currentUserRole === 'guest' ? 7 : 9;
                 claimsBody.innerHTML = `<tr><td colspan="${colspanValue}" style="text-align:center;">No claim data available${yearFilter !== 'all' ? ' for selected year' : ''}.</td></tr>`;
+                if (preserveScroll) window.scrollTo(0, scrollY);
                 return;
             }
 
@@ -1803,7 +1603,7 @@
                     const approvedAmountCell = row.insertCell(cellIndex++);
                     approvedAmountCell.textContent = formatRupiah(claim.nominalDisetujui);
                 }
-                
+
                 const statusCell = row.insertCell(cellIndex++);
                 if (currentUserRole === 'guest') {
                     const statusSpan = document.createElement('span');
@@ -1820,13 +1620,20 @@
                     `;
                     statusDropdown.addEventListener('change', async (e) => {
                         const newStatus = e.target.value;
+                        const scrollY = window.scrollY;
                         try {
                             await database.ref('claims/' + claim.id).update({ status: newStatus });
+                            // Update local data so we don't need to reload
+                            const localClaim = claimsData.find(c => c.id === claim.id);
+                            if (localClaim) localClaim.status = newStatus;
+                            const paginatedClaim = paginatedClaimsData.find(c => c.id === claim.id);
+                            if (paginatedClaim) paginatedClaim.status = newStatus;
+
                             e.target.className = '';
                             e.target.classList.add(`status-${newStatus.toLowerCase()}`);
                             showMessage('submitSuccess', `Status for claim ${claim.noUrut} updated to ${newStatus}!`, false);
-                            // Reload data but preserve current page
-                            loadClaims(true);
+                            // Restore scroll (no reload)
+                            requestAnimationFrame(() => window.scrollTo(0, scrollY));
                         } catch (error) {
                             console.error("Update Status Error:", error);
                             showMessage('submitError', 'Failed to update status: ' + error.message);
@@ -1859,8 +1666,15 @@
                     actionsCell.appendChild(deleteButton);
                 }
             });
+
+            if (preserveScroll) {
+                requestAnimationFrame(() => window.scrollTo(0, scrollY));
+            }
         }
 
+        /* ============================================================
+           SORT TABLE
+           ============================================================ */
         window.sortTable = function(columnIndex) {
             const headers = document.querySelectorAll('#claimsTable th');
             let dataKeys;
@@ -1871,11 +1685,10 @@
             }
 
             if (currentUserRole === 'guest' && columnIndex > dataKeys.length - 1) {
-                console.warn("Attempted to sort a hidden column for guest user.");
                 return;
             }
 
-            headers.forEach((header, index) => {
+            headers.forEach((header) => {
                 const icon = header.querySelector('.fa-sort, .fa-sort-up, .fa-sort-down');
                 if (icon) {
                     icon.classList.remove('fa-sort-up', 'fa-sort-down');
@@ -1896,17 +1709,15 @@
                 icon.classList.add(currentSortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
             }
 
-            claimsData.sort((a, b) => {
-                let valA, valB;
+            const key = dataKeys[columnIndex];
 
-                const key = dataKeys[columnIndex];
-
-                valA = a[key];
-                valB = b[key];
+            paginatedClaimsData.sort((a, b) => {
+                let valA = a[key];
+                let valB = b[key];
 
                 if (key === 'noUrut' || key.includes('nominal')) {
-                    valA = parseInt(valA);
-                    valB = parseInt(valB);
+                    valA = parseInt(valA) || 0;
+                    valB = parseInt(valB) || 0;
                 } else if (key.includes('tanggal')) {
                     valA = new Date(valA);
                     valB = new Date(valB);
@@ -1920,108 +1731,79 @@
                 return 0;
             });
 
-            // Apply year filter to sorted data
-            const filteredClaims = filterClaimsByYear(claimsData, yearFilter);
-            
-            // Update paginated data with sorted data
-            paginatedClaimsData = [...filteredClaims];
-            
-            // Always use pagination for both guest and admin
-            renderClaimsTable(getCurrentPageData());
+            renderClaimsTable(getCurrentPageData(), true);
             updatePaginationControls();
         };
 
-        // --- Statistics Functions ---
+        /* ============================================================
+           STATISTICS
+           ============================================================ */
         async function loadStatistics() {
             const statsYear = document.getElementById('statsYearFilter').value;
-            
+            const deptStatsBody = document.getElementById('deptStatsBody');
+            const empStatsBody = document.getElementById('employeeStatsBody');
+            deptStatsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><div class="loading"></div> Loading...</td></tr>';
+            empStatsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;"><div class="loading"></div> Loading...</td></tr>';
+
             try {
                 const snapshot = await database.ref('claims').once('value');
                 const claims = snapshot.val() || {};
                 const claimsArray = [];
-                
+
                 Object.keys(claims).forEach(key => {
                     claimsArray.push({ id: key, ...claims[key] });
                 });
-                
-                // Filter claims by selected year
+
                 const filteredClaims = claimsArray.filter(claim => {
                     const claimYear = claim.tanggalPengajuan ? claim.tanggalPengajuan.substring(0, 4) : null;
                     return claimYear === statsYear;
                 });
-                
-                // Calculate department statistics
+
                 const deptStats = {};
                 let totalClaimedAmount = 0;
                 let totalApprovedAmount = 0;
                 let totalClaimsCount = 0;
-                
-                // Clear previous data
+
                 allEmployeesData = [];
                 allDepartmentsData = [];
-                
+
                 filteredClaims.forEach(claim => {
                     const dept = claim.departemen || 'Unknown';
                     const claimedAmount = parseInt(claim.nominalDiajukan) || 0;
                     const approvedAmount = parseInt(claim.nominalDisetujui) || 0;
-                    
+
                     if (!deptStats[dept]) {
-                        deptStats[dept] = {
-                            count: 0,
-                            totalClaimed: 0,
-                            totalApproved: 0,
-                            employees: {},
-                            claims: []
-                        };
+                        deptStats[dept] = { count: 0, totalClaimed: 0, totalApproved: 0, employees: {}, claims: [] };
                     }
-                    
                     deptStats[dept].count++;
                     deptStats[dept].totalClaimed += claimedAmount;
                     deptStats[dept].totalApproved += approvedAmount;
                     deptStats[dept].claims.push(claim);
-                    
-                    // Track employee statistics within department
+
                     const employeeName = claim.namaKaryawan || 'Unknown';
                     if (!deptStats[dept].employees[employeeName]) {
-                        deptStats[dept].employees[employeeName] = {
-                            count: 0,
-                            totalClaimed: 0,
-                            totalApproved: 0,
-                            claims: []
-                        };
+                        deptStats[dept].employees[employeeName] = { count: 0, totalClaimed: 0, totalApproved: 0, claims: [] };
                     }
                     deptStats[dept].employees[employeeName].count++;
                     deptStats[dept].employees[employeeName].totalClaimed += claimedAmount;
                     deptStats[dept].employees[employeeName].totalApproved += approvedAmount;
                     deptStats[dept].employees[employeeName].claims.push(claim);
-                    
+
                     totalClaimedAmount += claimedAmount;
                     totalApprovedAmount += approvedAmount;
                     totalClaimsCount++;
                 });
-                
-                // Store department stats globally
+
                 deptStatsData = deptStats;
-                
-                // Collect all departments for dropdown
                 populateDepartmentDropdown(deptStats);
-                
-                // Collect all employees for dropdown
                 populateEmployeeDropdown(deptStats);
-                
-                // Render department statistics
                 renderDepartmentStats(deptStats, totalClaimedAmount);
-                
-                // Render employee statistics
                 renderEmployeeStats(deptStats);
-                
-                // Create chart
                 createDepartmentChart(deptStats);
-                
             } catch (error) {
                 console.error("Error loading statistics:", error);
-                document.getElementById('deptStatsBody').innerHTML = '<tr><td colspan="5" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
-                document.getElementById('employeeStatsBody').innerHTML = '<tr><td colspan="6" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
+                deptStatsBody.innerHTML = '<tr><td colspan="5" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
+                empStatsBody.innerHTML = '<tr><td colspan="6" class="error" style="text-align:center;">Failed to load statistics data.</td></tr>';
             }
         }
 
@@ -2029,7 +1811,7 @@
             const departmentSelect = document.getElementById('departmentSelect');
             departmentSelect.innerHTML = '<option value="">Select Department</option>';
             allDepartmentsData = [];
-            
+
             Object.keys(deptStats).forEach(dept => {
                 const deptData = {
                     name: dept,
@@ -2039,27 +1821,25 @@
                     employees: deptStats[dept].employees,
                     claims: deptStats[dept].claims
                 };
-                
                 allDepartmentsData.push(deptData);
-                
+
                 const option = document.createElement('option');
                 option.value = dept;
                 option.textContent = `${dept} - ${deptStats[dept].count} claims`;
                 departmentSelect.appendChild(option);
             });
-            
-            // Enable/disable view detail button based on selection
-            departmentSelect.addEventListener('change', function() {
+
+            departmentSelect.onchange = function() {
                 const viewDetailBtn = document.getElementById('viewDepartmentDetailBtn');
                 viewDetailBtn.disabled = !this.value;
-            });
+            };
         }
 
         function populateEmployeeDropdown(deptStats) {
             const employeeSelect = document.getElementById('employeeSelect');
             employeeSelect.innerHTML = '<option value="">Select Employee</option>';
             allEmployeesData = [];
-            
+
             Object.keys(deptStats).forEach(dept => {
                 const employees = deptStats[dept].employees;
                 Object.keys(employees).forEach(empName => {
@@ -2071,48 +1851,45 @@
                         totalApproved: employees[empName].totalApproved,
                         claims: employees[empName].claims
                     };
-                    
                     allEmployeesData.push(employeeData);
-                    
+
                     const option = document.createElement('option');
                     option.value = empName;
                     option.textContent = `${empName} (${dept}) - ${employees[empName].count} claims`;
                     employeeSelect.appendChild(option);
                 });
             });
-            
-            // Enable/disable view detail button based on selection
-            employeeSelect.addEventListener('change', function() {
+
+            employeeSelect.onchange = function() {
                 const viewDetailBtn = document.getElementById('viewEmployeeDetailBtn');
                 viewDetailBtn.disabled = !this.value;
-            });
+            };
         }
 
         function renderDepartmentStats(deptStats, totalClaimedAmount) {
             const deptStatsBody = document.getElementById('deptStatsBody');
             deptStatsBody.innerHTML = '';
-            
+
             const departments = Object.keys(deptStats);
-            
+
             if (departments.length === 0) {
                 deptStatsBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No data available for selected year.</td></tr>';
                 document.getElementById('deptCount').textContent = '0';
                 return;
             }
-            
+
             departments.sort((a, b) => deptStats[b].totalClaimed - deptStats[a].totalClaimed);
-            
+
             departments.forEach(dept => {
                 const stats = deptStats[dept];
                 const avgPerClaim = stats.count > 0 ? Math.round(stats.totalClaimed / stats.count) : 0;
-                
+
                 const row = deptStatsBody.insertRow();
                 row.insertCell().textContent = dept;
                 row.insertCell().textContent = stats.count;
                 row.insertCell().textContent = formatRupiah(stats.totalClaimed);
                 row.insertCell().textContent = formatRupiah(avgPerClaim);
-                
-                // Action cell with view detail button
+
                 const actionCell = row.insertCell();
                 const viewButton = document.createElement('button');
                 viewButton.innerHTML = '<i class="fas fa-eye"></i>';
@@ -2121,17 +1898,16 @@
                 viewButton.onclick = () => showDepartmentDetail(dept);
                 actionCell.appendChild(viewButton);
             });
-            
+
             document.getElementById('deptCount').textContent = departments.length;
         }
 
         function renderEmployeeStats(deptStats) {
             const employeeStatsBody = document.getElementById('employeeStatsBody');
             employeeStatsBody.innerHTML = '';
-            
-            // Collect all employees
+
             const allEmployees = [];
-            
+
             Object.keys(deptStats).forEach(dept => {
                 const employees = deptStats[dept].employees;
                 Object.keys(employees).forEach(empName => {
@@ -2145,35 +1921,27 @@
                     });
                 });
             });
-            
+
             if (allEmployees.length === 0) {
                 employeeStatsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No data available for selected year.</td></tr>';
                 document.getElementById('employeeCount').textContent = '0';
                 return;
             }
-            
-            // Sort by total claimed amount (descending)
+
             allEmployees.sort((a, b) => b.totalClaimed - a.totalClaimed);
-            
-            // Take top 10 employees
             const topEmployees = allEmployees.slice(0, 10);
-            
+
             topEmployees.forEach(emp => {
                 const row = employeeStatsBody.insertRow();
                 row.insertCell().textContent = emp.name;
                 row.insertCell().textContent = emp.department;
                 row.insertCell().textContent = emp.count;
-                
-                // Total Claimed cell
-                const claimedCell = row.insertCell();
-                claimedCell.textContent = formatRupiah(emp.totalClaimed);
-                
-                // Approved Amount cell with special styling
+                row.insertCell().textContent = formatRupiah(emp.totalClaimed);
+
                 const approvedCell = row.insertCell();
                 approvedCell.textContent = formatRupiah(emp.totalApproved);
                 approvedCell.classList.add('approved-amount');
-                
-                // Action cell with view detail button
+
                 const actionCell = row.insertCell();
                 const viewButton = document.createElement('button');
                 viewButton.innerHTML = '<i class="fas fa-eye"></i>';
@@ -2182,29 +1950,21 @@
                 viewButton.onclick = () => showEmployeeDetail(emp.name);
                 actionCell.appendChild(viewButton);
             });
-            
+
             document.getElementById('employeeCount').textContent = topEmployees.length;
         }
 
         function showDepartmentDetail(departmentName) {
-            // Find department data
             const deptData = allDepartmentsData.find(dept => dept.name === departmentName);
-            
-            if (!deptData) {
-                alert('Department data not found!');
-                return;
-            }
-            
-            // Populate modal content
+            if (!deptData) { alert('Department data not found!'); return; }
+
             const modalTitle = document.getElementById('departmentDetailTitle');
             const modalContent = document.getElementById('departmentDetailContent');
-            
             modalTitle.textContent = `Department Claim Details - ${departmentName}`;
-            
+
             const avgPerClaim = deptData.count > 0 ? Math.round(deptData.totalClaimed / deptData.count) : 0;
-            const approvalRate = deptData.totalClaimed > 0 ? 
-                Math.round((deptData.totalApproved / deptData.totalClaimed) * 100) : 0;
-            
+            const approvalRate = deptData.totalClaimed > 0 ? Math.round((deptData.totalApproved / deptData.totalClaimed) * 100) : 0;
+
             let contentHTML = `
                 <div class="department-summary-grid">
                     <div class="department-summary-item">
@@ -2232,57 +1992,27 @@
                         <div class="department-summary-value">${Object.keys(deptData.employees).length}</div>
                     </div>
                 </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Department:</div>
-                    <div class="detail-value">${deptData.name}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Claims:</div>
-                    <div class="detail-value">${deptData.count}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Claimed Amount:</div>
-                    <div class="detail-value claimed">${formatRupiah(deptData.totalClaimed)}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Approved Amount:</div>
-                    <div class="detail-value approved">${formatRupiah(deptData.totalApproved)}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Approval Rate:</div>
-                    <div class="detail-value">${approvalRate}%</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Average per Claim:</div>
-                    <div class="detail-value">${formatRupiah(avgPerClaim)}</div>
-                </div>
+                <div class="detail-row"><div class="detail-label">Department:</div><div class="detail-value">${deptData.name}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Claims:</div><div class="detail-value">${deptData.count}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Claimed Amount:</div><div class="detail-value claimed">${formatRupiah(deptData.totalClaimed)}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Approved Amount:</div><div class="detail-value approved">${formatRupiah(deptData.totalApproved)}</div></div>
+                <div class="detail-row"><div class="detail-label">Approval Rate:</div><div class="detail-value">${approvalRate}%</div></div>
+                <div class="detail-row"><div class="detail-label">Average per Claim:</div><div class="detail-value">${formatRupiah(avgPerClaim)}</div></div>
             `;
-            
-            // Add employees table
+
             const employees = deptData.employees;
             const employeeNames = Object.keys(employees);
-            
             if (employeeNames.length > 0) {
                 contentHTML += `
                     <div class="detail-table">
                         <h4 style="margin-top: 20px; color: var(--accent-color);">Employees in Department (${employeeNames.length})</h4>
                         <table>
                             <thead>
-                                <tr>
-                                    <th>Employee Name</th>
-                                    <th>Claim Count</th>
-                                    <th>Total Claimed</th>
-                                    <th>Approved Amount</th>
-                                    <th>Action</th>
-                                </tr>
+                                <tr><th>Employee Name</th><th>Claim Count</th><th>Total Claimed</th><th>Approved Amount</th><th>Action</th></tr>
                             </thead>
                             <tbody>
                 `;
-                
-                // Sort employees by total claimed (descending)
                 employeeNames.sort((a, b) => employees[b].totalClaimed - employees[a].totalClaimed);
-                
                 employeeNames.forEach(empName => {
                     const emp = employees[empName];
                     contentHTML += `
@@ -2291,47 +2021,26 @@
                             <td>${emp.count}</td>
                             <td>${formatRupiah(emp.totalClaimed)}</td>
                             <td class="approved-amount">${formatRupiah(emp.totalApproved)}</td>
-                            <td>
-                                <button class="stats-action-btn" onclick="showEmployeeDetail('${empName}')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </td>
+                            <td><button class="stats-action-btn" onclick="showEmployeeDetail('${empName}')"><i class="fas fa-eye"></i></button></td>
                         </tr>
                     `;
                 });
-                
-                contentHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+                contentHTML += `</tbody></table></div>`;
             }
-            
-            // Add claims table if there are claims
+
             if (deptData.claims && deptData.claims.length > 0) {
                 contentHTML += `
                     <div class="detail-table">
                         <h4 style="margin-top: 20px; color: var(--accent-color);">Recent Claims (Latest 20)</h4>
                         <table>
                             <thead>
-                                <tr>
-                                    <th>Claim No.</th>
-                                    <th>Employee</th>
-                                    <th>Submission Date</th>
-                                    <th>Claim Type</th>
-                                    <th>Claimed Amount</th>
-                                    <th>Approved Amount</th>
-                                    <th>Status</th>
-                                </tr>
+                                <tr><th>Claim No.</th><th>Employee</th><th>Submission Date</th><th>Claim Type</th><th>Claimed Amount</th><th>Approved Amount</th><th>Status</th></tr>
                             </thead>
                             <tbody>
                 `;
-                
-                // Sort claims by submission date (newest first) and take top 20
                 const sortedClaims = [...deptData.claims]
                     .sort((a, b) => new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan))
                     .slice(0, 20);
-                
                 sortedClaims.forEach(claim => {
                     contentHTML += `
                         <tr>
@@ -2345,89 +2054,43 @@
                         </tr>
                     `;
                 });
-                
-                contentHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+                contentHTML += `</tbody></table></div>`;
             }
-            
+
             modalContent.innerHTML = contentHTML;
-            
-            // Show modal
             document.getElementById('departmentDetailModal').style.display = 'flex';
         }
 
         function showEmployeeDetail(employeeName) {
-            // Find employee data
             const employeeData = allEmployeesData.find(emp => emp.name === employeeName);
-            
-            if (!employeeData) {
-                alert('Employee data not found!');
-                return;
-            }
-            
-            // Populate modal content
+            if (!employeeData) { alert('Employee data not found!'); return; }
+
             const modalTitle = document.getElementById('employeeDetailTitle');
             const modalContent = document.getElementById('employeeDetailContent');
-            
             modalTitle.textContent = `Employee Claim Details - ${employeeName}`;
-            
-            const approvalRate = employeeData.totalClaimed > 0 ? 
-                Math.round((employeeData.totalApproved / employeeData.totalClaimed) * 100) : 0;
-            
+
+            const approvalRate = employeeData.totalClaimed > 0 ? Math.round((employeeData.totalApproved / employeeData.totalClaimed) * 100) : 0;
+
             let contentHTML = `
-                <div class="detail-row">
-                    <div class="detail-label">Employee Name:</div>
-                    <div class="detail-value">${employeeData.name}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Department:</div>
-                    <div class="detail-value">${employeeData.department}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Claims:</div>
-                    <div class="detail-value">${employeeData.count}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Claimed Amount:</div>
-                    <div class="detail-value claimed">${formatRupiah(employeeData.totalClaimed)}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Total Approved Amount:</div>
-                    <div class="detail-value approved">${formatRupiah(employeeData.totalApproved)}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Approval Rate:</div>
-                    <div class="detail-value">${approvalRate}%</div>
-                </div>
+                <div class="detail-row"><div class="detail-label">Employee Name:</div><div class="detail-value">${employeeData.name}</div></div>
+                <div class="detail-row"><div class="detail-label">Department:</div><div class="detail-value">${employeeData.department}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Claims:</div><div class="detail-value">${employeeData.count}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Claimed Amount:</div><div class="detail-value claimed">${formatRupiah(employeeData.totalClaimed)}</div></div>
+                <div class="detail-row"><div class="detail-label">Total Approved Amount:</div><div class="detail-value approved">${formatRupiah(employeeData.totalApproved)}</div></div>
+                <div class="detail-row"><div class="detail-label">Approval Rate:</div><div class="detail-value">${approvalRate}%</div></div>
             `;
-            
-            // Add claims table if there are claims
+
             if (employeeData.claims && employeeData.claims.length > 0) {
                 contentHTML += `
                     <div class="detail-table">
                         <h4 style="margin-top: 20px; color: var(--accent-color);">Individual Claims</h4>
                         <table>
                             <thead>
-                                <tr>
-                                    <th>Claim No.</th>
-                                    <th>Submission Date</th>
-                                    <th>Claim Type</th>
-                                    <th>Claimed Amount</th>
-                                    <th>Approved Amount</th>
-                                    <th>Status</th>
-                                </tr>
+                                <tr><th>Claim No.</th><th>Submission Date</th><th>Claim Type</th><th>Claimed Amount</th><th>Approved Amount</th><th>Status</th></tr>
                             </thead>
                             <tbody>
                 `;
-                
-                // Sort claims by submission date (newest first)
-                const sortedClaims = [...employeeData.claims].sort((a, b) => 
-                    new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan)
-                );
-                
+                const sortedClaims = [...employeeData.claims].sort((a, b) => new Date(b.tanggalPengajuan) - new Date(a.tanggalPengajuan));
                 sortedClaims.forEach(claim => {
                     contentHTML += `
                         <tr>
@@ -2440,42 +2103,30 @@
                         </tr>
                     `;
                 });
-                
-                contentHTML += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+                contentHTML += `</tbody></table></div>`;
             }
-            
+
             modalContent.innerHTML = contentHTML;
-            
-            // Show modal
             document.getElementById('employeeDetailModal').style.display = 'flex';
         }
 
         function createDepartmentChart(deptStats) {
             const ctx = document.getElementById('departmentChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (departmentChart) {
-                departmentChart.destroy();
-            }
-            
+            if (departmentChart) departmentChart.destroy();
+
             const departments = Object.keys(deptStats);
             const claimedAmounts = departments.map(dept => deptStats[dept].totalClaimed);
             const approvedAmounts = departments.map(dept => deptStats[dept].totalApproved);
             const claimCounts = departments.map(dept => deptStats[dept].count);
-            
-            // Create gradients for chart
+
             const gradientClaimed = ctx.createLinearGradient(0, 0, 0, 400);
             gradientClaimed.addColorStop(0, 'rgba(0, 168, 150, 0.8)');
             gradientClaimed.addColorStop(1, 'rgba(0, 168, 150, 0.1)');
-            
+
             const gradientApproved = ctx.createLinearGradient(0, 0, 0, 400);
             gradientApproved.addColorStop(0, 'rgba(76, 175, 80, 0.8)');
             gradientApproved.addColorStop(1, 'rgba(76, 175, 80, 0.1)');
-            
+
             departmentChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2511,42 +2162,24 @@
                 },
                 options: {
                     responsive: true,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Department'
-                            }
-                        },
+                        x: { title: { display: true, text: 'Department' } },
                         y: {
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Claim Amount (Rp)'
-                            },
+                            title: { display: true, text: 'Claim Amount (Rp)' },
                             ticks: {
-                                callback: function(value) {
-                                    return 'Rp ' + value.toLocaleString('en-US');
-                                }
+                                callback: function(value) { return 'Rp ' + value.toLocaleString('en-US'); }
                             }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: {
-                                display: true,
-                                text: 'Number of Claims'
-                            },
-                            grid: {
-                                drawOnChartArea: false,
-                            },
+                            title: { display: true, text: 'Number of Claims' },
+                            grid: { drawOnChartArea: false }
                         }
                     },
                     plugins: {
@@ -2562,15 +2195,15 @@
                                 }
                             }
                         },
-                        legend: {
-                            position: 'top',
-                        }
+                        legend: { position: 'top' }
                     }
                 }
             });
         }
 
-        // --- Edit Modal Logic ---
+        /* ============================================================
+           MODAL LOGIC
+           ============================================================ */
         const editClaimModal = document.getElementById('editClaimModal');
         const detailClaimModal = document.getElementById('detailClaimModal');
         const employeeDetailModal = document.getElementById('employeeDetailModal');
@@ -2599,15 +2232,9 @@
                 editError.classList.add('hidden');
                 editSuccess.classList.add('hidden');
             }
-            if (event.target === detailClaimModal) {
-                detailClaimModal.style.display = 'none';
-            }
-            if (event.target === employeeDetailModal) {
-                employeeDetailModal.style.display = 'none';
-            }
-            if (event.target === departmentDetailModal) {
-                departmentDetailModal.style.display = 'none';
-            }
+            if (event.target === detailClaimModal) detailClaimModal.style.display = 'none';
+            if (event.target === employeeDetailModal) employeeDetailModal.style.display = 'none';
+            if (event.target === departmentDetailModal) departmentDetailModal.style.display = 'none';
         });
 
         window.openEditModal = (claimId, claimData) => {
@@ -2659,7 +2286,7 @@
             editSuccess.classList.add('hidden');
 
             const claimId = document.getElementById('editClaimId').value;
-            
+
             const editedNominalDiajukan = parseInt(cleanRupiahFormat(document.getElementById('editNominalDiajukan').value)) || 0;
             const editedNominalDisetujui = parseInt(cleanRupiahFormat(document.getElementById('editNominalDisetujui').value)) || 0;
 
@@ -2678,16 +2305,38 @@
                 status: document.getElementById('editStatus').value,
             };
 
+            const scrollY = window.scrollY;
+
             try {
                 await database.ref('claims/' + claimId).update(updatedClaimData);
                 showMessage('editSuccess', 'Claim updated successfully!', false);
-                // Load claims but preserve current page
-                loadClaims(true);
+
+                // Update local data so we don't reset scroll
+                const localIndex = claimsData.findIndex(c => c.id === claimId);
+                if (localIndex !== -1) {
+                    claimsData[localIndex] = { ...claimsData[localIndex], ...updatedClaimData };
+                }
+
+                // Refresh table without losing scroll/page
+                const filteredClaims = filterClaimsByYear(claimsData, yearFilter);
+                filteredClaims.sort((a, b) => a.noUrut - b.noUrut);
+                paginatedClaimsData = [...filteredClaims];
+
+                // Keep current page if possible
+                if (currentPage > Math.ceil(paginatedClaimsData.length / itemsPerPage)) {
+                    currentPage = Math.max(1, Math.ceil(paginatedClaimsData.length / itemsPerPage));
+                }
+
+                renderClaimsTable(getCurrentPageData(), true);
+                updatePaginationControls();
+
                 setTimeout(() => {
                     editClaimModal.style.display = 'none';
                     editError.classList.add('hidden');
                     editSuccess.classList.add('hidden');
-                }, 1500);
+                }, 800);
+
+                requestAnimationFrame(() => window.scrollTo(0, scrollY));
             } catch (error) {
                 console.error("Update Claim Error:", error);
                 showMessage('editError', 'Failed to update claim: ' + error.message);
@@ -2699,31 +2348,46 @@
 
         window.deleteClaim = async (claimId, noUrut) => {
             if (currentUserRole === 'guest') return;
+            if (!confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) return;
 
-            if (confirm(`Are you sure you want to delete claim No. ${noUrut}?`)) {
-                try {
-                    await database.ref('claims/' + claimId).remove();
-                    showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
-                    // Load claims but preserve current page
-                    loadClaims(true);
-                } catch (error) {
-                    console.error("Delete Claim Error:", error);
-                    showMessage('submitError', 'Failed to delete claim: ' + error.message);
-                }
+            const scrollY = window.scrollY;
+
+            try {
+                await database.ref('claims/' + claimId).remove();
+                showMessage('submitSuccess', `Claim No. ${noUrut} deleted successfully!`, false);
+
+                // Remove from local data
+                claimsData = claimsData.filter(c => c.id !== claimId);
+                paginatedClaimsData = paginatedClaimsData.filter(c => c.id !== claimId);
+
+                const filteredClaims = filterClaimsByYear(claimsData, yearFilter);
+                filteredClaims.sort((a, b) => a.noUrut - b.noUrut);
+                paginatedClaimsData = [...filteredClaims];
+                totalPages = Math.max(1, Math.ceil(paginatedClaimsData.length / itemsPerPage));
+
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                renderClaimsTable(getCurrentPageData(), true);
+                updatePaginationControls();
+
+                requestAnimationFrame(() => window.scrollTo(0, scrollY));
+            } catch (error) {
+                console.error("Delete Claim Error:", error);
+                showMessage('submitError', 'Failed to delete claim: ' + error.message);
             }
         };
 
-        // --- Login/Logout Section and DOMContentLoaded Event Listeners ---
+        /* ============================================================
+           DOM CONTENT LOADED
+           ============================================================ */
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
             document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
 
-            // Set current year as default in year filters
             const currentYear = new Date().getFullYear();
             document.getElementById('yearFilter').value = 'all';
             document.getElementById('statsYearFilter').value = currentYear.toString();
 
-            // NEW: Export button functionality
             const exportBtn = document.getElementById('exportBtn');
             const exportDropdown = document.getElementById('exportDropdown');
             const exportClaimsBtn = document.getElementById('exportClaimsBtn');
@@ -2746,54 +2410,43 @@
                 exportStatistics();
             });
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
                 if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
                     exportDropdown.classList.remove('active');
                 }
             });
 
-            // Pagination event listeners
             document.getElementById('firstPageBtn').addEventListener('click', () => goToPage(1));
             document.getElementById('prevPageBtn').addEventListener('click', () => goToPage(currentPage - 1));
             document.getElementById('nextPageBtn').addEventListener('click', () => goToPage(currentPage + 1));
             document.getElementById('lastPageBtn').addEventListener('click', () => goToPage(totalPages));
 
-            // Year filter event listener for claims list
             document.getElementById('yearFilter').addEventListener('change', function() {
                 yearFilter = this.value;
-                loadClaims();
+                // preserve page if possible
+                loadClaims(true);
             });
 
-            // Year filter event listener for statistics
             document.getElementById('statsYearFilter').addEventListener('change', function() {
                 loadStatistics();
             });
 
-            // View department detail button event listener
             document.getElementById('viewDepartmentDetailBtn').addEventListener('click', function() {
                 const selectedDepartment = document.getElementById('departmentSelect').value;
-                if (selectedDepartment) {
-                    showDepartmentDetail(selectedDepartment);
-                }
+                if (selectedDepartment) showDepartmentDetail(selectedDepartment);
             });
 
-            // View employee detail button event listener
             document.getElementById('viewEmployeeDetailBtn').addEventListener('click', function() {
                 const selectedEmployee = document.getElementById('employeeSelect').value;
-                if (selectedEmployee) {
-                    showEmployeeDetail(selectedEmployee);
-                }
+                if (selectedEmployee) showEmployeeDetail(selectedEmployee);
             });
 
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    // Check if the user is one of the authorized users
                     const authorizedEmails = ['anisah@genetek.co.id', 'anggita-s@genetek.co.id'];
                     if (authorizedEmails.includes(user.email)) {
                         showMainPage('admin');
                     } else {
-                        // Other users can only view (guest mode)
                         showMainPage('guest');
                     }
                 } else {
@@ -2855,7 +2508,6 @@
 
                 try {
                     const currentNoUrut = parseInt(document.getElementById('noUrutForm').value);
-
                     const nominalDiajukanValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDiajukanBaru').value)) || 0;
                     const nominalDisetujuiValue = parseInt(cleanRupiahFormat(document.getElementById('nominalDisetujuiBaru').value)) || 0;
 
@@ -2881,8 +2533,19 @@
                     document.getElementById('nominalDiajukanBaru').value = formatRupiah(0);
                     document.getElementById('nominalDisetujuiBaru').value = formatRupiah(0);
                     updateNextClaimNumber();
-                    // Reload claims but preserve current page
-                    loadClaims(true);
+
+                    // Refresh claim list in background without changing active tab
+                    if (activePageId === 'claimsListPage') {
+                        loadClaims(true);
+                    } else {
+                        // just update in background
+                        const snapshot = await database.ref('claims').once('value');
+                        const claims = snapshot.val() || {};
+                        claimsData = [];
+                        Object.keys(claims).forEach(key => {
+                            claimsData.push({ id: key, ...claims[key] });
+                        });
+                    }
                 } catch (error) {
                     console.error("Submit Claim Error:", error);
                     showMessage('submitError', 'Failed to submit claim: ' + error.message);
